@@ -1,0 +1,51 @@
+"%prod":
+  quarkus:
+
+    # database configs
+    datasource:
+      db-kind: postgresql
+      username: ${DATASOURCE_USERNAME}
+      password: ${DATASOURCE_PASSWORD}
+      reactive:
+        url: vertx-reactive:postgresql://${DATASOURCE_HOST}:${DATASOURCE_PORT}/${DATASOURCE_DATABASE}
+    hibernate-orm:
+      database:
+        generation:
+          ~: update
+          create-schemas: true
+
+    # authorization configs
+    oidc:
+      auth-server-url: ${OIDC_AUTH_SERVER_URL}
+      client-id: ${OIDC_CLIENT_ID}
+      token:
+        issuer: ${OIDC_TOKEN_JWT_ISSUER}
+        audience: ${OIDC_TOKEN_JWT_AUDIENCE}
+
+"%dev":
+  quarkus:
+    log:
+      level:
+        category:
+          "feature_toggle":
+              level: DEBUG
+
+    # database configs
+    datasource:
+      db-kind: postgresql
+      devservices:
+        enabled: true
+        port: 5432
+        username: service
+        password: service
+    hibernate-orm:
+      database:
+        generation: drop-and-create
+
+    # authorization configs
+    keycloak:
+      devservices:
+        enabled: true
+        port: 8000
+        realm-name: insta-toggles
+        realm-path: example-keycloak-settings.json
