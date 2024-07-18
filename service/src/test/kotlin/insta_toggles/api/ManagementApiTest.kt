@@ -158,21 +158,8 @@ class ManagementApiTest {
     @Test
     @TestSecurity(user = "admin", roles = [DefaultRoles.ADMIN])
     fun partialUpdate_notFound_test() {
-        val feature = feature()
         val request = PartialFeatureUpdateRequest("updated", "updated", true)
-        Mockito.`when`(
-            serviceMock.update(
-                feature.id, request
-            )
-        ).thenReturn(
-            Uni.createFrom().item(feature.apply {
-                name = "updated"
-                description = "updated"
-                isActive = true
-            })
-        )
-        partialUpdateRequest(request).then().statusCode(200).body("name", `is`(request.name))
-            .body("description", `is`(request.description))
+        partialUpdateRequest(request).then().statusCode(404)
     }
 
     @Test
