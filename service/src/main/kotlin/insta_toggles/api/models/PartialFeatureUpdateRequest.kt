@@ -1,3 +1,5 @@
 package insta_toggles.api.models
 
-data class PartialFeatureUpdateRequest(val name: String?, val description: String?, val isActive: Boolean?)
+data class PartialFeatureUpdateRequest(
+    var name: String?, var description: String?, var isActive: Boolean?
+)
