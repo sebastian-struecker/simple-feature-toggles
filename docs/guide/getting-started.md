@@ -1,13 +1,13 @@
 # Getting Started
 
-Get started with insta-toggles on Docker
+Get started with insta-toggles on your machine
 
 ## Before you start
 
 - Make sure you have a running [Docker](https://www.docker.com/) environment.
 - Running [PostgreSQL](https://www.postgresql.org/) instance version 16 or higher.
 - Running Authentication provider, like [Keycloak](https://www.keycloak.org/).
-  - Please check [Authorization Concept](./authorization-concept) for more informations.
+  - Please check [Authorization Concept](./authorization-concept) for more information.
 
 ## Start Service
 

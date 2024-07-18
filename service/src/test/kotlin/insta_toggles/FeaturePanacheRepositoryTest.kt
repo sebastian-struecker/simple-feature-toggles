@@ -1,16 +1,16 @@
 package insta_toggles
 
 
-import io.quarkus.test.InjectMock
 import io.quarkus.test.junit.QuarkusTest
 import io.quarkus.test.vertx.RunOnVertxContext
+import jakarta.inject.Inject
 
 @QuarkusTest
 @RunOnVertxContext
 class FeaturePanacheRepositoryTest {
 
-    @InjectMock
-    var repositoryMock: FeaturePanacheRepository? = null
+    @Inject
+    lateinit var featurePanacheRepository: FeaturePanacheRepository
 
     fun getAll_test() {
     }
@@ -18,8 +18,11 @@ class FeaturePanacheRepositoryTest {
     fun getAllActive_test() {
     }
 
-    fun getById_test() {
-    }
+//    @Test
+//    fun getById_test() {
+//        featurePanacheRepository.getById(1).subscribe().withSubscriber(UniAssertSubscriber.create()).awaitItem()
+//            .assertSubscribed()
+//    }
 
     fun getByName_test() {
     }

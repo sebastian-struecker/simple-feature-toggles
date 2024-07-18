@@ -20,12 +20,16 @@ class FeaturePanacheRepository : PanacheRepository<FeatureEntity>, FeatureReposi
             .flatMap(Multi.createFrom()::iterable).map { it.toDomain() }
     }
 
-    override fun getById(id: Long): Uni<Feature?> {
-        return Panache.withTransaction { findById(id) ?: null }.map { it.toDomain() }
+    override fun getById(id: Long): Uni<Feature> {
+        return Panache.withTransaction { findById(id) }.onItem().ifNotNull()
+            .transformToUni { it -> Uni.createFrom().item(it.toDomain()) }.onItem().ifNull()
+            .failWith(NoSuchElementException("Feature with id $id not found"))
     }
 
-    override fun getByName(name: String): Uni<Feature?> {
-        return Panache.withTransaction { find("name = ?1", name)?.firstResult() }.map { it.toDomain() }
+    override fun getByName(name: String): Uni<Feature> {
+        return Panache.withTransaction { find("name = ?1", name)?.firstResult() }.onItem().ifNotNull()
+            .transformToUni { it -> Uni.createFrom().item(it.toDomain()) }.onItem().ifNull()
+            .failWith(NoSuchElementException("Feature with name $name not found"))
     }
 
     override fun create(name: String, description: String): Uni<Feature> {

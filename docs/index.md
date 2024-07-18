@@ -15,14 +15,14 @@ features:
   - icon:
       src: icons/rocket-svgrepo.svg
     title: Fast launch
-    details: Lorem ipsum...
+    details: With easily configurable, ready-to-launch Docker images you can start using Feature Toggles in no time.
   - icon:
       src: icons/padlock-svgrepo.svg
     title: Secured
-    details: Lorem ipsum...
+    details: The management of Feature Toggles is secured by using JWT authentication.
   - icon:
       src: icons/lightning-svgrepo.svg
     title: Lightning fast
-    details: Lorem ipsum...
+    details: Using Quarkus, Reactive Frameworks, and a scalable design this service supports handling many user requests.
 
 ---

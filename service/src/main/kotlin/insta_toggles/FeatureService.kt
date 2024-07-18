@@ -12,22 +12,20 @@ class FeatureService(val featureRepository: FeatureRepository) {
     }
 
     fun update(id: Long, updates: PartialFeatureUpdateRequest): Uni<Feature> {
-        return featureRepository.getById(id).onItem().ifNull()
-            .failWith(NoSuchElementException("Feature with id $id not found")).onItem().ifNotNull()
-            .transformToUni { it: Feature? ->
-                it!!.apply {
-                    if (updates.name?.isNotBlank() == true) {
-                        name = updates.name!!
-                    }
-                    if (updates.description?.isNotBlank() == true) {
-                        description = updates.description!!
-                    }
-                    if (updates.isActive != null) {
-                        isActive = updates.isActive!!
-                    }
+        return featureRepository.getById(id).onItem().ifNotNull().transformToUni { it: Feature ->
+            it.apply {
+                if (updates.name?.isNotBlank() == true) {
+                    name = updates.name!!
                 }
-                featureRepository.update(it)
+                if (updates.description?.isNotBlank() == true) {
+                    description = updates.description!!
+                }
+                if (updates.isActive != null) {
+                    isActive = updates.isActive!!
+                }
             }
+            featureRepository.update(it)
+        }
     }
 
 }

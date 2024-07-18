@@ -37,12 +37,8 @@ class ManagementApi(val featureService: FeatureService, val featureRepository: F
     fun get(id: Long): Uni<RestResponse<FeatureResponse>> {
         Log.debug("[ManagementApi] Calling method: get url: /management/$id")
         return featureRepository.getById(id).onItem().transform {
-            if (it != null) {
-                RestResponse.ok(it.toResponse())
-            } else {
-                RestResponse.notFound()
-            }
-        }
+            RestResponse.ok(it.toResponse())
+        }.onFailure().transform { NotFoundException() }
     }
 
     @POST
@@ -63,12 +59,8 @@ class ManagementApi(val featureService: FeatureService, val featureRepository: F
     fun partialUpdate(id: Long, updates: PartialFeatureUpdateRequest): Uni<RestResponse<FeatureResponse>> {
         Log.debug("[ManagementApi] Calling method: patch url: /management/$id body: $updates")
         return featureService.update(id, updates).onItem().transform {
-            if (it != null) {
-                RestResponse.ok(it.toResponse())
-            } else {
-                RestResponse.notFound()
-            }
-        }
+            RestResponse.ok(it.toResponse())
+        }.onFailure().transform { NotFoundException() }
     }
 
     fun Feature.toResponse(): FeatureResponse {
