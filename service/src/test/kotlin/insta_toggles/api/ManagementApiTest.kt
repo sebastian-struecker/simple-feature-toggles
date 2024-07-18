@@ -85,7 +85,8 @@ class ManagementApiTest {
         Mockito.`when`(repositoryMock.getById(1)).thenReturn(
             Uni.createFrom().item(feature)
         )
-        getById().then().statusCode(200)
+        getById().then().statusCode(200).body("name", `is`(feature.name))
+            .body("description", `is`(feature.description))
     }
 
     @Test
