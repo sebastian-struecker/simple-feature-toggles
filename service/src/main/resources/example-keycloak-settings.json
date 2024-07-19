@@ -57,7 +57,7 @@
       },
       {
         "id": "5318f992-f80f-4f2e-b706-53073a7a3ef3",
-        "name": "FEATURE_ADMIN",
+        "name": "feature_toggle_admin",
         "description": "",
         "composite": false,
         "clientRole": false,
@@ -75,7 +75,7 @@
       },
       {
         "id": "a605a399-8d32-471b-bef4-b398747b3fdd",
-        "name": "FEATURE_RELEASE_MANAGER",
+        "name": "feature_toggle_release_manager",
         "description": "",
         "composite": false,
         "clientRole": false,
@@ -84,7 +84,7 @@
       },
       {
         "id": "ef70f3de-e4f5-4833-abcc-79d2d63f2846",
-        "name": "FEATURE_VIEWER",
+        "name": "feature_toggle_viewer",
         "description": "",
         "composite": false,
         "clientRole": false,
@@ -497,7 +497,7 @@
         }
       ],
       "realmRoles": [
-        "FEATURE_ADMIN"
+        "feature_toggle_admin"
       ]
     },
     {
@@ -514,7 +514,7 @@
         }
       ],
       "realmRoles": [
-        "FEATURE_VIEWER"
+        "feature_toggle_viewer"
       ]
     },
     {
@@ -531,7 +531,7 @@
         }
       ],
       "realmRoles": [
-        "FEATURE_RELEASE_MANAGER"
+        "feature_toggle_release_manager"
       ]
     }
   ],

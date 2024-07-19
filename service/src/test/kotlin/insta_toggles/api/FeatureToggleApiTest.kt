@@ -1,10 +1,11 @@
 package insta_toggles.api
 
-import insta_toggles.Feature
-import insta_toggles.FeaturePanacheRepository
-import insta_toggles.FeatureService
-import insta_toggles.api.models.CreateFeatureRequest
-import insta_toggles.api.models.PartialFeatureUpdateRequest
+import insta_toggles.Context
+import insta_toggles.FeatureToggle
+import insta_toggles.FeatureToggleService
+import insta_toggles.api.models.CreateFeatureToggleRequest
+import insta_toggles.api.models.FeatureToggleFieldUpdateRequest
+import insta_toggles.repository.FeatureTogglePanacheRepository
 import io.quarkus.test.junit.QuarkusMock
 import io.quarkus.test.junit.QuarkusTest
 import io.quarkus.test.security.TestSecurity
@@ -12,6 +13,7 @@ import io.quarkus.test.vertx.RunOnVertxContext
 import io.restassured.RestAssured.given
 import io.restassured.http.ContentType
 import io.restassured.response.Response
+import io.smallrye.mutiny.Multi
 import io.smallrye.mutiny.Uni
 import jakarta.inject.Inject
 import org.hamcrest.Matchers.`is`
@@ -23,21 +25,21 @@ import org.mockito.Mockito
 
 @QuarkusTest
 @RunOnVertxContext
-class ManagementApiTest {
+class FeatureToggleApiTest {
 
     @Inject
-    lateinit var serviceMock: FeatureService
+    lateinit var serviceMock: FeatureToggleService
 
     @Inject
-    lateinit var repositoryMock: FeaturePanacheRepository
+    lateinit var repositoryMock: FeatureTogglePanacheRepository
 
     @BeforeEach
     fun setupMocks() {
-        repositoryMock = Mockito.mock(FeaturePanacheRepository::class.java)
-        QuarkusMock.installMockForType(repositoryMock, FeaturePanacheRepository::class.java)
+        repositoryMock = Mockito.mock(FeatureTogglePanacheRepository::class.java)
+        QuarkusMock.installMockForType(repositoryMock, FeatureTogglePanacheRepository::class.java)
 
-        serviceMock = Mockito.mock(FeatureService::class.java)
-        QuarkusMock.installMockForType(serviceMock, FeatureService::class.java)
+        serviceMock = Mockito.mock(FeatureToggleService::class.java)
+        QuarkusMock.installMockForType(serviceMock, FeatureToggleService::class.java)
     }
 
     @AfterEach
@@ -47,7 +49,22 @@ class ManagementApiTest {
     }
 
     companion object {
-        const val baseUrl: String = "/management"
+        const val featureToggleUrl: String = "/feature-toggle"
+        const val featureTogglesUrl: String = "/feature-toggles"
+    }
+
+    @Test
+    fun getAllActiveFeatures_context_invalid_test() {
+        val feature = feature()
+        Mockito.`when`(
+            repositoryMock.getAllActive(Context.TESTING)
+        ).thenReturn(
+            Multi.createFrom().item(feature)
+        )
+        val responseList =
+            getAllActiveFeaturesRequest("asd").then().statusCode(200).body("size()", `is`(1)).extract().body().jsonPath()
+                .getList<String>("")
+        assert(responseList.get(0) == feature.name)
     }
 
     @Test
@@ -119,7 +136,7 @@ class ManagementApiTest {
 
     @Test
     fun create_unauthorized_test() {
-        val request = CreateFeatureRequest("name", "description")
+        val request = CreateFeatureToggleRequest("key", "name", "description")
         createRequest(request).then().statusCode(401)
     }
 
@@ -127,10 +144,10 @@ class ManagementApiTest {
     @TestSecurity(user = "admin", roles = [DefaultRoles.ADMIN])
     fun create_authorized_admin_test() {
         val feature = feature()
-        Mockito.`when`(serviceMock.create(feature.name, feature.description)).thenReturn(
+        Mockito.`when`(serviceMock.create(feature.key, feature.name, feature.description)).thenReturn(
             Uni.createFrom().item(feature)
         )
-        val request = CreateFeatureRequest(feature.name, feature.description)
+        val request = CreateFeatureToggleRequest(feature.key, feature.name, feature.description)
         createRequest(request).then().statusCode(200).body("name", `is`(request.name))
             .body("description", `is`(request.description))
     }
@@ -138,27 +155,27 @@ class ManagementApiTest {
     @Test
     @TestSecurity(user = "viewer", roles = [DefaultRoles.VIEWER])
     fun create_unauthorized_viewer_test() {
-        val request = CreateFeatureRequest("name", "description")
+        val request = CreateFeatureToggleRequest("key", "name", "description")
         createRequest(request).then().statusCode(403)
     }
 
     @Test
     @TestSecurity(user = "release-manager", roles = [DefaultRoles.RELEASE_MANAGER])
     fun create_unauthorized_release_manager_test() {
-        val request = CreateFeatureRequest("name", "description")
+        val request = CreateFeatureToggleRequest("key", "name", "description")
         createRequest(request).then().statusCode(403)
     }
 
     @Test
     fun partialUpdate_unauthorized_test() {
-        val request = PartialFeatureUpdateRequest(null, null, isActive = true)
+        val request = FeatureToggleFieldUpdateRequest(null, null, null)
         partialUpdateRequest(request).then().statusCode(401)
     }
 
     @Test
     @TestSecurity(user = "admin", roles = [DefaultRoles.ADMIN])
     fun partialUpdate_notFound_test() {
-        val request = PartialFeatureUpdateRequest("updated", "updated", true)
+        val request = FeatureToggleFieldUpdateRequest(null, null, null)
         partialUpdateRequest(request).then().statusCode(404)
     }
 
@@ -166,7 +183,7 @@ class ManagementApiTest {
     @TestSecurity(user = "admin", roles = [DefaultRoles.ADMIN])
     fun partialUpdate_authorized_admin_test() {
         val feature = feature()
-        val request = PartialFeatureUpdateRequest("updated", "updated", true)
+        val request = FeatureToggleFieldUpdateRequest("updated", "updated", mapOf(Context.TESTING to true))
         Mockito.`when`(
             serviceMock.update(
                 feature.id, request
@@ -175,7 +192,7 @@ class ManagementApiTest {
             Uni.createFrom().item(feature.apply {
                 name = "updated"
                 description = "updated"
-                isActive = true
+                activation.set(Context.TESTING, true)
             })
         )
         partialUpdateRequest(request).then().statusCode(200).body("name", `is`(request.name))
@@ -185,27 +202,32 @@ class ManagementApiTest {
     @Test
     @TestSecurity(user = "viewer", roles = [DefaultRoles.VIEWER])
     fun partialUpdate_unauthorized_viewer_test() {
-        val request = PartialFeatureUpdateRequest(null, null, isActive = true)
+        val request = FeatureToggleFieldUpdateRequest(null, null, null)
         partialUpdateRequest(request).then().statusCode(403)
     }
 
     @Test
     @TestSecurity(user = "release_manager", roles = [DefaultRoles.RELEASE_MANAGER])
     fun partialUpdate_unauthorized_release_manager_test() {
-        val request = PartialFeatureUpdateRequest(null, null, isActive = true)
+        val request = FeatureToggleFieldUpdateRequest(null, null, null)
         partialUpdateRequest(request).then().statusCode(403)
     }
 
-    private fun getAllRequest(): Response = given().`when`().get(baseUrl)
+    private fun getAllActiveFeaturesRequest(context: String): Response =
+        given().`when`().get("$featureTogglesUrl/$context/active")
 
-    private fun getByIdRequest(id: Long = 1): Response = given().`when`().get("$baseUrl/$id")
+    private fun getAllRequest(): Response = given().`when`().get(featureTogglesUrl)
 
-    private fun createRequest(request: CreateFeatureRequest): Response =
-        given().`when`().body(request).contentType(ContentType.JSON).post(baseUrl)
+    private fun getByIdRequest(id: Long = 1): Response = given().`when`().get("$featureToggleUrl/$id")
 
-    private fun partialUpdateRequest(request: PartialFeatureUpdateRequest, id: Long = 1): Response =
-        given().`when`().body(request).contentType(ContentType.JSON).patch("$baseUrl/$id")
+    private fun createRequest(request: CreateFeatureToggleRequest): Response =
+        given().`when`().body(request).contentType(ContentType.JSON).post(featureTogglesUrl)
 
-    private fun feature() = Feature(1L, "name", "description", false)
+    private fun partialUpdateRequest(request: FeatureToggleFieldUpdateRequest, id: Long = 1): Response =
+        given().`when`().body(request).contentType(ContentType.JSON).patch("$featureToggleUrl/$id")
+
+    private fun feature() = FeatureToggle(
+        1L, "key", "name", "description", mutableMapOf(Context.TESTING to false, Context.PRODUCTION to false)
+    )
 
 }
