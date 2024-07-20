@@ -27,7 +27,7 @@
     log:
       level:
         category:
-          "feature_toggle":
+          "insta_toggles":
               level: DEBUG
 
     # database configs

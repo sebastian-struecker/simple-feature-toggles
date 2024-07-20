@@ -1,11 +1,13 @@
 package insta_toggles.repository
 
 
-import insta_toggles.Context
+import insta_toggles.ContextName
 import insta_toggles.FeatureToggle
 import insta_toggles.FeatureToggleRepository
+import insta_toggles.api.models.FeatureToggleUpdateRequest
 import io.quarkus.hibernate.reactive.panache.Panache
 import io.quarkus.hibernate.reactive.panache.PanacheRepository
+import io.quarkus.panache.common.Parameters
 import io.smallrye.mutiny.Multi
 import io.smallrye.mutiny.Uni
 import io.smallrye.mutiny.replaceWithUnit
@@ -19,12 +21,11 @@ class FeatureTogglePanacheRepository : PanacheRepository<FeatureToggleEntity>, F
             .map { it.toDomain() }
     }
 
-    override fun getAllActive(context: Context): Multi<FeatureToggle> {
+    override fun getAllActive(contextName: ContextName): Multi<FeatureToggle> {
         return Panache.withTransaction {
             find(
-                "#FeatureToggleEntity.getAllActive",
-                context,
-                true,
+                "#FeatureToggleEntity.findWithActiveContext",
+                Parameters.with("contextKey", contextName.toString())
             ).list<FeatureToggleEntity>()
         }.toMulti().flatMap(Multi.createFrom()::iterable).map { it.toDomain() }
     }
@@ -46,19 +47,30 @@ class FeatureTogglePanacheRepository : PanacheRepository<FeatureToggleEntity>, F
         entity.key = key
         entity.name = name
         entity.description = description
-        return Panache.withTransaction { persistAndFlush(entity) }.map { it.toDomain() }
+        return Panache.withTransaction { persistAndFlush(entity).map { it.toDomain() } }
     }
 
-    override fun update(featureToggle: FeatureToggle): Uni<FeatureToggle> {
+    override fun update(id: Long, updates: FeatureToggleUpdateRequest): Uni<FeatureToggle> {
         return Panache.withTransaction {
-            update(
-                "name = ?1, description = ?2, activation= ?3 where id = ?4",
-                featureToggle.name,
-                featureToggle.description,
-                featureToggle.activation,
-                featureToggle.id
-            )
-        }.map { featureToggle }
+            findById(id).map { it ->
+                it.apply {
+                    if (updates.name?.isNotBlank() == true) {
+                        name = updates.name!!
+                    }
+                    if (updates.description?.isNotBlank() == true) {
+                        description = updates.description!!
+                    }
+                    if (updates.contexts?.isNotEmpty() == true) {
+                        updates.contexts?.forEach { updated ->
+                            contexts.firstOrNull { it.key == updated.key }?.let {
+                                it.isActive = updated.isActive
+                            }
+                        }
+                    }
+                }
+            }
+        }.onItem().ifNotNull().transformToUni { it: FeatureToggleEntity -> Uni.createFrom().item(it.toDomain()) }
+            .onItem().ifNull().failWith(NoSuchElementException("Feature with id $id not found"))
     }
 
     override fun removeById(id: Long): Uni<Unit> {

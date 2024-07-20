@@ -1,38 +1,58 @@
 package insta_toggles.repository
 
-import insta_toggles.Context
+import insta_toggles.ContextName
 import insta_toggles.FeatureToggle
-import jakarta.persistence.ElementCollection
-import jakarta.persistence.Entity
-import jakarta.persistence.GeneratedValue
-import jakarta.persistence.Id
-import jakarta.persistence.NamedQueries
-import jakarta.persistence.NamedQuery
-import org.hibernate.annotations.Fetch
-import org.hibernate.annotations.FetchMode
+import jakarta.persistence.*
 
 
-@Entity(name = "feature_toggle_entity")
+@Entity
 @NamedQueries(
     NamedQuery(
-        name = "FeatureToggleEntity.getAllActive",
-        query = "from feature_toggle_entity where activation[?1] = ?2"
-    ),
+        name = "FeatureToggleEntity.findWithActiveContext",
+        query = """
+            SELECT f FROM FeatureToggleEntity f 
+            JOIN f.contexts c 
+            WHERE c.key = :contextKey 
+            AND c.isActive = true
+        """
+    )
 )
-class FeatureToggleEntity {
-    @Id
-    @GeneratedValue
-    var id: Long? = null
-    lateinit var key: String
-    lateinit var name: String
-    lateinit var description: String
+class FeatureToggleEntity(
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY) var id: Long? = null,
+    @Column(nullable = false) var key: String,
+    @Column(nullable = false) var name: String,
+    var description: String,
+    @OneToMany(
+        fetch = FetchType.EAGER, cascade = [CascadeType.ALL], orphanRemoval = true
+    ) @JoinColumn(name = "featuretoggleentity_id") var contexts: MutableList<ContextEntity> = mutableListOf()
+) {
+    constructor() : this(null, "", "", "", mutableListOf())
 
-    @ElementCollection
-    @Fetch(FetchMode.JOIN)
-    val activation: MutableMap<Context, Boolean> = mutableMapOf(Context.TESTING to false, Context.PRODUCTION to false)
+    init {
+        if (contexts.isEmpty()) {
+            contexts.addAll(defaultContexts())
+        }
+    }
 
     fun toDomain(): FeatureToggle {
-        return FeatureToggle(id!!, key, name, description, activation)
+        return FeatureToggle(id ?: throw IllegalStateException("ID cannot be null"),
+            key,
+            name,
+            description,
+            contexts.map { it.toDomain() })
+    }
+
+    @Transient
+    private fun defaultContexts(): MutableList<ContextEntity> {
+        return mutableListOf(createContextEntity(ContextName.testing), createContextEntity(ContextName.production))
+    }
+
+    @Transient
+    private fun createContextEntity(contextName: ContextName): ContextEntity {
+        val contextEntity = ContextEntity()
+        contextEntity.key = contextName.toString()
+        contextEntity.name = contextName.toString()
+        return contextEntity
     }
 
 }

@@ -5,7 +5,7 @@ class FeatureToggle(
     val key: String,
     var name: String,
     var description: String,
-    val activation: MutableMap<Context, Boolean>
+    val contexts: List<Context>
 ) {
     init {
         require(key.matches(Regex("^[a-z_]*[a-z]$"))) {
