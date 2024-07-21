@@ -1,11 +1,11 @@
-package insta_toggles
+package insta_toggles.repository
 
 
+import insta_toggles.Context
+import insta_toggles.ContextName
+import insta_toggles.FeatureToggle
 import insta_toggles.api.models.ContextApiModel
 import insta_toggles.api.models.FeatureToggleUpdateRequest
-import insta_toggles.repository.ContextEntity
-import insta_toggles.repository.FeatureToggleEntity
-import insta_toggles.repository.FeatureTogglePanacheRepository
 import io.quarkus.test.junit.QuarkusTest
 import io.quarkus.test.vertx.RunOnVertxContext
 import io.quarkus.test.vertx.UniAsserter
@@ -177,23 +177,20 @@ class FeatureTogglePanacheRepositoryTest {
         }, Unit)
     }
 
-    //
+//    TODO: fix me
 //    @Test
 //    fun removeById_notFound_test(asserter: UniAsserter) {
-//        asserter.execute {
-//            Mockito.`when`(repositoryMock.deleteById(1)).thenReturn(Uni.createFrom().nullItem())
-//            asserter.assertFailedWith(
-//                { repositoryMock.removeById(1) }, NoSuchElementException::class.java
-//            )
-//        }
+//        asserter.assertFailedWith({
+//            repository.removeById(1)
+//        }, NoSuchElementException::class.java)
 //    }
-//
-//    @Test//    fun removeAll_found_test(asserter: UniAsserter) {
-//        asserter.execute {
-//            repositoryMock.removeAll()
-//            repositoryMock.deleteAll()
-//        }
-//    }
+
+    @Test
+    fun removeAll_found_test(asserter: UniAsserter) {
+        asserter.execute {
+            repository.removeAll()
+        }
+    }
 
     private fun featureToggle(key: String = "key") = FeatureToggle(
         1L, key, "name", "description", listOf(

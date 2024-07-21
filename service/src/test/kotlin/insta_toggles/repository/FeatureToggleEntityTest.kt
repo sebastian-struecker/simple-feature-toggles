@@ -1,7 +1,8 @@
-package insta_toggles
+package insta_toggles.repository
 
-import insta_toggles.repository.ContextEntity
-import insta_toggles.repository.FeatureToggleEntity
+import insta_toggles.Context
+import insta_toggles.ContextName
+import insta_toggles.FeatureToggle
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 

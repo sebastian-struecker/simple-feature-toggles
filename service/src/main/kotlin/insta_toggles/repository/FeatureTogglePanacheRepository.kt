@@ -36,7 +36,7 @@ class FeatureTogglePanacheRepository : PanacheRepository<FeatureToggleEntity>, F
     }
 
     override fun getByKey(key: String): Uni<FeatureToggle> {
-        return Panache.withTransaction { findByKey(key) }.onItem().ifNotNull()
+        return Panache.withTransaction { find("key = ?1", key)?.firstResult() }.onItem().ifNotNull()
             .transformToUni { it: FeatureToggleEntity -> Uni.createFrom().item(it.toDomain()) }.onItem().ifNull()
             .failWith(NoSuchElementException("Feature with name $key not found"))
     }
@@ -84,8 +84,6 @@ class FeatureTogglePanacheRepository : PanacheRepository<FeatureToggleEntity>, F
         return Panache.withTransaction { deleteAll() }.onItem()
             .transformToUni { _ -> Uni.createFrom().voidItem().replaceWithUnit() }
     }
-
-    private fun findByKey(key: String): Uni<FeatureToggleEntity>? = find("key = ?1", key)?.firstResult()
 
 }
 

@@ -1,6 +1,5 @@
-package insta_toggles
+package insta_toggles.repository
 
-import insta_toggles.repository.ContextEntity
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 
