@@ -22,6 +22,24 @@
         issuer: ${OIDC_TOKEN_JWT_ISSUER}
         audience: ${OIDC_TOKEN_JWT_AUDIENCE}
 
+  api-keys: ${API_KEYS}
+
+"%test":
+  quarkus:
+    # database configs
+    datasource:
+      db-kind: postgresql
+      devservices:
+        enabled: true
+        port: 5432
+        username: service
+        password: service
+    hibernate-orm:
+      database:
+        generation: drop-and-create
+
+  api-keys: test
+
 "%dev":
   quarkus:
     log:
@@ -49,3 +67,5 @@
         port: 8000
         realm-name: insta-toggles
         realm-path: example-keycloak-settings.json
+
+  api-keys: test

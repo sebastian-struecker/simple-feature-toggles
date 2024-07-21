@@ -1,5 +1,5 @@
 package insta_toggles.api.models
 
 data class FeatureToggleUpdateRequest(
-    var name: String?, var description: String?, var contexts: List<ContextApiModel>?
+    var name: String? = null, var description: String? = null, var contexts: List<ContextApiModel>? = null
 )

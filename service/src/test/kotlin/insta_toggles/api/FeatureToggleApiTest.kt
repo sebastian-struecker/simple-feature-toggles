@@ -11,6 +11,8 @@ import io.quarkus.test.junit.QuarkusTest
 import io.quarkus.test.security.TestSecurity
 import io.restassured.RestAssured.given
 import io.restassured.http.ContentType
+import io.restassured.http.Header
+import io.restassured.http.Headers
 import io.restassured.response.Response
 import io.smallrye.mutiny.Multi
 import io.smallrye.mutiny.Uni
@@ -50,7 +52,23 @@ class FeatureToggleApiTest {
         ).thenReturn(
             Multi.createFrom().item(feature)
         )
-        getAllActiveFeaturesRequest().then().statusCode(200).body("size()", `is`(0))
+        getAllActiveFeaturesRequest(context = "dummy").then().statusCode(200).body("size()", `is`(0))
+    }
+
+    @Test
+    fun getAllActiveFeatures_missingApiKey_test() {
+        getAllActiveFeaturesRequest(apiKey = "fail").then().statusCode(401)
+    }
+
+    @Test
+    fun getAllActiveFeatures_test() {
+        val feature = feature()
+        Mockito.`when`(
+            repositoryMock.getAllActive(ContextName.testing)
+        ).thenReturn(
+            Multi.createFrom().item(feature)
+        )
+        getAllActiveFeaturesRequest().then().statusCode(200).body("size()", `is`(1))
     }
 
     @Test
@@ -246,8 +264,10 @@ class FeatureToggleApiTest {
         deleteAllRequest().then().statusCode(403)
     }
 
-    private fun getAllActiveFeaturesRequest(context: String = "dummy"): Response =
-        given().`when`().get("$FEATURE_TOGGLES_URL/$context")
+    private fun getAllActiveFeaturesRequest(context: String = "testing", apiKey: String = "test"): Response {
+        val headers = Headers.headers(Header("x-api-key", apiKey))
+        return given().`when`().headers(headers).get("$FEATURE_TOGGLES_URL/$context")
+    }
 
     private fun getAllRequest(): Response = given().`when`().get(FEATURE_TOGGLES_URL)
 

@@ -85,7 +85,7 @@ class FeatureTogglePanacheRepository : PanacheRepository<FeatureToggleEntity>, F
             .transformToUni { _ -> Uni.createFrom().voidItem().replaceWithUnit() }
     }
 
-    fun findByKey(key: String): Uni<FeatureToggleEntity>? = find("key = ?1", key)?.firstResult()
+    private fun findByKey(key: String): Uni<FeatureToggleEntity>? = find("key = ?1", key)?.firstResult()
 
 }
 

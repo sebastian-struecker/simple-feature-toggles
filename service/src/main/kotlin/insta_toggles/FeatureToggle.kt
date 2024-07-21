@@ -17,4 +17,29 @@ class FeatureToggle(
             }
         }
     }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as FeatureToggle
+
+        if (id != other.id) return false
+        if (key != other.key) return false
+        if (name != other.name) return false
+        if (description != other.description) return false
+        if (contexts != other.contexts) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = id.hashCode()
+        result = 31 * result + key.hashCode()
+        result = 31 * result + name.hashCode()
+        result = 31 * result + description.hashCode()
+        result = 31 * result + contexts.hashCode()
+        return result
+    }
+
 }

@@ -1,5 +1,6 @@
 package insta_toggles
 
+import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.assertThrows
@@ -29,6 +30,32 @@ class FeatureToggleTest {
             FeatureToggle(1, "key", "", "description", contexts())
         }
     }
+
+    @Test
+    fun equals_test() {
+        val featureToggle = featureToggle()
+        Assertions.assertTrue({
+            featureToggle == featureToggle
+            featureToggle() == featureToggle()
+        })
+        Assertions.assertFalse({
+            featureToggle(id = 1) == featureToggle(id = 2)
+            featureToggle(key = "one") == featureToggle(key = "two")
+            featureToggle(name = "one") == featureToggle(name = "two")
+            featureToggle(description = "one") == featureToggle(description = "two")
+        })
+    }
+
+    @Test
+    fun hashCode_test() {
+        Assertions.assertTrue({
+            featureToggle().hashCode() == featureToggle().hashCode()
+        })
+    }
+
+    private fun featureToggle(
+        id: Long = 1, key: String = "key", name: String = "name", description: String = "description"
+    ) = FeatureToggle(id, key, name, description, contexts())
 
     private fun contexts() = listOf(
         Context(1, ContextName.testing.toString(), ContextName.testing.toString(), false),
