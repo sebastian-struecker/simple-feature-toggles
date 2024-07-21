@@ -11,21 +11,22 @@ class ContextTest {
     fun create_instance_test() {
         assertDoesNotThrow {
             Context(1, "testing", "testing", false)
-            Context(1, "production", "production", false)
+            Context(2, "production", "production", false)
         }
     }
 
     @Test
-    fun create_instance_failure_test() {
+    fun instance_keyNotTestingOrProduction_failure_test() {
         assertThrows<IllegalArgumentException> {
             Context(1, "fail", "testing", false)
-            Context(1, "fail", "production", false)
-            Context(1, "production", "testing", false)
+        }
+    }
+
+    @Test
+    fun instance_keyNotName_failure_test() {
+        assertThrows<IllegalArgumentException> {
             Context(1, "testing", "production", false)
-            Context(1, "testing", "", false)
-            Context(1, "testing", "fail", false)
-            Context(1, "production", "", false)
-            Context(1, "production", "fail", false)
+            Context(1, "production", "testing", false)
         }
     }
 
