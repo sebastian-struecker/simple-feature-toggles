@@ -7,9 +7,14 @@ Get started with insta-toggles on your machine
 - Make sure you have a running [Docker](https://www.docker.com/) environment.
 - Running [PostgreSQL](https://www.postgresql.org/) instance version 16 or higher.
 - Running Authentication provider, like [Keycloak](https://www.keycloak.org/).
-  - Please check [Authorization Concept](./authorization-concept) for more information.
+    - Please check [Authorization Concept](./authorization-concept) for more information.
 
-## Start Service
+## Decide which setup to use
+
+You can choose to use only the insta-toggles [service](#start-the-service), which requires you to manage feature toggles manually using the REST API.
+In addition, you can choose to use the provided [UI](#start-the-ui) to simplify feature toggle management.
+
+## Start the service
 
 ::: code-group
 
@@ -27,4 +32,6 @@ docker run -p 8080:8080 \
 ghcr.io/sebastian-struecker/insta-toggles/service:1.0.0-snapshot
 ```
 
-:::
+## Start the UI
+
+Will come in the future

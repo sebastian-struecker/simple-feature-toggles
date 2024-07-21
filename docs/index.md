@@ -4,7 +4,7 @@ layout: home
 
 hero:
   name: "insta-toggles"
-  text: "Simple Feature Toggles for your systems"
+  text: "Simple Feature Toggles for your applications"
   tagline: Ready to use in minutes
   actions:
     - theme: brand
@@ -24,5 +24,4 @@ features:
       src: icons/lightning-svgrepo.svg
     title: Lightning fast
     details: Using Quarkus, Reactive Frameworks, and a scalable design this service supports handling many user requests.
-
 ---
