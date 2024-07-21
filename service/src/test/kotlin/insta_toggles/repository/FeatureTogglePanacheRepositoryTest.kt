@@ -149,13 +149,21 @@ class FeatureTogglePanacheRepositoryTest {
         asserter.execute {
             repository.create("key", "name", "description")
             repository.update(
-                1, FeatureToggleUpdateRequest("updated", null, null)
+                1, FeatureToggleUpdateRequest(
+                    "updated", "updated", listOf(
+                        ContextApiModel(ContextName.testing.toString(), true),
+                        ContextApiModel(ContextName.production.toString(), true)
+                    )
+                )
             )
         }
         asserter.assertThat({
             repository.getById(1)
         }, {
             it.name == "updated"
+            it.description == "updated"
+            it.contexts[0].isActive == true
+            it.contexts[1].isActive == true
         })
     }
 
