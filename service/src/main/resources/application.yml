@@ -1,7 +1,13 @@
+quarkus:
+  smallrye-openapi:
+    path: /openapi
+    store-schema-directory: target
+  swagger-ui:
+    always-include: true
+    path: /swagger-ui
+
 "%prod":
   quarkus:
-
-    # database configs
     datasource:
       db-kind: postgresql
       username: ${DATASOURCE_USERNAME}
@@ -14,7 +20,6 @@
           ~: update
           create-schemas: true
 
-    # authorization configs
     oidc:
       auth-server-url: ${OIDC_AUTH_SERVER_URL}
       client-id: ${OIDC_CLIENT_ID}
@@ -26,7 +31,6 @@
 
 "%test":
   quarkus:
-    # database configs
     datasource:
       db-kind: postgresql
       devservices:
@@ -48,7 +52,6 @@
           "insta_toggles":
               level: DEBUG
 
-    # database configs
     datasource:
       db-kind: postgresql
       devservices:
@@ -60,7 +63,6 @@
       database:
         generation: drop-and-create
 
-    # authorization configs
     keycloak:
       devservices:
         enabled: true
