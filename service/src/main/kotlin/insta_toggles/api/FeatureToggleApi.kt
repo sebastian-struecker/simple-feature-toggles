@@ -85,6 +85,26 @@ class FeatureToggleApi(
         }.onFailure().transform { NotFoundException() }
     }
 
+    @DELETE
+    @RolesAllowed(DefaultRoles.ADMIN)
+    @Path("/feature-toggle/{id}")
+    fun deleteById(id: Long): Uni<RestResponse<Unit>> {
+        Log.debug("[FeatureToggleApi] Calling method: delete url: /feature-toggle/$id")
+        return featureToggleRepository.removeById(id).onItem().transform {
+            RestResponse.ok(it)
+        }.onFailure().transform { NotFoundException() }
+    }
+
+    @DELETE
+    @RolesAllowed(DefaultRoles.ADMIN)
+    @Path("/feature-toggles")
+    fun deleteAll(): Uni<RestResponse<Unit>> {
+        Log.debug("[FeatureToggleApi] Calling method: delete url: /feature-toggles")
+        return featureToggleRepository.removeAll().onItem().transform {
+            RestResponse.ok(it)
+        }.onFailure().transform { NotFoundException() }
+    }
+
     fun FeatureToggle.toResponse(): FeatureToggleResponse {
         return FeatureToggleResponse(id, key, name, description, contexts.map { it.toResponse() })
     }

@@ -6,16 +6,14 @@ import insta_toggles.FeatureToggle
 import insta_toggles.api.models.CreateFeatureToggleRequest
 import insta_toggles.api.models.FeatureToggleUpdateRequest
 import insta_toggles.repository.FeatureTogglePanacheRepository
-import io.quarkus.test.junit.QuarkusMock
+import io.quarkus.test.InjectMock
 import io.quarkus.test.junit.QuarkusTest
 import io.quarkus.test.security.TestSecurity
-import io.quarkus.test.vertx.RunOnVertxContext
 import io.restassured.RestAssured.given
 import io.restassured.http.ContentType
 import io.restassured.response.Response
 import io.smallrye.mutiny.Multi
 import io.smallrye.mutiny.Uni
-import jakarta.inject.Inject
 import org.hamcrest.Matchers.`is`
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
@@ -24,16 +22,14 @@ import org.mockito.Mockito
 
 
 @QuarkusTest
-@RunOnVertxContext
 class FeatureToggleApiTest {
 
-    @Inject
+    @InjectMock
     lateinit var repositoryMock: FeatureTogglePanacheRepository
 
     @BeforeEach
     fun setupMocks() {
-        repositoryMock = Mockito.mock(FeatureTogglePanacheRepository::class.java)
-        QuarkusMock.installMockForType(repositoryMock, FeatureTogglePanacheRepository::class.java)
+        Mockito.reset(repositoryMock)
     }
 
     @AfterEach
@@ -54,7 +50,7 @@ class FeatureToggleApiTest {
         ).thenReturn(
             Multi.createFrom().item(feature)
         )
-        getAllActiveFeaturesRequest("asd").then().statusCode(200).body("size()", `is`(0))
+        getAllActiveFeaturesRequest().then().statusCode(200).body("size()", `is`(0))
     }
 
     @Test
@@ -204,7 +200,53 @@ class FeatureToggleApiTest {
         partialUpdateRequest(request).then().statusCode(403)
     }
 
-    private fun getAllActiveFeaturesRequest(context: String): Response =
+    @Test
+    @TestSecurity(user = "admin", roles = [DefaultRoles.ADMIN])
+    fun deleteById_authorized_admin_test() {
+        Mockito.`when`(
+            repositoryMock.removeById(1)
+        ).thenReturn(
+            Uni.createFrom().nullItem()
+        )
+        deleteByIdRequest().then().statusCode(200)
+    }
+
+    @Test
+    @TestSecurity(user = "viewer", roles = [DefaultRoles.VIEWER])
+    fun deleteById_unauthorized_viewer_test() {
+        deleteByIdRequest().then().statusCode(403)
+    }
+
+    @Test
+    @TestSecurity(user = "release_manager", roles = [DefaultRoles.RELEASE_MANAGER])
+    fun deleteById_unauthorized_release_manager_test() {
+        deleteByIdRequest().then().statusCode(403)
+    }
+
+    @Test
+    @TestSecurity(user = "admin", roles = [DefaultRoles.ADMIN])
+    fun deleteAll_authorized_admin_test() {
+        Mockito.`when`(
+            repositoryMock.removeAll()
+        ).thenReturn(
+            Uni.createFrom().nullItem()
+        )
+        deleteAllRequest().then().statusCode(200)
+    }
+
+    @Test
+    @TestSecurity(user = "viewer", roles = [DefaultRoles.VIEWER])
+    fun deleteAll_unauthorized_viewer_test() {
+        deleteAllRequest().then().statusCode(403)
+    }
+
+    @Test
+    @TestSecurity(user = "release_manager", roles = [DefaultRoles.RELEASE_MANAGER])
+    fun deleteAll_unauthorized_release_manager_test() {
+        deleteAllRequest().then().statusCode(403)
+    }
+
+    private fun getAllActiveFeaturesRequest(context: String = "dummy"): Response =
         given().`when`().get("$FEATURE_TOGGLES_URL/$context")
 
     private fun getAllRequest(): Response = given().`when`().get(FEATURE_TOGGLES_URL)
@@ -216,6 +258,10 @@ class FeatureToggleApiTest {
 
     private fun partialUpdateRequest(request: FeatureToggleUpdateRequest, id: Long = 1): Response =
         given().`when`().body(request).contentType(ContentType.JSON).patch("$FEATURE_TOGGLE_URL/$id")
+
+    private fun deleteByIdRequest(id: Long = 1): Response = given().`when`().delete("$FEATURE_TOGGLE_URL/$id")
+
+    private fun deleteAllRequest(): Response = given().`when`().delete(FEATURE_TOGGLES_URL)
 
     private fun feature() = FeatureToggle(
         1L, "key", "name", "description", listOf(

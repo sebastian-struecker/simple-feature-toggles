@@ -1,6 +1,7 @@
 package insta_toggles
 
 
+import insta_toggles.api.models.FeatureToggleUpdateRequest
 import insta_toggles.repository.ContextEntity
 import insta_toggles.repository.FeatureToggleEntity
 import insta_toggles.repository.FeatureTogglePanacheRepository
@@ -12,6 +13,7 @@ import io.smallrye.mutiny.Uni
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito
 
+
 @QuarkusTest
 @RunOnVertxContext
 class FeatureTogglePanacheRepositoryTest {
@@ -19,18 +21,31 @@ class FeatureTogglePanacheRepositoryTest {
     @InjectMock
     lateinit var repositoryMock: FeatureTogglePanacheRepository
 
-    fun getAll_test() {
+    @Test
+    fun getAll_test(asserter: UniAsserter) {
+        val featureToggle = featureToggle().toEntity()
+        asserter.execute {
+            Mockito.`when`(repositoryMock.listAll()).thenReturn(Uni.createFrom().item(listOf(featureToggle)))
+            asserter.assertEquals({ repositoryMock.listAll() }, listOf(featureToggle))
+        }
     }
 
-    fun getAllActive_test() {
-    }
+//    @Test
+//    fun getAllActive_test(asserter: UniAsserter) {
+//        val featureToggle = featureToggle().toEntity()
+//        asserter.execute {
+//            Mockito.`when`(repositoryMock.findById(featureToggle.id)).thenReturn(Uni.createFrom().item(featureToggle))
+//            asserter.assertEquals({ repositoryMock.findById(1) }, featureToggle)
+//        }
+//    }
 
     @Test
     fun getById_found_test(asserter: UniAsserter) {
-        val featureToggle = featureToggle().toEntity()
+        val featureToggle = featureToggle()
+        val entity = featureToggle.toEntity()
         asserter.execute {
-            Mockito.`when`(repositoryMock.findById(featureToggle.id)).thenReturn(Uni.createFrom().item(featureToggle))
-            asserter.assertEquals({ repositoryMock.findById(1) }, featureToggle)
+            Mockito.`when`(repositoryMock.findById(featureToggle.id)).thenReturn(Uni.createFrom().item(entity))
+            asserter.assertEquals({ repositoryMock.getById(1) }, featureToggle)
         }
     }
 
@@ -38,40 +53,114 @@ class FeatureTogglePanacheRepositoryTest {
     fun getById_notFound_test(asserter: UniAsserter) {
         asserter.execute {
             Mockito.`when`(repositoryMock.findById(1)).thenReturn(Uni.createFrom().nullItem())
-            asserter.assertFailedWith({ repositoryMock.findById(1) }, NoSuchElementException::class.java)
+            asserter.assertFailedWith({ repositoryMock.getById(1) }, NoSuchElementException::class.java)
         }
     }
 
-//    @Test
-//    fun getByName_found_test() {
-//        val feature = createFeature()
-//        featurePanacheRepository.getByKey(feature.name).subscribe().withSubscriber(UniAssertSubscriber.create())
-//            .awaitItem().assertSubscribed().assertItem(feature)
-//    }
-//
-//    @Test
-//    fun getByName_notFound_test() {
-//        featurePanacheRepository.getByKey("test").subscribe().withSubscriber(UniAssertSubscriber.create())
-//            .assertFailed()
-//    }
-//
-//    @Test
-//    fun create_test(asserter: UniAsserter) {
-//        val feature = createFeature()
-//        asserter.assertEquals(() -> feature, 1l)
-//        assertEquals(1L, feature.id)
-//        assertEquals("name", feature.name)
-//        assertEquals("description", feature.description)
-//        assertEquals(false, feature.activation.get(Context.TESTING))
-//        assertEquals(false, feature.activation.get(Context.PRODUCTION))
-//    }
-
-    fun update_test() {
+    @Test
+    fun getByKey_found_test(asserter: UniAsserter) {
+        val featureToggle = featureToggle()
+        val entity = featureToggle.toEntity()
+        asserter.execute {
+            Mockito.`when`(repositoryMock.findByKey(featureToggle.key)).thenReturn(
+                Uni.createFrom().item(entity)
+            )
+            asserter.assertEquals({
+                repositoryMock.getByKey(featureToggle.key)
+            }, featureToggle)
+        }
     }
 
-    private fun featureToggle() = FeatureToggle(
-        1L, "key", "name", "description", listOf(
-            Context(1, ContextName.testing.toString(), ContextName.testing.toString(), false),
+    @Test
+    fun getByKey_notFound_test(asserter: UniAsserter) {
+        asserter.execute {
+            Mockito.`when`(repositoryMock.findByKey("empty"))
+                .thenReturn(Uni.createFrom().failure(NoSuchElementException()))
+            asserter.assertFailedWith(
+                { repositoryMock.getByKey("empty") }, NoSuchElementException::class.java
+            )
+        }
+    }
+
+    @Test
+    fun create_test(asserter: UniAsserter) {
+        val featureToggle = featureToggle()
+        val entity = featureToggle.toEntity()
+        asserter.execute {
+            Mockito.`when`(repositoryMock.persistAndFlush(entity)).thenReturn(Uni.createFrom().item(entity))
+            asserter.assertEquals({
+                repositoryMock.create(featureToggle.key, featureToggle.name, featureToggle.description)
+            }, featureToggle)
+        }
+    }
+
+    @Test
+    fun create_wrongInput_test(asserter: UniAsserter) {
+        asserter.execute {
+            asserter.assertFailedWith(
+                { repositoryMock.create("12_", "name", "description") }, IllegalArgumentException::class.java
+            )
+        }
+    }
+
+    @Test
+    fun update_found_test(asserter: UniAsserter) {
+        val featureToggle = featureToggle()
+        val entity = featureToggle.toEntity()
+        val updateRequest = FeatureToggleUpdateRequest("updated", null, null)
+        asserter.execute {
+            Mockito.`when`(repositoryMock.findById(featureToggle.id)).thenReturn(Uni.createFrom().item(entity))
+            asserter.assertEquals({
+                repositoryMock.update(featureToggle.id, updateRequest)
+            }, featureToggle.apply {
+                name = updateRequest.name!!
+            })
+        }
+    }
+
+    @Test
+    fun update_notFound_test(asserter: UniAsserter) {
+        val updateRequest = FeatureToggleUpdateRequest("updated", null, null)
+        asserter.execute {
+            Mockito.`when`(repositoryMock.findById(1)).thenReturn(Uni.createFrom().nullItem())
+            asserter.assertFailedWith(
+                { repositoryMock.update(1, updateRequest) }, NoSuchElementException::class.java
+            )
+        }
+    }
+
+    @Test
+    fun removeById_found_test(asserter: UniAsserter) {
+        val featureToggle = featureToggle()
+        asserter.execute {
+            Mockito.`when`(repositoryMock.deleteById(featureToggle.id)).thenReturn(Uni.createFrom().item(true))
+            asserter.assertEquals({
+                repositoryMock.removeById(featureToggle.id)
+            }, null)
+        }
+    }
+
+    @Test
+    fun removeById_notFound_test(asserter: UniAsserter) {
+        asserter.execute {
+            Mockito.`when`(repositoryMock.deleteById(1)).thenReturn(Uni.createFrom().nullItem())
+            asserter.assertFailedWith(
+                { repositoryMock.removeById(1) }, NoSuchElementException::class.java
+            )
+        }
+    }
+
+    @Test
+    fun removeAll_found_test(asserter: UniAsserter) {
+        asserter.execute {
+            repositoryMock.removeAll()
+            repositoryMock.deleteAll()
+        }
+    }
+
+    private fun featureToggle(key: String = "key") = FeatureToggle(
+        1L, key, "name", "description", listOf(
+            Context(1, ContextName.testing.toString(), ContextName.testing.toString(), true),
             Context(2, ContextName.production.toString(), ContextName.production.toString(), false)
         )
     )

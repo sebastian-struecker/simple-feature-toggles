@@ -24,8 +24,7 @@ class FeatureTogglePanacheRepository : PanacheRepository<FeatureToggleEntity>, F
     override fun getAllActive(contextName: ContextName): Multi<FeatureToggle> {
         return Panache.withTransaction {
             find(
-                "#FeatureToggleEntity.findWithActiveContext",
-                Parameters.with("contextKey", contextName.toString())
+                "#FeatureToggleEntity.findWithActiveContext", Parameters.with("contextKey", contextName.toString())
             ).list<FeatureToggleEntity>()
         }.toMulti().flatMap(Multi.createFrom()::iterable).map { it.toDomain() }
     }
@@ -37,12 +36,14 @@ class FeatureTogglePanacheRepository : PanacheRepository<FeatureToggleEntity>, F
     }
 
     override fun getByKey(key: String): Uni<FeatureToggle> {
-        return Panache.withTransaction { find("name = ?1", key)?.firstResult() }.onItem().ifNotNull()
+        return Panache.withTransaction { findByKey(key) }.onItem().ifNotNull()
             .transformToUni { it: FeatureToggleEntity -> Uni.createFrom().item(it.toDomain()) }.onItem().ifNull()
             .failWith(NoSuchElementException("Feature with name $key not found"))
     }
 
+
     override fun create(key: String, name: String, description: String): Uni<FeatureToggle> {
+        FeatureToggle.checkInputs(key, description)
         val entity = FeatureToggleEntity()
         entity.key = key
         entity.name = name
@@ -74,7 +75,7 @@ class FeatureTogglePanacheRepository : PanacheRepository<FeatureToggleEntity>, F
     }
 
     override fun removeById(id: Long): Uni<Unit> {
-        return Panache.withTransaction { delete("id = ?1", id) }.onItem().ifNotNull()
+        return Panache.withTransaction { deleteById(id) }.onItem().ifNotNull()
             .transformToUni { _ -> Uni.createFrom().voidItem().replaceWithUnit() }.onItem().ifNull()
             .failWith(NoSuchElementException("Feature with id $id not found"))
     }
@@ -83,6 +84,8 @@ class FeatureTogglePanacheRepository : PanacheRepository<FeatureToggleEntity>, F
         return Panache.withTransaction { deleteAll() }.onItem()
             .transformToUni { _ -> Uni.createFrom().voidItem().replaceWithUnit() }
     }
+
+    fun findByKey(key: String): Uni<FeatureToggleEntity>? = find("key = ?1", key)?.firstResult()
 
 }
 
