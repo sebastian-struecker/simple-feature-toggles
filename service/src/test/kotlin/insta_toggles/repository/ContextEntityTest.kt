@@ -8,7 +8,7 @@ class ContextEntityTest {
     @Test
     fun id_notNull_test() {
         assertThrows<IllegalStateException> {
-            ContextEntity(null, "key", "name", false)
+            ContextEntity(null, "key", "name", false).toDomain()
         }
     }
 
