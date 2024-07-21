@@ -11,11 +11,7 @@ class FeatureToggleEntityTest {
     fun id_notNull_test() {
         assertThrows<IllegalStateException> {
             FeatureToggleEntity(
-                null,
-                "key",
-                "name",
-                "description",
-                mutableListOf()
+                null, "key", "name", "description", mutableListOf()
             ).toDomain()
         }
     }

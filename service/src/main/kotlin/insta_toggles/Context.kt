@@ -7,9 +7,6 @@ class Context(
         require(key == ContextName.testing.toString() || key == ContextName.production.toString()) {
             "Feature key '$key' does not match testing or production"
         }
-        require(name == ContextName.testing.toString() || name == ContextName.production.toString()) {
-            "Feature name '$name' does not match testing or production"
-        }
         require(name == key) {
             "Feature name '$name' does not match key '$key'"
         }
@@ -23,7 +20,6 @@ class Context(
 
         if (id != other.id) return false
         if (key != other.key) return false
-        if (name != other.name) return false
         if (isActive != other.isActive) return false
 
         return true
