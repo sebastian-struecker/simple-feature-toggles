@@ -175,20 +175,46 @@ class FeatureTogglePanacheRepositoryTest {
 
     @Test
     @TestReactiveTransaction
-    fun update_whenPartialUpdate_shouldUpdateOnlyProvidedFields(asserter: UniAsserter) {
+    fun update_whenPartialUpdate_onlyName_shouldUpdateOnlyProvidedFields(asserter: UniAsserter) {
+        asserter.assertThat({
+            repository.create("key", "name", "description").chain { it ->
+                repository.update(it.id, FeatureToggleUpdateRequest(name = "partially updated"))
+            }.chain { it ->
+                repository.getById(it.id)
+            }
+        }, {
+
+        })
+    }
+
+    @Test
+    @TestReactiveTransaction
+    fun update_whenPartialUpdate_onlyDescription_shouldUpdateOnlyProvidedFields(asserter: UniAsserter) {
+        asserter.assertThat({
+            repository.create("key", "name", "description").chain { it ->
+                repository.update(it.id, FeatureToggleUpdateRequest(description = "partially updated"))
+            }.chain { it ->
+                repository.getById(it.id)
+            }
+        }, {
+            assertTrue(it.description == "partially updated")
+        })
+    }
+
+    @Test
+    @TestReactiveTransaction
+    fun update_whenPartialUpdate_onlyContexts_shouldUpdateOnlyProvidedFields(asserter: UniAsserter) {
         asserter.assertThat({
             repository.create("key", "name", "description").chain { it ->
                 repository.update(
-                    it.id, FeatureToggleUpdateRequest(
-                        name = "partially updated",
-                        contexts = listOf(ContextApiModel(ContextName.testing.toString(), true))
-                    )
+                    it.id,
+                    FeatureToggleUpdateRequest(contexts = listOf(ContextApiModel(ContextName.testing.toString(), true)))
                 )
             }.chain { it ->
                 repository.getById(it.id)
             }
         }, { it ->
-            it.name == "partially updated" && it.description == "description" && it.contexts.first { it.key == ContextName.testing.toString() }.isActive && !it.contexts.first { it.key == ContextName.production.toString() }.isActive
+            it.contexts.first { it.key == ContextName.testing.toString() }.isActive && !it.contexts.first { it.key == ContextName.production.toString() }.isActive
         })
     }
 
