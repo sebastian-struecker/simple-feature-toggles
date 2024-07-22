@@ -1,11 +1,3 @@
-quarkus:
-  smallrye-openapi:
-    path: /openapi
-    store-schema-directory: target
-  swagger-ui:
-    always-include: true
-    path: /swagger-ui
-
 "%prod":
   quarkus:
     datasource:
@@ -26,6 +18,13 @@ quarkus:
       token:
         issuer: ${OIDC_TOKEN_JWT_ISSUER}
         audience: ${OIDC_TOKEN_JWT_AUDIENCE}
+
+    smallrye-openapi:
+      path: /openapi
+      store-schema-directory: target
+    swagger-ui:
+      always-include: true
+      path: /swagger-ui
 
   api-keys: ${API_KEYS}
 
@@ -69,5 +68,12 @@ quarkus:
         port: 8000
         realm-name: insta-toggles
         realm-path: example-keycloak-settings.json
+
+    smallrye-openapi:
+      path: /openapi
+      store-schema-directory: target
+    swagger-ui:
+      always-include: true
+      path: /swagger-ui
 
   api-keys: test

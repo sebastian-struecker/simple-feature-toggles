@@ -20,16 +20,13 @@ class FeatureToggle(
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
-        if (javaClass != other?.javaClass) return false
-
+        if (other?.javaClass != this.javaClass) return false
         other as FeatureToggle
-
         if (id != other.id) return false
         if (key != other.key) return false
         if (name != other.name) return false
         if (description != other.description) return false
         if (contexts != other.contexts) return false
-
         return true
     }
 
@@ -40,6 +37,10 @@ class FeatureToggle(
         result = 31 * result + description.hashCode()
         result = 31 * result + contexts.hashCode()
         return result
+    }
+
+    override fun toString(): String {
+        return "FeatureToggle(id=$id, key='$key', name='$name', description='$description', contexts=$contexts)"
     }
 
 }

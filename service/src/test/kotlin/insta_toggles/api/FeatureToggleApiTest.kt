@@ -61,7 +61,7 @@ class FeatureToggleApiTest {
     }
 
     @Test
-    fun getAllActiveFeatures_test() {
+    fun getAllActiveFeatures_testing_test() {
         val feature = feature()
         Mockito.`when`(
             repositoryMock.getAllActive(ContextName.testing)
@@ -69,6 +69,17 @@ class FeatureToggleApiTest {
             Multi.createFrom().item(feature)
         )
         getAllActiveFeaturesRequest().then().statusCode(200).body("size()", `is`(1))
+    }
+
+    @Test
+    fun getAllActiveFeatures_production_test() {
+        val feature = feature()
+        Mockito.`when`(
+            repositoryMock.getAllActive(ContextName.production)
+        ).thenReturn(
+            Multi.createFrom().item(feature)
+        )
+        getAllActiveFeaturesRequest(ContextName.production.toString()).then().statusCode(200).body("size()", `is`(1))
     }
 
     @Test

@@ -14,14 +14,11 @@ class Context(
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
-        if (javaClass != other?.javaClass) return false
-
+        if (other?.javaClass != this.javaClass) return false
         other as Context
-
         if (id != other.id) return false
         if (key != other.key) return false
         if (isActive != other.isActive) return false
-
         return true
     }
 
@@ -31,6 +28,10 @@ class Context(
         result = 31 * result + name.hashCode()
         result = 31 * result + isActive.hashCode()
         return result
+    }
+
+    override fun toString(): String {
+        return "Context(id=$id, key='$key', name='$name', isActive=$isActive)"
     }
 
 }
