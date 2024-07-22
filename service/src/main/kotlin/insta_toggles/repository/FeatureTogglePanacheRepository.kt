@@ -38,7 +38,7 @@ class FeatureTogglePanacheRepository : PanacheRepository<FeatureToggleEntity>, F
     override fun getByKey(key: String): Uni<FeatureToggle> {
         return Panache.withTransaction { find("key = ?1", key)?.firstResult() }.onItem().ifNotNull()
             .transformToUni { it: FeatureToggleEntity -> Uni.createFrom().item(it.toDomain()) }.onItem().ifNull()
-            .failWith(NoSuchElementException("Feature with name $key not found"))
+            .failWith(NoSuchElementException("Feature with key $key not found"))
     }
 
 
@@ -53,7 +53,7 @@ class FeatureTogglePanacheRepository : PanacheRepository<FeatureToggleEntity>, F
 
     override fun update(id: Long, updates: FeatureToggleUpdateRequest): Uni<FeatureToggle> {
         return Panache.withTransaction {
-            findById(id).map { it ->
+            findById(id).onItem().ifNull().failWith(NoSuchElementException("Feature with id $id not found")).map {
                 it.apply {
                     if (updates.name?.isNotBlank() == true) {
                         name = updates.name!!
@@ -70,19 +70,21 @@ class FeatureTogglePanacheRepository : PanacheRepository<FeatureToggleEntity>, F
                     }
                 }
             }
-        }.onItem().ifNotNull().transformToUni { it: FeatureToggleEntity -> Uni.createFrom().item(it.toDomain()) }
-            .onItem().ifNull().failWith(NoSuchElementException("Feature with id $id not found"))
+        }.chain { it: FeatureToggleEntity -> Uni.createFrom().item(it.toDomain()) }
+
     }
 
     override fun removeById(id: Long): Uni<Unit> {
-        return Panache.withTransaction { deleteById(id) }.onItem().ifNotNull()
-            .transformToUni { _ -> Uni.createFrom().voidItem().replaceWithUnit() }.onItem().ifNull()
+        return Panache.withTransaction {
+            deleteById(id)
+        }.onItem().ifNotNull().transformToUni { _ -> Uni.createFrom().voidItem().replaceWithUnit() }.onItem().ifNull()
             .failWith(NoSuchElementException("Feature with id $id not found"))
     }
 
     override fun removeAll(): Uni<Unit> {
-        return Panache.withTransaction { deleteAll() }.onItem()
-            .transformToUni { _ -> Uni.createFrom().voidItem().replaceWithUnit() }
+        return Panache.withTransaction {
+            deleteAll()
+        }.chain { _ -> Uni.createFrom().voidItem().replaceWithUnit() }
     }
 
 }

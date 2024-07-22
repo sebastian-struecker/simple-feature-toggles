@@ -6,11 +6,14 @@ import insta_toggles.ContextName
 import insta_toggles.FeatureToggle
 import insta_toggles.api.models.ContextApiModel
 import insta_toggles.api.models.FeatureToggleUpdateRequest
+import io.quarkus.test.TestReactiveTransaction
 import io.quarkus.test.junit.QuarkusTest
 import io.quarkus.test.vertx.RunOnVertxContext
 import io.quarkus.test.vertx.UniAsserter
 import jakarta.inject.Inject
 import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 
 
@@ -22,197 +25,231 @@ class FeatureTogglePanacheRepositoryTest {
     lateinit var repository: FeatureTogglePanacheRepository
 
     @Test
-    fun getAll_size_0_test(asserter: UniAsserter) {
+    @TestReactiveTransaction
+    fun getAll_whenNoEntities_shouldReturnEmptyList(asserter: UniAsserter) {
         asserter.assertThat({
             repository.getAll().collect().asList()
         }, {
-            it.size == 0
+            it.isEmpty()
         })
     }
 
     @Test
-    fun getAll_size_1_test(asserter: UniAsserter) {
-        asserter.execute {
-            repository.create("key", "name", "description")
-        }
+    @TestReactiveTransaction
+    fun getAll_whenOneEntity_shouldReturnListWithOneEntity(asserter: UniAsserter) {
         asserter.assertThat({
-            repository.getAll().collect().asList()
+            repository.create("key", "name", "description").chain { it ->
+                repository.getAll().collect().asList()
+            }
         }, {
-            it.size == 1
+            assertTrue(it.size == 1)
         })
     }
 
     @Test
-    fun getAllActive_noActive_test(asserter: UniAsserter) {
-        asserter.execute {
-            repository.create("key", "name", "description")
-        }
+    @TestReactiveTransaction
+    fun getAllActive_whenNoActiveContexts_shouldReturnEmptyList(asserter: UniAsserter) {
         asserter.assertThat({
-            repository.getAllActive(ContextName.testing).collect().asList()
+            repository.create("key", "name", "description").chain { it ->
+                repository.getAllActive(ContextName.testing).collect().asList()
+            }
         }, {
-            it.size == 0
+            it.isEmpty()
         })
     }
 
     @Test
-    fun getAllActive_activeTesting_test(asserter: UniAsserter) {
-        asserter.execute {
-            repository.create("key", "name", "description")
-            repository.update(
-                1, FeatureToggleUpdateRequest(null, null, listOf(ContextApiModel(ContextName.testing.toString(), true)))
-            )
-        }
+    @TestReactiveTransaction
+    fun getAllActive_whenActiveTestingContext_shouldReturnListWithOneEntity(asserter: UniAsserter) {
         asserter.assertThat({
-            repository.getAllActive(ContextName.testing).collect().asList()
+            repository.create("key", "name", "description").chain { it ->
+                repository.update(
+                    it.id, FeatureToggleUpdateRequest(
+                        null, null, listOf(ContextApiModel(ContextName.testing.toString(), true))
+                    )
+                ).chain { _ ->
+                    repository.getAllActive(ContextName.testing).collect().asList()
+                }
+            }
         }, {
-            it.size == 1
+            assertTrue(it.size == 1)
         })
     }
 
     @Test
-    fun getAllActive_activeProduction_test(asserter: UniAsserter) {
-        asserter.execute {
-            repository.create("key", "name", "description")
-            repository.update(
-                1,
-                FeatureToggleUpdateRequest(null, null, listOf(ContextApiModel(ContextName.production.toString(), true)))
-            )
-        }
+    @TestReactiveTransaction
+    fun getAllActive_whenActiveProductionContext_shouldReturnListWithOneEntity(asserter: UniAsserter) {
         asserter.assertThat({
-            repository.getAllActive(ContextName.production).collect().asList()
+            repository.create("key", "name", "description").chain { it ->
+                repository.update(
+                    it.id, FeatureToggleUpdateRequest(
+                        null, null, listOf(ContextApiModel(ContextName.production.toString(), true))
+                    )
+                ).chain { _ ->
+                    repository.getAllActive(ContextName.production).collect().asList()
+                }
+            }
         }, {
-            it.size == 1
+            assertTrue(it.size == 1)
         })
     }
 
-//    TODO: fix me
-//    @Test
-//    fun getById_found_test(asserter: UniAsserter) {
-//        val featureToggle = featureToggle()
-//        asserter.execute {
-//            repository.create("key", "name", "description")
-//        }.assertThat({
-//            repository.getById(1)
-//        }, {
-//            it == featureToggle
-//        })
-//    }
-
-//    TODO: fix me
-//    @Test
-//    fun getById_notFound_test(asserter: UniAsserter) {
-//        asserter.execute {
-//            repository.getByKey("key")
-//        }.assertFailedWith({
-//            repository.getByKey("key")
-//        }, NoSuchElementException::class.java)
-//    }
-
     @Test
-    fun getByKey_found_test(asserter: UniAsserter) {
-        val featureToggle = featureToggle()
-        asserter.execute {
-            repository.create("key", "name", "description")
-        }
+    @TestReactiveTransaction
+    fun getById_whenEntityExists_shouldReturnEntity(asserter: UniAsserter) {
         asserter.assertThat({
-            repository.getByKey("key")
+            repository.create("key", "name", "description").chain { it ->
+                repository.getById(it.id)
+            }
         }, {
-            it == featureToggle
+            assertFeatureToggle(it)
         })
     }
 
     @Test
-    fun getByKey_notFound_test(asserter: UniAsserter) {
+    @TestReactiveTransaction
+    fun getById_whenEntityDoesNotExist_shouldThrowException(asserter: UniAsserter) {
         asserter.assertFailedWith({
-            repository.getByKey("empty")
+            repository.getById(1)
         }, NoSuchElementException::class.java)
     }
 
     @Test
-    fun create_test(asserter: UniAsserter) {
-        val featureToggle = featureToggle()
+    @TestReactiveTransaction
+    fun getByKey_whenEntityExists_shouldReturnEntity(asserter: UniAsserter) {
         asserter.assertThat({
-            repository.create("key", "name", "description")
+            repository.create("key", "name", "description").chain { it ->
+                repository.getByKey(it.key)
+            }
         }, {
-            it == featureToggle
+            assertFeatureToggle(it)
         })
     }
 
     @Test
-    fun create_wrongInput_test(asserter: UniAsserter) {
-        Assertions.assertThrows(IllegalArgumentException::class.java,
+    @TestReactiveTransaction
+    fun getByKey_whenEntityDoesNotExist_shouldThrowException(asserter: UniAsserter) {
+        asserter.assertFailedWith({
+            repository.getByKey("nonexistent")
+        }, NoSuchElementException::class.java)
+    }
+
+    @Test
+    @TestReactiveTransaction
+    fun create_whenValidInput_shouldCreateEntity(asserter: UniAsserter) {
+        asserter.assertThat({
+            repository.create("key", "name", "description")
+        }, {
+            assertFeatureToggle(it)
+        })
+    }
+
+    @Test
+    @TestReactiveTransaction
+    fun create_whenInvalidInput_shouldThrowException(asserter: UniAsserter) {
+        Assertions.assertThrows(
+            IllegalArgumentException::class.java,
             { repository.create("12_", "name", "description") })
     }
 
     @Test
-    fun update_found_test(asserter: UniAsserter) {
-        asserter.execute {
-            repository.create("key", "name", "description")
-            repository.update(
-                1, FeatureToggleUpdateRequest(
-                    "updated", "updated", listOf(
-                        ContextApiModel(ContextName.testing.toString(), true),
-                        ContextApiModel(ContextName.production.toString(), true)
+    @TestReactiveTransaction
+    fun update_whenEntityExists_shouldUpdateEntity(asserter: UniAsserter) {
+        asserter.assertThat({
+            repository.create("key", "name", "description").chain { it ->
+                repository.update(
+                    it.id, FeatureToggleUpdateRequest(
+                        "updated", "updated", listOf(
+                            ContextApiModel(ContextName.testing.toString(), true),
+                            ContextApiModel(ContextName.production.toString(), true)
+                        )
                     )
                 )
-            )
-        }
-        asserter.assertThat({
-            repository.getById(1)
+            }.chain { it ->
+                repository.getById(it.id)
+            }
         }, {
-            it.name == "updated"
-            it.description == "updated"
-            it.contexts[0].isActive == true
-            it.contexts[1].isActive == true
+            it.name == "updated" && it.description == "updated" && it.contexts[0].isActive && it.contexts[1].isActive
         })
     }
 
-//    TODO: fix me
-//    @Test
-//    fun update_notFound_test(asserter: UniAsserter) {
-//        asserter.assertFailedWith({
-//            repository.getByKey("key")
-//        }, NoSuchElementException::class.java)
-//    }
-
     @Test
-    fun removeById_found_test(asserter: UniAsserter) {
-        asserter.execute {
-            repository.create("key", "name", "description")
-        }
-        asserter.assertSame({
-            repository.removeById(1)
-        }, Unit)
+    @TestReactiveTransaction
+    fun update_whenPartialUpdate_shouldUpdateOnlyProvidedFields(asserter: UniAsserter) {
+        asserter.assertThat({
+            repository.create("key", "name", "description").chain { it ->
+                repository.update(
+                    it.id, FeatureToggleUpdateRequest(
+                        name = "partially updated",
+                        contexts = listOf(ContextApiModel(ContextName.testing.toString(), true))
+                    )
+                )
+            }.chain { it ->
+                repository.getById(it.id)
+            }
+        }, { it ->
+            it.name == "partially updated" && it.description == "description" && it.contexts.first { it.key == ContextName.testing.toString() }.isActive && !it.contexts.first { it.key == ContextName.production.toString() }.isActive
+        })
     }
 
-//    TODO: fix me
-//    @Test
-//    fun removeById_notFound_test(asserter: UniAsserter) {
-//        asserter.assertFailedWith({
-//            repository.removeById(1)
-//        }, NoSuchElementException::class.java)
-//    }
+    @Test
+    @TestReactiveTransaction
+    fun update_whenNoUpdates_shouldNotChangeEntity(asserter: UniAsserter) {
+        asserter.assertThat({
+            repository.create("key", "name", "description").chain { it ->
+                repository.update(
+                    1, FeatureToggleUpdateRequest()
+                )
+            }.chain { it ->
+                repository.getById(1)
+            }
+        }, { it ->
+            it.name == "name" && it.description == "description" && !it.contexts.first { it.key == ContextName.testing.toString() }.isActive && !it.contexts.first { it.key == ContextName.production.toString() }.isActive
+        })
+    }
 
     @Test
-    fun removeAll_found_test(asserter: UniAsserter) {
-        asserter.execute {
+    @TestReactiveTransaction
+    fun update_whenEntityDoesNotExist_shouldThrowException(asserter: UniAsserter) {
+        asserter.assertFailedWith({
+            repository.update(1, FeatureToggleUpdateRequest("updated", "updated"))
+        }, NoSuchElementException::class.java)
+    }
+
+    @Test
+    @TestReactiveTransaction
+    fun removeById_whenEntityExists_shouldRemoveEntity(asserter: UniAsserter) {
+        asserter.assertThat({
+            repository.create("key", "name", "description").chain { it ->
+                repository.removeById(it.id)
+            }
+        }, {
+            assertTrue(it == Unit)
+        })
+    }
+
+    @Test
+    @TestReactiveTransaction
+    fun removeAll_shouldRemoveAllEntities(asserter: UniAsserter) {
+        asserter.assertThat({
             repository.removeAll()
-        }
+        }, {
+            assertTrue(it == Unit)
+        })
     }
 
-    private fun featureToggle(key: String = "key") = FeatureToggle(
-        1L, key, "name", "description", listOf(
-            Context(1, ContextName.testing.toString(), ContextName.testing.toString(), true),
-            Context(2, ContextName.production.toString(), ContextName.production.toString(), false)
-        )
-    )
-
-    private fun FeatureToggle.toEntity(): FeatureToggleEntity {
-        return FeatureToggleEntity(id, key, name, description, contexts.map { it.toEntity() }.toMutableList())
+    private fun assertFeatureToggle(it: FeatureToggle) {
+        assertEquals("key", it.key)
+        assertEquals("name", it.name)
+        assertEquals("description", it.description)
+        assertContext(it.contexts[0], ContextName.testing)
+        assertContext(it.contexts[1], ContextName.production)
     }
 
-    private fun Context.toEntity(): ContextEntity {
-        return ContextEntity(id, key, name, isActive)
+    private fun assertContext(context: Context, name: ContextName) {
+        assertEquals(name.toString(), context.key)
+        assertEquals(name.toString(), context.name)
+        assertEquals(false, context.isActive)
     }
 
 }

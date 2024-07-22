@@ -1,11 +1,14 @@
 package insta_toggles.api
 
+import jakarta.ws.rs.NotAuthorizedException
 import jakarta.ws.rs.container.ContainerRequestContext
-import jakarta.ws.rs.core.Response
 import org.eclipse.microprofile.config.inject.ConfigProperty
 import org.jboss.resteasy.reactive.server.ServerRequestFilter
 
-class ApiKeyFilter(@ConfigProperty(name = "api-keys") val apiKeys: List<String>) {
+class ApiKeyFilter(
+    @ConfigProperty(name = "api-keys")
+    val apiKeys: List<String>
+) {
 
     companion object {
         const val apiKeyHeaderName = "x-api-key"
@@ -17,13 +20,13 @@ class ApiKeyFilter(@ConfigProperty(name = "api-keys") val apiKeys: List<String>)
         if (isApiKeySecurePath(path)) {
             val apiKeyHeader = requestContext.getHeaderString(apiKeyHeaderName)
             if (apiKeyHeader == null || !apiKeys.contains(apiKeyHeader)) {
-                requestContext.abortWith(Response.status(Response.Status.UNAUTHORIZED).build())
+                throw NotAuthorizedException("Api-Key is missing")
             }
         }
     }
 
     private fun isApiKeySecurePath(path: String): Boolean {
-        return path.contains("feature-toggles\\/[a-z_]*[a-z]")
+        return path.contains("feature-toggles/testing") || path.contains("feature-toggles/production")
     }
 
 }
