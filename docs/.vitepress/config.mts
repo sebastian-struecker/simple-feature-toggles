@@ -1,38 +1,28 @@
-import { defineConfig } from 'vitepress'
+import {defineConfig} from 'vitepress'
 
-// https://vitepress.dev/reference/site-config
 export default defineConfig({
-  base: "/insta-toggles",
-  title: "insta-toggles",
-  description: "Feature Toggles in Minutes",
-  themeConfig: {
-    // https://vitepress.dev/reference/default-theme-config
-    nav: [
-      { text: 'Home', link: '/' },
-      { text: 'Guide', link: '/guide' }
-    ],
+    base: "/insta-toggles", title: "insta-toggles", description: "Feature Toggles in Minutes", themeConfig: {
+        nav: [{text: 'Home', link: '/'}, {text: 'Guide', link: '/guide'}],
 
-    sidebar: {
-      '/guide/': [
-        {
-          text: 'Introduction',
-          items: [
-            { text: 'Getting Started', link: '/guide/getting-started' },
-          ]
+        sidebar: {
+            '/guide/': [{
+                text: 'Getting Started',
+                link: '/guide/getting-started/',
+                items: [
+                    {text: 'Service', link: '/guide/getting-started/service'},
+                    {text: 'API Client', link: '/guide/getting-started/api-client'},
+                    {text: 'UI', link: '/guide/getting-started/ui'},
+                ]
+            }, {
+                text: 'Examples', link: '/guide/examples/', items: [{
+                    text: 'Keycloak Setup', link: '/guide/examples/keycloak-setup'
+                }]
+            }]
         },
-        {
-          text: 'Integration',
-          items: [
-            { text: 'Authorization Concept', link: '/guide/authorization-concept' },
-            { text: 'Management Client', link: '/guide/management-client' },
-            { text: 'Application Client', link: '/guide/application-client' }
-          ]
-        }
-      ]
-    },
 
-    socialLinks: [
-      { icon: 'github', link: 'https://github.com/sebastian-struecker/insta-toggles' }
+        socialLinks: [{icon: 'github', link: 'https://github.com/sebastian-struecker/insta-toggles'}]
+    },
+    head: [
+        ['link', { rel: 'icon', href: 'icons/favicon.ico' }]
     ]
-  }
 })

@@ -19,7 +19,7 @@ features:
   - icon:
       src: icons/padlock-svgrepo.svg
     title: Secured
-    details: The management of Feature Toggles is secured by using JWT authentication.
+    details: The management of Feature Toggles is secured by using OpenID Connect authentication.
   - icon:
       src: icons/lightning-svgrepo.svg
     title: Lightning fast
