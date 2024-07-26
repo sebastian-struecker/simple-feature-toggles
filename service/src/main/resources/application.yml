@@ -12,6 +12,7 @@ quarkus:
 
 api:
   authorization:
+    enable: ${API_AUTHORIZATION_ENABLE}
     keys: ${API_AUTHORIZATION_KEYS}
 
 "%prod":
@@ -54,6 +55,7 @@ api:
 
   api:
     authorization:
+      enable: true
       keys: test
 
 "%dev":
@@ -83,4 +85,5 @@ api:
 
   api:
     authorization:
+      enable: true
       keys: test
