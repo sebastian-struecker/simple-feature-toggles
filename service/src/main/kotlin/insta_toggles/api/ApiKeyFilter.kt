@@ -10,8 +10,6 @@ import org.jboss.resteasy.reactive.server.ServerRequestFilter
 class ApiKeyFilter(
     @ConfigProperty(name = "api.authorization.keys")
     val apiKeys: List<String>,
-    @ConfigProperty(name = "api.authorization.enable", defaultValue = "true")
-    val authorizationEnabled: Boolean
 ) {
 
     companion object {
@@ -20,7 +18,6 @@ class ApiKeyFilter(
 
     @ServerRequestFilter(preMatching = true)
     fun filter(requestContext: ContainerRequestContext) {
-        if (!authorizationEnabled) return
         val path = requestContext.uriInfo.path
         if (isApiKeySecurePath(path)) {
             val apiKeyHeader = requestContext.getHeaderString(apiKeyHeaderName)
