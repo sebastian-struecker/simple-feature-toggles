@@ -57,7 +57,7 @@ class FeatureToggleApi(
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/feature-toggles/{context}")
     @SecurityRequirement(name = "APIKEY")
-    @Operation(summary = "Get all active features for a given context")
+    @Operation(operationId = "getAllActiveFeatures", summary = "Get all active features for a given context")
     @APIResponses(
         value = [APIResponse(
             responseCode = "200", description = "A list of active feature names", content = [Content(
@@ -83,7 +83,7 @@ class FeatureToggleApi(
     @RolesAllowed(DefaultRoles.ADMIN, DefaultRoles.RELEASE_MANAGER, DefaultRoles.VIEWER)
     @Path("/feature-toggles")
     @SecurityRequirement(name = "JWT")
-    @Operation(summary = "Get all feature toggles")
+    @Operation(operationId = "getAll", summary = "Get all feature toggles")
     @APIResponses(
         value = [APIResponse(
             responseCode = "200", description = "A list of all feature toggles", content = [Content(
@@ -103,7 +103,7 @@ class FeatureToggleApi(
     @RolesAllowed(DefaultRoles.ADMIN, DefaultRoles.RELEASE_MANAGER, DefaultRoles.VIEWER)
     @Path("/feature-toggle/{id}")
     @SecurityRequirement(name = "JWT")
-    @Operation(summary = "Get a feature toggle by ID")
+    @Operation(operationId = "getById", summary = "Get a feature toggle by ID")
     @APIResponses(
         value = [APIResponse(
             responseCode = "200", description = "A single feature toggle", content = [Content(
@@ -111,7 +111,7 @@ class FeatureToggleApi(
             )]
         ), APIResponse(responseCode = "404", description = "Feature toggle not found")]
     )
-    fun get(id: Long): Uni<RestResponse<FeatureToggleResponse>> {
+    fun getById(id: Long): Uni<RestResponse<FeatureToggleResponse>> {
         Log.debug("[FeatureToggleApi] Calling method: get url: /feature-toggle/$id")
         return featureToggleRepository.getById(id).onItem().transform {
             RestResponse.ok(it.toResponse())
@@ -124,7 +124,7 @@ class FeatureToggleApi(
     @RolesAllowed(DefaultRoles.ADMIN)
     @Path("/feature-toggles")
     @SecurityRequirement(name = "JWT")
-    @Operation(summary = "Create a new feature toggle")
+    @Operation(operationId = "create", summary = "Create a new feature toggle")
     @APIResponses(
         value = [APIResponse(
             responseCode = "200", description = "Feature toggle created", content = [Content(
@@ -144,7 +144,7 @@ class FeatureToggleApi(
     @RolesAllowed(DefaultRoles.ADMIN)
     @Path("/feature-toggle/{id}")
     @SecurityRequirement(name = "JWT")
-    @Operation(summary = "Partially update a feature toggle by ID")
+    @Operation(operationId = "partialUpdate", summary = "Partially update a feature toggle by ID")
     @APIResponses(
         value = [APIResponse(
             responseCode = "200", description = "Feature toggle updated", content = [Content(
@@ -167,7 +167,7 @@ class FeatureToggleApi(
     @RolesAllowed(DefaultRoles.ADMIN)
     @Path("/feature-toggle/{id}")
     @SecurityRequirement(name = "JWT")
-    @Operation(summary = "Delete a feature toggle by ID")
+    @Operation(operationId = "deleteById", summary = "Delete a feature toggle by ID")
     @APIResponses(
         value = [APIResponse(
             responseCode = "200", description = "Feature toggle deleted"
@@ -184,7 +184,7 @@ class FeatureToggleApi(
     @RolesAllowed(DefaultRoles.ADMIN)
     @Path("/feature-toggles")
     @SecurityRequirement(name = "JWT")
-    @Operation(summary = "Delete all feature toggles")
+    @Operation(operationId = "deleteAll", summary = "Delete all feature toggles")
     @APIResponses(
         value = [APIResponse(responseCode = "200", description = "All feature toggles deleted")]
     )
