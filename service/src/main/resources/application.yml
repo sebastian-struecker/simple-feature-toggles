@@ -1,7 +1,23 @@
+quarkus:
+  datasource:
+    db-kind: postgresql
+
+  smallrye-openapi:
+    path: /openapi
+    store-schema-directory: target
+
+  swagger-ui:
+    always-include: true
+    path: /swagger-ui
+
+api:
+  authorization:
+    enable: ${API_AUTHORIZATION_ENABLE}
+    keys: ${API_AUTHORIZATION_KEYS}
+
 "%prod":
   quarkus:
     datasource:
-      db-kind: postgresql
       username: ${DATASOURCE_USERNAME}
       password: ${DATASOURCE_PASSWORD}
       reactive:
@@ -19,19 +35,9 @@
         issuer: ${OIDC_TOKEN_JWT_ISSUER}
         audience: ${OIDC_TOKEN_JWT_AUDIENCE}
 
-    smallrye-openapi:
-      path: /openapi
-      store-schema-directory: target
-    swagger-ui:
-      always-include: true
-      path: /swagger-ui
-
-  api-keys: ${API_KEYS}
-
 "%test":
   quarkus:
     datasource:
-      db-kind: postgresql
       devservices:
         enabled: true
         port: 5432
@@ -41,7 +47,16 @@
       database:
         generation: drop-and-create
 
-  api-keys: test
+  smallrye-openapi:
+    enable: false
+
+  swagger-ui:
+    enable: false
+
+  api:
+    authorization:
+      enable: true
+      keys: test
 
 "%dev":
   quarkus:
@@ -49,10 +64,9 @@
       level:
         category:
           "insta_toggles":
-              level: DEBUG
+            level: DEBUG
 
     datasource:
-      db-kind: postgresql
       devservices:
         enabled: true
         port: 5432
@@ -69,11 +83,7 @@
         realm-name: insta-toggles
         realm-path: example-keycloak-settings.json
 
-    smallrye-openapi:
-      path: /openapi
-      store-schema-directory: target
-    swagger-ui:
-      always-include: true
-      path: /swagger-ui
-
-  api-keys: test
+  api:
+    authorization:
+      enable: false
+      keys: test
