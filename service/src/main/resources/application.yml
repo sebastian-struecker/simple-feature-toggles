@@ -12,7 +12,7 @@ quarkus:
 
 api:
   authorization:
-    enable: ${API_AUTHORIZATION_ENABLE}
+    enable: ${API_AUTHORIZATION_ENABLE:true}
     keys: ${API_AUTHORIZATION_KEYS}
 
 "%prod":
