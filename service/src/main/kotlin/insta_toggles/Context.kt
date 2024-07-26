@@ -5,10 +5,10 @@ class Context(
 ) {
     init {
         require(key == ContextName.testing.toString() || key == ContextName.production.toString()) {
-            "Feature key '$key' does not match testing or production"
+            "Context key '$key' does not match testing or production"
         }
         require(name == key) {
-            "Feature name '$name' does not match key '$key'"
+            "Context name '$name' does not match key '$key'"
         }
     }
 

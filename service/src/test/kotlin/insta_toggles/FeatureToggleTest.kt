@@ -43,6 +43,7 @@ class FeatureToggleTest {
             featureToggle(key = "one") == featureToggle(key = "two")
             featureToggle(name = "one") == featureToggle(name = "two")
             featureToggle(description = "one") == featureToggle(description = "two")
+            featureToggle() == featureToggle(contexts = listOf())
         })
     }
 
@@ -54,8 +55,12 @@ class FeatureToggleTest {
     }
 
     private fun featureToggle(
-        id: Long = 1, key: String = "key", name: String = "name", description: String = "description"
-    ) = FeatureToggle(id, key, name, description, contexts())
+        id: Long = 1,
+        key: String = "key",
+        name: String = "name",
+        description: String = "description",
+        contexts: List<Context> = contexts()
+    ) = FeatureToggle(id, key, name, description, contexts)
 
     private fun contexts() = listOf(
         Context(1, ContextName.testing.toString(), ContextName.testing.toString(), false),

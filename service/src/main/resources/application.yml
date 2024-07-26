@@ -10,10 +10,17 @@ quarkus:
     always-include: true
     path: /swagger-ui
 
+  jacoco:
+    excludes: "CustomAuthorizationController.class"
+
 api:
+  key:
+    enable: ${API_KEY_ENABLE:true}
+    values: ${API_KEY_VALUES}
   authorization:
     enable: ${API_AUTHORIZATION_ENABLE:true}
-    keys: ${API_AUTHORIZATION_KEYS}
+
+use-only-one-context: ${USE_ONLY_ONE_CONTEXT:false}
 
 "%prod":
   quarkus:
@@ -54,9 +61,8 @@ api:
     enable: false
 
   api:
-    authorization:
-      enable: true
-      keys: test
+    key:
+      values: test
 
 "%dev":
   quarkus:
@@ -84,6 +90,5 @@ api:
         realm-path: example-keycloak-settings.json
 
   api:
-    authorization:
-      enable: false
-      keys: test
+    key:
+      values: test

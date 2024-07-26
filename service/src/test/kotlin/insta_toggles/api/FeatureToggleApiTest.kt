@@ -7,6 +7,7 @@ import insta_toggles.api.models.CreateFeatureToggleRequest
 import insta_toggles.api.models.FeatureToggleUpdateRequest
 import insta_toggles.repository.FeatureTogglePanacheRepository
 import io.quarkus.test.InjectMock
+import io.quarkus.test.junit.QuarkusMock
 import io.quarkus.test.junit.QuarkusTest
 import io.quarkus.test.security.TestSecurity
 import io.restassured.RestAssured.given
@@ -57,7 +58,22 @@ class FeatureToggleApiTest {
 
     @Test
     fun getAllActiveFeatures_missingApiKey_test() {
+        getAllActiveFeaturesRequest(apiKey = null).then().statusCode(401)
+    }
+
+    @Test
+    fun getAllActiveFeatures_wrongApiKey_test() {
         getAllActiveFeaturesRequest(apiKey = "fail").then().statusCode(401)
+    }
+
+    @Test
+    fun getAllActiveFeatures_apiKeyDisabled_test() {
+        QuarkusMock.installMockForType(
+            ApiKeyFilter(
+                listOf("test"), false
+            ), ApiKeyFilter::class.java
+        )
+        getAllActiveFeaturesRequest(apiKey = "fail").then().statusCode(200)
     }
 
     @Test
@@ -275,7 +291,10 @@ class FeatureToggleApiTest {
         deleteAllRequest().then().statusCode(403)
     }
 
-    private fun getAllActiveFeaturesRequest(context: String = "testing", apiKey: String = "test"): Response {
+    private fun getAllActiveFeaturesRequest(context: String = "testing", apiKey: String? = "test"): Response {
+        if (apiKey == null) {
+            return given().`when`().get("$FEATURE_TOGGLES_URL/$context")
+        }
         val headers = Headers.headers(Header("x-api-key", apiKey))
         return given().`when`().headers(headers).get("$FEATURE_TOGGLES_URL/$context")
     }
