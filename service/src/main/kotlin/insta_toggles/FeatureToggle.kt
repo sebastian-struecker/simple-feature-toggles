@@ -39,8 +39,4 @@ class FeatureToggle(
         return result
     }
 
-    override fun toString(): String {
-        return "FeatureToggle(id=$id, key='$key', name='$name', description='$description', contexts=$contexts)"
-    }
-
 }

@@ -30,8 +30,4 @@ class Context(
         return result
     }
 
-    override fun toString(): String {
-        return "Context(id=$id, key='$key', name='$name', isActive=$isActive)"
-    }
-
 }
