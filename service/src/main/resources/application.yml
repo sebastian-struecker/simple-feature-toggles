@@ -85,5 +85,5 @@ api:
 
   api:
     authorization:
-      enable: false
+      enable: true
       keys: test
