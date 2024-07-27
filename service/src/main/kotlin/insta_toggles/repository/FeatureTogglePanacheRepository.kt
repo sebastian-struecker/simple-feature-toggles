@@ -12,9 +12,11 @@ import io.smallrye.mutiny.Multi
 import io.smallrye.mutiny.Uni
 import io.smallrye.mutiny.replaceWithUnit
 import jakarta.enterprise.context.ApplicationScoped
+import org.eclipse.microprofile.config.inject.ConfigProperty
 
 @ApplicationScoped
-class FeatureTogglePanacheRepository : PanacheRepository<FeatureToggleEntity>, FeatureToggleRepository {
+class FeatureTogglePanacheRepository(@ConfigProperty(name = "use-testing-context") var useTestingContext: Boolean) :
+    PanacheRepository<FeatureToggleEntity>, FeatureToggleRepository {
 
     override fun getAll(): Multi<FeatureToggle> {
         return Panache.withTransaction { listAll() }.toMulti().flatMap(Multi.createFrom()::iterable)
@@ -41,13 +43,13 @@ class FeatureTogglePanacheRepository : PanacheRepository<FeatureToggleEntity>, F
             .failWith(NoSuchElementException("Feature with key $key not found"))
     }
 
-
     override fun create(key: String, name: String, description: String): Uni<FeatureToggle> {
         FeatureToggle.checkInputs(key, description)
         val entity = FeatureToggleEntity()
         entity.key = key
         entity.name = name
         entity.description = description
+        entity.contexts = createContexts(useTestingContext)
         return Panache.withTransaction { persistAndFlush(entity).map { it.toDomain() } }
     }
 
@@ -85,6 +87,16 @@ class FeatureTogglePanacheRepository : PanacheRepository<FeatureToggleEntity>, F
         return Panache.withTransaction {
             deleteAll()
         }.chain { _ -> Uni.createFrom().voidItem().replaceWithUnit() }
+    }
+
+    fun createContexts(testContext: Boolean): MutableList<ContextEntity> {
+        if (testContext) {
+            return mutableListOf(
+                ContextEntity.create(ContextName.testing),
+                ContextEntity.create(ContextName.production)
+            )
+        }
+        return mutableListOf(ContextEntity.create(ContextName.production))
     }
 
 }

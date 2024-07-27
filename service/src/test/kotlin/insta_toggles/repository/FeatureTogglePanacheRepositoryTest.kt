@@ -60,24 +60,6 @@ class FeatureTogglePanacheRepositoryTest {
 
     @Test
     @TestReactiveTransaction
-    fun getAllActive_whenActiveTestingContext_shouldReturnListWithOneEntity(asserter: UniAsserter) {
-        asserter.assertThat({
-            repository.create("key", "name", "description").chain { it ->
-                repository.update(
-                    it.id, FeatureToggleUpdateRequest(
-                        null, null, listOf(ContextApiModel(ContextName.testing.toString(), true))
-                    )
-                ).chain { _ ->
-                    repository.getAllActive(ContextName.testing).collect().asList()
-                }
-            }
-        }, {
-            assertTrue(it.size == 1)
-        })
-    }
-
-    @Test
-    @TestReactiveTransaction
     fun getAllActive_whenActiveProductionContext_shouldReturnListWithOneEntity(asserter: UniAsserter) {
         asserter.assertThat({
             repository.create("key", "name", "description").chain { it ->
@@ -147,8 +129,7 @@ class FeatureTogglePanacheRepositoryTest {
     @Test
     @TestReactiveTransaction
     fun create_whenInvalidInput_shouldThrowException(asserter: UniAsserter) {
-        Assertions.assertThrows(
-            IllegalArgumentException::class.java,
+        Assertions.assertThrows(IllegalArgumentException::class.java,
             { repository.create("12_", "name", "description") })
     }
 
@@ -169,7 +150,7 @@ class FeatureTogglePanacheRepositoryTest {
                 repository.getById(it.id)
             }
         }, {
-            it.name == "updated" && it.description == "updated" && it.contexts[0].isActive && it.contexts[1].isActive
+            it.name == "updated" && it.description == "updated" && it.contexts[0].isActive
         })
     }
 
@@ -214,7 +195,7 @@ class FeatureTogglePanacheRepositoryTest {
                 repository.getById(it.id)
             }
         }, { it ->
-            it.contexts.first { it.key == ContextName.testing.toString() }.isActive && !it.contexts.first { it.key == ContextName.production.toString() }.isActive
+            it.contexts.first { it.key == ContextName.production.toString() }.isActive
         })
     }
 
@@ -230,7 +211,7 @@ class FeatureTogglePanacheRepositoryTest {
                 repository.getById(1)
             }
         }, { it ->
-            it.name == "name" && it.description == "description" && !it.contexts.first { it.key == ContextName.testing.toString() }.isActive && !it.contexts.first { it.key == ContextName.production.toString() }.isActive
+            it.name == "name" && it.description == "description" && it.contexts.first { it.key == ContextName.production.toString() }.isActive
         })
     }
 
@@ -264,18 +245,40 @@ class FeatureTogglePanacheRepositoryTest {
         })
     }
 
+    @Test
+    @TestReactiveTransaction
+    fun createContexts_withTestContexts_returnTwoContexts(asserter: UniAsserter) {
+        val contexts = repository.createContexts(true)
+        assertEquals(2, contexts.size)
+        assertContextEntity(contexts.get(0), ContextName.testing)
+        assertContextEntity(contexts.get(1), ContextName.production)
+    }
+
+    @Test
+    @TestReactiveTransaction
+    fun createContexts_withOutTestContexts_returnOneContext(asserter: UniAsserter) {
+        val contexts = repository.createContexts(false)
+        assertEquals(1, contexts.size)
+        assertContextEntity(contexts.get(0), ContextName.production)
+    }
+
     private fun assertFeatureToggle(it: FeatureToggle) {
         assertEquals("key", it.key)
         assertEquals("name", it.name)
         assertEquals("description", it.description)
-        assertContext(it.contexts[0], ContextName.testing)
-        assertContext(it.contexts[1], ContextName.production)
+        assertContext(it.contexts[0], ContextName.production)
     }
 
     private fun assertContext(context: Context, name: ContextName) {
         assertEquals(name.toString(), context.key)
         assertEquals(name.toString(), context.name)
         assertEquals(false, context.isActive)
+    }
+
+    private fun assertContextEntity(contextEntity: ContextEntity, name: ContextName) {
+        assertEquals(name.toString(), contextEntity.key)
+        assertEquals(name.toString(), contextEntity.name)
+        assertEquals(false, contextEntity.isActive)
     }
 
 }

@@ -15,8 +15,7 @@ class FeatureToggleEntityTest {
         assertEquals("", featureToggle.key)
         assertEquals("", featureToggle.name)
         assertEquals("", featureToggle.description)
-        assertTrue(featureToggle.contexts.isNotEmpty())
-        assertEquals(2, featureToggle.contexts.size)
+        assertTrue(featureToggle.contexts.isEmpty())
     }
 
     @Test
@@ -35,21 +34,6 @@ class FeatureToggleEntityTest {
     fun constructor_nullId_test() {
         val featureToggle = featureToggleEntity(null)
         assertNull(featureToggle.id)
-    }
-
-    @Test
-    fun constructor_emptyContexts_test() {
-        val featureToggle = FeatureToggleEntity(1L, "key", "name", "description", mutableListOf())
-        assertEquals(2, featureToggle.contexts.size)
-    }
-
-    @Test
-    fun defaultContexts_test() {
-        val contexts = FeatureToggleEntity().contexts
-        assertNotNull(contexts)
-        assertEquals(2, contexts.size)
-        assertEquals("testing", contexts[0].key)
-        assertEquals("production", contexts[1].key)
     }
 
     @Test

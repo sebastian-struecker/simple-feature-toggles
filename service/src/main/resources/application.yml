@@ -20,7 +20,7 @@ api:
   authorization:
     enable: ${API_AUTHORIZATION_ENABLE:true}
 
-use-only-one-context: ${USE_ONLY_ONE_CONTEXT:false}
+use-testing-context: ${USE_TESTING_CONTEXT:false}
 
 "%prod":
   quarkus:
