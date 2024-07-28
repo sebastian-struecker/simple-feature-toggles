@@ -15,20 +15,20 @@ quarkus:
 
 api:
   key:
-    enable: ${API_KEY_ENABLE:true}
-    values: ${API_KEY_VALUES}
+    enable: ${SERVICE_API_KEY_ENABLE:true}
+    values: ${SERVICE_API_KEY_VALUES}
   authorization:
-    enable: ${API_AUTHORIZATION_ENABLE:true}
+    enable: ${SERVICE_API_AUTHORIZATION_ENABLE:true}
 
-use-testing-context: ${USE_TESTING_CONTEXT:false}
+use-testing-context: ${SERVICE_USE_TESTING_CONTEXT:false}
 
 "%prod":
   quarkus:
     datasource:
-      username: ${DATASOURCE_USERNAME}
-      password: ${DATASOURCE_PASSWORD}
+      username: ${SERVICE_DATASOURCE_USERNAME}
+      password: ${SERVICE_DATASOURCE_PASSWORD}
       reactive:
-        url: vertx-reactive:postgresql://${DATASOURCE_HOST}:${DATASOURCE_PORT}/${DATASOURCE_DATABASE}
+        url: vertx-reactive:postgresql://${SERVICE_DATASOURCE_HOST}:${SERVICE_DATASOURCE_PORT}/${SERVICE_DATASOURCE_DATABASE}
     hibernate-orm:
       database:
         generation:
@@ -36,11 +36,11 @@ use-testing-context: ${USE_TESTING_CONTEXT:false}
           create-schemas: true
 
     oidc:
-      auth-server-url: ${OIDC_AUTH_SERVER_URL}
-      client-id: ${OIDC_CLIENT_ID}
+      auth-server-url: ${SERVICE_OIDC_AUTH_SERVER_URL}
+      client-id: ${SERVICE_OIDC_CLIENT_ID}
       token:
-        issuer: ${OIDC_TOKEN_JWT_ISSUER}
-        audience: ${OIDC_TOKEN_JWT_AUDIENCE}
+        issuer: ${SERVICE_OIDC_TOKEN_JWT_ISSUER}
+        audience: ${SERVICE_OIDC_TOKEN_JWT_AUDIENCE}
 
 "%test":
   quarkus:
