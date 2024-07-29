@@ -14,7 +14,14 @@ quarkus:
     excludes: "CustomAuthorizationController.class"
 
   http:
-    cors: false
+    cors:
+      ~: true
+      origins: /.*/
+      headers: origin, host, referer, accept, accept-encoding, accept-language, authorization, content-type, x-api-key
+      access-control-allow-credentials: true
+      methods: GET,PUT,POST,PATCH,DELETE
+  tls:
+    trust-all: true
 
 api:
   key:
