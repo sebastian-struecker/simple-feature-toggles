@@ -13,10 +13,12 @@ quarkus:
   jacoco:
     excludes: "CustomAuthorizationController.class"
 
+  http:
+    cors: false
+
 api:
   key:
-    enable: ${SERVICE_API_KEY_ENABLE:true}
-    values: ${SERVICE_API_KEY_VALUES: }
+    values: ${SERVICE_API_KEY_VALUES}
   authorization:
     enable: ${SERVICE_API_AUTHORIZATION_ENABLE:true}
 
@@ -90,5 +92,5 @@ use-testing-context: ${SERVICE_USE_TESTING_CONTEXT:false}
         realm-path: example-keycloak-settings.json
 
   api:
-    key:
-      values: test
+    authorization:
+      enable: false
