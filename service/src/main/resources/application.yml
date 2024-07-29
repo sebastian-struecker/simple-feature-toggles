@@ -16,7 +16,7 @@ quarkus:
 api:
   key:
     enable: ${SERVICE_API_KEY_ENABLE:true}
-    values: ${SERVICE_API_KEY_VALUES}
+    values: ${SERVICE_API_KEY_VALUES: }
   authorization:
     enable: ${SERVICE_API_AUTHORIZATION_ENABLE:true}
 
