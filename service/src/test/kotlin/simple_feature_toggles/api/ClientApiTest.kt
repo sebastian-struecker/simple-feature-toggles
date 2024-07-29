@@ -1,9 +1,5 @@
 package insta_toggles.api
 
-import insta_toggles.Context
-import insta_toggles.ContextName
-import insta_toggles.FeatureToggle
-import insta_toggles.repository.FeatureTogglePanacheRepository
 import io.quarkus.test.InjectMock
 import io.quarkus.test.junit.QuarkusMock
 import io.quarkus.test.junit.QuarkusTest
@@ -17,6 +13,11 @@ import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito
+import simple_feature_toggles.Context
+import simple_feature_toggles.ContextName
+import simple_feature_toggles.FeatureToggle
+import simple_feature_toggles.api.ApiKeyFilter
+import simple_feature_toggles.repository.FeatureTogglePanacheRepository
 import java.util.*
 
 

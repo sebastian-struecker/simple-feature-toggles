@@ -1,36 +1,11 @@
 package simple_feature_toggles.api
 
-<<<<<<<< HEAD:service/src/main/kotlin/simple_feature_toggles/api/ManagementApi.kt
-import insta_toggles.Context
-import insta_toggles.FeatureToggle
-import insta_toggles.FeatureToggleRepository
-import insta_toggles.api.models.ContextApiModel
-import insta_toggles.api.models.CreateFeatureToggleRequest
-import insta_toggles.api.models.FeatureToggleResponse
-import insta_toggles.api.models.FeatureToggleUpdateRequest
-========
-import simple_feature_toggles.Context
-import simple_feature_toggles.ContextName
-import simple_feature_toggles.FeatureToggle
-import simple_feature_toggles.FeatureToggleRepository
-import simple_feature_toggles.api.models.ContextApiModel
-import simple_feature_toggles.api.models.CreateFeatureToggleRequest
-import simple_feature_toggles.api.models.FeatureToggleResponse
-import simple_feature_toggles.api.models.FeatureToggleUpdateRequest
->>>>>>>> 2c05731 (Rename project to: simple-feature-toggles):service/src/main/kotlin/simple_feature_toggles/api/FeatureToggleApi.kt
 import io.quarkus.logging.Log
 import io.smallrye.mutiny.Multi
 import io.smallrye.mutiny.Uni
 import jakarta.annotation.security.RolesAllowed
 import jakarta.enterprise.context.ApplicationScoped
-import jakarta.ws.rs.Consumes
-import jakarta.ws.rs.DELETE
-import jakarta.ws.rs.GET
-import jakarta.ws.rs.NotFoundException
-import jakarta.ws.rs.PATCH
-import jakarta.ws.rs.POST
-import jakarta.ws.rs.Path
-import jakarta.ws.rs.Produces
+import jakarta.ws.rs.*
 import jakarta.ws.rs.core.MediaType
 import org.eclipse.microprofile.openapi.annotations.Operation
 import org.eclipse.microprofile.openapi.annotations.enums.SchemaType
@@ -44,6 +19,13 @@ import org.eclipse.microprofile.openapi.annotations.security.SecurityScheme
 import org.eclipse.microprofile.openapi.annotations.tags.Tag
 import org.jboss.resteasy.reactive.NoCache
 import org.jboss.resteasy.reactive.RestResponse
+import simple_feature_toggles.Context
+import simple_feature_toggles.FeatureToggle
+import simple_feature_toggles.FeatureToggleRepository
+import simple_feature_toggles.api.models.ContextApiModel
+import simple_feature_toggles.api.models.CreateFeatureToggleRequest
+import simple_feature_toggles.api.models.FeatureToggleResponse
+import simple_feature_toggles.api.models.FeatureToggleUpdateRequest
 
 @ApplicationScoped
 @Path("feature-toggles")

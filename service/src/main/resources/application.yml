@@ -10,9 +10,6 @@ quarkus:
     always-include: true
     path: /swagger-ui
 
-  jacoco:
-    excludes: "CustomAuthorizationController.class"
-
   http:
     cors:
       ~: true

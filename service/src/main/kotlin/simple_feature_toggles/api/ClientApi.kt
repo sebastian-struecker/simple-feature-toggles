@@ -1,7 +1,5 @@
-package insta_toggles.api
+package simple_feature_toggles.api
 
-import insta_toggles.ContextName
-import insta_toggles.FeatureToggleRepository
 import io.quarkus.logging.Log
 import io.smallrye.mutiny.Multi
 import jakarta.enterprise.context.ApplicationScoped
@@ -21,6 +19,8 @@ import org.eclipse.microprofile.openapi.annotations.security.SecurityRequirement
 import org.eclipse.microprofile.openapi.annotations.security.SecurityScheme
 import org.eclipse.microprofile.openapi.annotations.tags.Tag
 import org.jboss.resteasy.reactive.NoCache
+import simple_feature_toggles.ContextName
+import simple_feature_toggles.FeatureToggleRepository
 
 @ApplicationScoped
 @Path("client")
