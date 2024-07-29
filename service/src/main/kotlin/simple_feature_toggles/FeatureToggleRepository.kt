@@ -1,6 +1,6 @@
-package insta_toggles
+package simple_feature_toggles
 
-import insta_toggles.api.models.FeatureToggleUpdateRequest
+import simple_feature_toggles.api.models.FeatureToggleUpdateRequest
 import io.smallrye.mutiny.Multi
 import io.smallrye.mutiny.Uni
 

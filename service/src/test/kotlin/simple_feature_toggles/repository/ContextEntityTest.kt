@@ -1,4 +1,4 @@
-package insta_toggles.repository
+package simple_feature_toggles.repository
 
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test

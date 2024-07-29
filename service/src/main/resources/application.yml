@@ -95,7 +95,7 @@ use-testing-context: ${SERVICE_USE_TESTING_CONTEXT:false}
       devservices:
         enabled: true
         port: 8000
-        realm-name: insta-toggles
+        realm-name: simple-feature-toggles
         realm-path: example-keycloak-settings.json
 
   api:

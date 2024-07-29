@@ -1,6 +1,6 @@
 # Service
 
-Get started with the insta-toggles **Service** container.
+Get started with the simple-feature-toggles **Service** container.
 
 ## Before you start
 
@@ -27,7 +27,7 @@ docker run -p 8080:8080 \
 -e SERVICE_API_KEY_VALUES=test,prod \
 -e SERVICE_API_AUTHORIZATION_ENABLE=true \
 -e SERVICE_USE_TESTING_CONTEXT=false \
-ghcr.io/sebastian-struecker/insta-toggles/service:1.0.0-snapshot
+ghcr.io/sebastian-struecker/simple-feature-toggles/service:1.0.0-snapshot
 ```
 
 ## Configuration References

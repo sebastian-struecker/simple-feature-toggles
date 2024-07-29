@@ -1,7 +1,7 @@
 import {defineConfig} from 'vitepress'
 
 export default defineConfig({
-    base: "/insta-toggles", title: "insta-toggles", description: "Feature Toggles in Minutes", themeConfig: {
+    base: "/simple-feature-toggles", title: "simple-feature-toggles", description: "Feature Toggles in Minutes", themeConfig: {
         nav: [{text: 'Home', link: '/'}, {text: 'Guide', link: '/guide'}],
 
         sidebar: {
@@ -20,7 +20,7 @@ export default defineConfig({
             }]
         },
 
-        socialLinks: [{icon: 'github', link: 'https://github.com/sebastian-struecker/insta-toggles'}]
+        socialLinks: [{icon: 'github', link: 'https://github.com/sebastian-struecker/simple-feature-toggles'}]
     },
     head: [
         ['link', { rel: 'icon', href: 'icons/favicon.ico' }]

@@ -1,4 +1,4 @@
-package insta_toggles.api
+package simple_feature_toggles.api
 
 import io.quarkus.arc.profile.UnlessBuildProfile
 import io.quarkus.security.spi.runtime.AuthorizationController

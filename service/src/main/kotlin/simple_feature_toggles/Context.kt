@@ -1,4 +1,4 @@
-package insta_toggles
+package simple_feature_toggles
 
 class Context(
     val id: Long, val key: String, var name: String, var isActive: Boolean

@@ -231,4 +231,4 @@ components:
     SecurityScheme:
       type: openIdConnect
       description: Authentication
-      openIdConnectUrl: http://localhost:8000/realms/insta-toggles/.well-known/openid-configuration
+      openIdConnectUrl: http://localhost:8000/realms/simple-feature-toggles/.well-known/openid-configuration

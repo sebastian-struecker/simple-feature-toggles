@@ -1,6 +1,6 @@
-package insta_toggles.repository
+package simple_feature_toggles.repository
 
-import insta_toggles.FeatureToggle
+import simple_feature_toggles.FeatureToggle
 import jakarta.persistence.*
 import org.hibernate.annotations.OnDelete
 import org.hibernate.annotations.OnDeleteAction

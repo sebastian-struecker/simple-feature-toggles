@@ -1,4 +1,4 @@
-# What is insta-toggles?
+# What is simple-feature-toggles?
 
-**insta-toggles** is a small service for integrating Feature Toggles into existing infrastructures.
+**simple-feature-toggles** is a small service for integrating Feature Toggles into existing infrastructures.
 

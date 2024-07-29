@@ -22,7 +22,7 @@ jobs:
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@0.20.0
         with:
-          image-ref: 'ghcr.io/sebastian-struecker/insta-toggles/service:${{ steps.project.outputs.version }}'
+          image-ref: 'ghcr.io/sebastian-struecker/simple-feature-toggles/service:${{ steps.project.outputs.version }}'
           format: 'sarif'
           output: 'trivy-results.sarif'
 

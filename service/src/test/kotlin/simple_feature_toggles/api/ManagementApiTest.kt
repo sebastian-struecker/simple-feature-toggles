@@ -1,11 +1,11 @@
-package insta_toggles.api
+package simple_feature_toggles.api
 
-import insta_toggles.Context
-import insta_toggles.ContextName
-import insta_toggles.FeatureToggle
-import insta_toggles.api.models.CreateFeatureToggleRequest
-import insta_toggles.api.models.FeatureToggleUpdateRequest
-import insta_toggles.repository.FeatureTogglePanacheRepository
+import simple_feature_toggles.Context
+import simple_feature_toggles.ContextName
+import simple_feature_toggles.FeatureToggle
+import simple_feature_toggles.api.models.CreateFeatureToggleRequest
+import simple_feature_toggles.api.models.FeatureToggleUpdateRequest
+import simple_feature_toggles.repository.FeatureTogglePanacheRepository
 import io.quarkus.test.InjectMock
 import io.quarkus.test.junit.QuarkusTest
 import io.quarkus.test.security.TestSecurity

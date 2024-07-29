@@ -1,4 +1,4 @@
-package insta_toggles.api
+package simple_feature_toggles.api
 
 import jakarta.enterprise.context.ApplicationScoped
 import jakarta.ws.rs.NotAuthorizedException

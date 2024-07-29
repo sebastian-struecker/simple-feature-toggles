@@ -1,7 +1,7 @@
-package insta_toggles.repository
+package simple_feature_toggles.repository
 
-import insta_toggles.Context
-import insta_toggles.ContextName
+import simple_feature_toggles.Context
+import simple_feature_toggles.ContextName
 import jakarta.persistence.*
 
 

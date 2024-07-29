@@ -1,10 +1,10 @@
-package insta_toggles.repository
+package simple_feature_toggles.repository
 
 
-import insta_toggles.ContextName
-import insta_toggles.FeatureToggle
-import insta_toggles.FeatureToggleRepository
-import insta_toggles.api.models.FeatureToggleUpdateRequest
+import simple_feature_toggles.ContextName
+import simple_feature_toggles.FeatureToggle
+import simple_feature_toggles.FeatureToggleRepository
+import simple_feature_toggles.api.models.FeatureToggleUpdateRequest
 import io.quarkus.hibernate.reactive.panache.Panache
 import io.quarkus.hibernate.reactive.panache.PanacheRepository
 import io.quarkus.panache.common.Parameters

@@ -1,5 +1,6 @@
-package insta_toggles.api
+package simple_feature_toggles.api
 
+<<<<<<<< HEAD:service/src/main/kotlin/simple_feature_toggles/api/ManagementApi.kt
 import insta_toggles.Context
 import insta_toggles.FeatureToggle
 import insta_toggles.FeatureToggleRepository
@@ -7,6 +8,16 @@ import insta_toggles.api.models.ContextApiModel
 import insta_toggles.api.models.CreateFeatureToggleRequest
 import insta_toggles.api.models.FeatureToggleResponse
 import insta_toggles.api.models.FeatureToggleUpdateRequest
+========
+import simple_feature_toggles.Context
+import simple_feature_toggles.ContextName
+import simple_feature_toggles.FeatureToggle
+import simple_feature_toggles.FeatureToggleRepository
+import simple_feature_toggles.api.models.ContextApiModel
+import simple_feature_toggles.api.models.CreateFeatureToggleRequest
+import simple_feature_toggles.api.models.FeatureToggleResponse
+import simple_feature_toggles.api.models.FeatureToggleUpdateRequest
+>>>>>>>> 2c05731 (Rename project to: simple-feature-toggles):service/src/main/kotlin/simple_feature_toggles/api/FeatureToggleApi.kt
 import io.quarkus.logging.Log
 import io.smallrye.mutiny.Multi
 import io.smallrye.mutiny.Uni

@@ -3,7 +3,7 @@
 layout: home
 
 hero:
-  name: "insta-toggles"
+  name: "simple-feature-toggles"
   text: "Simple Feature Toggles for your applications"
   tagline: Ready to use in minutes
   actions:

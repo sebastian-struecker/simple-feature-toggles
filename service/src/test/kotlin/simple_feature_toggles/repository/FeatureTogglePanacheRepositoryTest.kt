@@ -1,11 +1,11 @@
-package insta_toggles.repository
+package simple_feature_toggles.repository
 
 
-import insta_toggles.Context
-import insta_toggles.ContextName
-import insta_toggles.FeatureToggle
-import insta_toggles.api.models.ContextApiModel
-import insta_toggles.api.models.FeatureToggleUpdateRequest
+import simple_feature_toggles.Context
+import simple_feature_toggles.ContextName
+import simple_feature_toggles.FeatureToggle
+import simple_feature_toggles.api.models.ContextApiModel
+import simple_feature_toggles.api.models.FeatureToggleUpdateRequest
 import io.quarkus.test.TestReactiveTransaction
 import io.quarkus.test.junit.QuarkusTest
 import io.quarkus.test.vertx.RunOnVertxContext

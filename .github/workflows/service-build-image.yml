@@ -49,4 +49,4 @@ jobs:
           context: .
           file: ./service/src/main/docker/Dockerfile
           push: true
-          tags: ghcr.io/sebastian-struecker/insta-toggles/service:${{ steps.project.outputs.version }}
+          tags: ghcr.io/sebastian-struecker/simple-feature-toggles/service:${{ steps.project.outputs.version }}

@@ -1,4 +1,4 @@
-package insta_toggles.api
+package simple_feature_toggles.api
 
 object DefaultRoles {
     const val ADMIN: String = "feature_toggle_admin"

@@ -1,12 +1,12 @@
-# insta-toggles
+# simple-feature-toggles
 
-[![License](https://img.shields.io/github/license/sebastian-struecker/insta-toggles.svg)](https://github.com/sebastian-struecker/insta-toggles/blob/main/LICENSE)
-[![Documentation](https://img.shields.io/badge/insta--toggles-docs-white.svg)](https://sebastian-struecker.github.io/insta-toggles)
-[![CI](https://github.com/sebastian-struecker/insta-toggles/actions/workflows/service-build-image.yml/badge.svg)](https://github.com/sebastian-struecker/insta-toggles/actions/workflows/service-build-image.yml)
-[![codecov](https://codecov.io/gh/sebastian-struecker/insta-toggles/graph/badge.svg?token=QODH0DNVSL)](https://codecov.io/gh/sebastian-struecker/insta-toggles)
-[![Known Vulnerabilities](https://snyk.io/test/github/sebastian-struecker/insta-toggles/badge.svg)](https://snyk.io/test/github/sebastian-struecker/insta-toggles)
+[![License](https://img.shields.io/github/license/sebastian-struecker/simple-feature-toggles.svg)](https://github.com/sebastian-struecker/simple-feature-toggles/blob/main/LICENSE)
+[![Documentation](https://img.shields.io/badge/simple---feature---toggles-docs-white.svg)](https://sebastian-struecker.github.io/simple-feature-toggles)
+[![CI](https://github.com/sebastian-struecker/simple-feature-toggles/actions/workflows/service-build-image.yml/badge.svg)](https://github.com/sebastian-struecker/simple-feature-toggles/actions/workflows/service-build-image.yml)
+[![codecov](https://codecov.io/gh/sebastian-struecker/simple-feature-toggles/graph/badge.svg?token=QODH0DNVSL)](https://codecov.io/gh/sebastian-struecker/simple-feature-toggles)
+[![Known Vulnerabilities](https://snyk.io/test/github/sebastian-struecker/simple-feature-toggles/badge.svg)](https://snyk.io/test/github/sebastian-struecker/simple-feature-toggles)
 
-## Why use insta-toggles
+## Why use simple-feature-toggles
 - Simple service for feature toggles
 - Small and fast, even for many users
 - Enables secure management of features
@@ -17,4 +17,4 @@
 - Authentication provider, like Keycloak
 
 ## Documentation
-https://sebastian-struecker.github.io/insta-toggles
+https://sebastian-struecker.github.io/simple-feature-toggles

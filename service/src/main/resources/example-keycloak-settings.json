@@ -1,6 +1,6 @@
 {
   "id": "3f250268-9af4-4f27-9e42-445840e11baa",
-  "realm": "insta-toggles",
+  "realm": "simple-feature-toggles",
   "notBefore": 0,
   "defaultSignatureAlgorithm": "RS256",
   "revokeRefreshToken": false,
@@ -93,7 +93,7 @@
       },
       {
         "id": "eede259b-1307-40c7-9f4f-c8f798b48e15",
-        "name": "default-roles-insta-toggles",
+        "name": "default-roles-simple-feature-toggles",
         "description": "${role_default-roles}",
         "composite": true,
         "composites": {
@@ -326,7 +326,7 @@
           "attributes": {}
         }
       ],
-      "insta-toggles": [],
+      "simple-feature-toggles": [],
       "security-admin-console": [],
       "admin-cli": [],
       "account-console": [],
@@ -434,7 +434,7 @@
   "groups": [],
   "defaultRole": {
     "id": "eede259b-1307-40c7-9f4f-c8f798b48e15",
-    "name": "default-roles-insta-toggles",
+    "name": "default-roles-simple-feature-toggles",
     "description": "${role_default-roles}",
     "composite": true,
     "clientRole": false,
@@ -560,13 +560,13 @@
       "clientId": "account",
       "name": "${client_account}",
       "rootUrl": "${authBaseUrl}",
-      "baseUrl": "/realms/insta-toggles/account/",
+      "baseUrl": "/realms/simple-feature-toggles/account/",
       "surrogateAuthRequired": false,
       "enabled": true,
       "alwaysDisplayInConsole": false,
       "clientAuthenticatorType": "client-secret",
       "redirectUris": [
-        "/realms/insta-toggles/account/*"
+        "/realms/simple-feature-toggles/account/*"
       ],
       "webOrigins": [],
       "notBefore": 0,
@@ -604,13 +604,13 @@
       "clientId": "account-console",
       "name": "${client_account-console}",
       "rootUrl": "${authBaseUrl}",
-      "baseUrl": "/realms/insta-toggles/account/",
+      "baseUrl": "/realms/simple-feature-toggles/account/",
       "surrogateAuthRequired": false,
       "enabled": true,
       "alwaysDisplayInConsole": false,
       "clientAuthenticatorType": "client-secret",
       "redirectUris": [
-        "/realms/insta-toggles/account/*"
+        "/realms/simple-feature-toggles/account/*"
       ],
       "webOrigins": [],
       "notBefore": 0,
@@ -773,13 +773,13 @@
       "clientId": "security-admin-console",
       "name": "${client_security-admin-console}",
       "rootUrl": "${authAdminUrl}",
-      "baseUrl": "/admin/insta-toggles/console/",
+      "baseUrl": "/admin/simple-feature-toggles/console/",
       "surrogateAuthRequired": false,
       "enabled": true,
       "alwaysDisplayInConsole": false,
       "clientAuthenticatorType": "client-secret",
       "redirectUris": [
-        "/admin/insta-toggles/console/*"
+        "/admin/simple-feature-toggles/console/*"
       ],
       "webOrigins": [
         "+"
@@ -835,8 +835,8 @@
     },
     {
       "id": "e16393d3-05dd-44ee-8bb0-79eabe277a71",
-      "clientId": "insta-toggles",
-      "name": "insta-toggles",
+      "clientId": "simple-feature-toggles",
+      "name": "simple-feature-toggles",
       "description": "",
       "rootUrl": "http://localhost:3000/",
       "adminUrl": "http://localhost:3000/",
@@ -1325,7 +1325,7 @@
           "protocolMapper": "oidc-audience-mapper",
           "consentRequired": false,
           "config": {
-            "included.client.audience": "insta-toggles",
+            "included.client.audience": "simple-feature-toggles",
             "id.token.claim": "true",
             "lightweight.claim": "false",
             "introspection.token.claim": "true",

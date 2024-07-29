@@ -1,16 +1,16 @@
 services:
   service:
-    image: ghcr.io/sebastian-struecker/insta-toggles/service:1.0.0-snapshot
+    image: ghcr.io/sebastian-struecker/simple-feature-toggles/service:1.0.0-snapshot
     environment:
       DATASOURCE_DATABASE: service
       DATASOURCE_USERNAME: service
       DATASOURCE_PASSWORD: service
       DATASOURCE_HOST: service_database
       DATASOURCE_PORT: 5432
-      OIDC_AUTH_SERVER_URL: http://host.docker.internal:8000/realms/insta-toggles
-      OIDC_CLIENT_ID: insta-toggles
-      OIDC_TOKEN_JWT_ISSUER: http://localhost:8000/realms/insta-toggles
-      OIDC_TOKEN_JWT_AUDIENCE: insta-toggles
+      OIDC_AUTH_SERVER_URL: http://host.docker.internal:8000/realms/simple-feature-toggles
+      OIDC_CLIENT_ID: simple-feature-toggles
+      OIDC_TOKEN_JWT_ISSUER: http://localhost:8000/realms/simple-feature-toggles
+      OIDC_TOKEN_JWT_AUDIENCE: simple-feature-toggles
       API_KEYS: test
     ports:
       - 8080:8080
