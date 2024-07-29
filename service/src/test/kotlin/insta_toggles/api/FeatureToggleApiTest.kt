@@ -41,8 +41,7 @@ class FeatureToggleApiTest {
     }
 
     companion object {
-        const val FEATURE_TOGGLE_URL: String = "/feature-toggle"
-        const val FEATURE_TOGGLES_URL: String = "/feature-toggles"
+        const val BASE_URL: String = "/feature-toggles"
     }
 
     @Test
@@ -293,25 +292,25 @@ class FeatureToggleApiTest {
 
     private fun getAllActiveFeaturesRequest(context: String = "testing", apiKey: String? = "test"): Response {
         if (apiKey == null) {
-            return given().`when`().get("$FEATURE_TOGGLES_URL/$context")
+            return given().`when`().get("$BASE_URL/$context")
         }
         val headers = Headers.headers(Header("x-api-key", apiKey))
-        return given().`when`().headers(headers).get("$FEATURE_TOGGLES_URL/$context")
+        return given().`when`().headers(headers).get("$BASE_URL/$context")
     }
 
-    private fun getAllRequest(): Response = given().`when`().get(FEATURE_TOGGLES_URL)
+    private fun getAllRequest(): Response = given().`when`().get(BASE_URL)
 
-    private fun getByIdRequest(id: Long = 1): Response = given().`when`().get("$FEATURE_TOGGLE_URL/$id")
+    private fun getByIdRequest(id: Long = 1): Response = given().`when`().get("$BASE_URL/$id")
 
     private fun createRequest(request: CreateFeatureToggleRequest): Response =
-        given().`when`().body(request).contentType(ContentType.JSON).post(FEATURE_TOGGLES_URL)
+        given().`when`().body(request).contentType(ContentType.JSON).post(BASE_URL)
 
     private fun partialUpdateRequest(request: FeatureToggleUpdateRequest, id: Long = 1): Response =
-        given().`when`().body(request).contentType(ContentType.JSON).patch("$FEATURE_TOGGLE_URL/$id")
+        given().`when`().body(request).contentType(ContentType.JSON).patch("$BASE_URL/$id")
 
-    private fun deleteByIdRequest(id: Long = 1): Response = given().`when`().delete("$FEATURE_TOGGLE_URL/$id")
+    private fun deleteByIdRequest(id: Long = 1): Response = given().`when`().delete("$BASE_URL/$id")
 
-    private fun deleteAllRequest(): Response = given().`when`().delete(FEATURE_TOGGLES_URL)
+    private fun deleteAllRequest(): Response = given().`when`().delete(BASE_URL)
 
     private fun feature() = FeatureToggle(
         1L, "key", "name", "description", listOf(

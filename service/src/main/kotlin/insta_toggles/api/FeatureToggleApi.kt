@@ -37,7 +37,7 @@ import org.jboss.resteasy.reactive.NoCache
 import org.jboss.resteasy.reactive.RestResponse
 
 @ApplicationScoped
-@Path("")
+@Path("feature-toggles")
 @Tag(name = "Feature Toggle API", description = "API for managing feature toggles")
 @SecurityScheme(
     securitySchemeName = "JWT", type = SecuritySchemeType.HTTP, scheme = "bearer", bearerFormat = "JWT"
@@ -55,7 +55,7 @@ class FeatureToggleApi(
     @GET
     @NoCache
     @Produces(MediaType.APPLICATION_JSON)
-    @Path("/feature-toggles/{context}")
+    @Path("{context}")
     @SecurityRequirement(name = "APIKEY")
     @Operation(operationId = "getAllActiveFeatures", summary = "Get all active features for a given context")
     @APIResponses(
@@ -81,7 +81,6 @@ class FeatureToggleApi(
     @NoCache
     @Produces(MediaType.APPLICATION_JSON)
     @RolesAllowed(DefaultRoles.ADMIN, DefaultRoles.RELEASE_MANAGER, DefaultRoles.VIEWER)
-    @Path("/feature-toggles")
     @SecurityRequirement(name = "JWT")
     @Operation(operationId = "getAll", summary = "Get all feature toggles")
     @APIResponses(
@@ -101,7 +100,7 @@ class FeatureToggleApi(
     @NoCache
     @Produces(MediaType.APPLICATION_JSON)
     @RolesAllowed(DefaultRoles.ADMIN, DefaultRoles.RELEASE_MANAGER, DefaultRoles.VIEWER)
-    @Path("/feature-toggle/{id}")
+    @Path("{id}")
     @SecurityRequirement(name = "JWT")
     @Operation(operationId = "getById", summary = "Get a feature toggle by ID")
     @APIResponses(
@@ -112,7 +111,7 @@ class FeatureToggleApi(
         ), APIResponse(responseCode = "404", description = "Feature toggle not found")]
     )
     fun getById(id: Long): Uni<RestResponse<FeatureToggleResponse>> {
-        Log.debug("[FeatureToggleApi] Calling method: get url: /feature-toggle/$id")
+        Log.debug("[FeatureToggleApi] Calling method: get url: /feature-toggles/$id")
         return featureToggleRepository.getById(id).onItem().transform {
             RestResponse.ok(it.toResponse())
         }.onFailure().transform { NotFoundException() }
@@ -122,7 +121,6 @@ class FeatureToggleApi(
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @RolesAllowed(DefaultRoles.ADMIN)
-    @Path("/feature-toggles")
     @SecurityRequirement(name = "JWT")
     @Operation(operationId = "create", summary = "Create a new feature toggle")
     @APIResponses(
@@ -142,7 +140,7 @@ class FeatureToggleApi(
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @RolesAllowed(DefaultRoles.ADMIN)
-    @Path("/feature-toggle/{id}")
+    @Path("{id}")
     @SecurityRequirement(name = "JWT")
     @Operation(operationId = "partialUpdate", summary = "Partially update a feature toggle by ID")
     @APIResponses(
@@ -157,7 +155,7 @@ class FeatureToggleApi(
     fun partialUpdate(
         id: Long, updates: FeatureToggleUpdateRequest
     ): Uni<RestResponse<FeatureToggleResponse>> {
-        Log.debug("[FeatureToggleApi] Calling method: patch url: /feature-toggle/$id body: $updates")
+        Log.debug("[FeatureToggleApi] Calling method: patch url: /feature-toggles/$id body: $updates")
         return featureToggleRepository.update(id, updates).onItem().transform {
             RestResponse.ok(it.toResponse())
         }.onFailure().transform { NotFoundException() }
@@ -165,7 +163,7 @@ class FeatureToggleApi(
 
     @DELETE
     @RolesAllowed(DefaultRoles.ADMIN)
-    @Path("/feature-toggle/{id}")
+    @Path("{id}")
     @SecurityRequirement(name = "JWT")
     @Operation(operationId = "deleteById", summary = "Delete a feature toggle by ID")
     @APIResponses(
@@ -174,7 +172,7 @@ class FeatureToggleApi(
         ), APIResponse(responseCode = "404", description = "Feature toggle not found")]
     )
     fun deleteById(id: Long): Uni<RestResponse<Unit>> {
-        Log.debug("[FeatureToggleApi] Calling method: delete url: /feature-toggle/$id")
+        Log.debug("[FeatureToggleApi] Calling method: delete url: /feature-toggles/$id")
         return featureToggleRepository.removeById(id).onItem().transform {
             RestResponse.ok(it)
         }.onFailure().transform { NotFoundException() }
@@ -182,7 +180,6 @@ class FeatureToggleApi(
 
     @DELETE
     @RolesAllowed(DefaultRoles.ADMIN)
-    @Path("/feature-toggles")
     @SecurityRequirement(name = "JWT")
     @Operation(operationId = "deleteAll", summary = "Delete all feature toggles")
     @APIResponses(
