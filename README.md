@@ -1,10 +1,12 @@
 # simple-feature-toggles
 
-[![License](https://img.shields.io/github/license/sebastian-struecker/simple-feature-toggles.svg)](https://github.com/sebastian-struecker/simple-feature-toggles/blob/main/LICENSE)
-[![Documentation](https://img.shields.io/badge/simple---feature---toggles-docs-white.svg)](https://sebastian-struecker.github.io/simple-feature-toggles)
-[![CI](https://github.com/sebastian-struecker/simple-feature-toggles/actions/workflows/service-build-image.yml/badge.svg)](https://github.com/sebastian-struecker/simple-feature-toggles/actions/workflows/service-build-image.yml)
-[![codecov](https://codecov.io/gh/sebastian-struecker/simple-feature-toggles/graph/badge.svg?token=QODH0DNVSL)](https://codecov.io/gh/sebastian-struecker/simple-feature-toggles)
-[![Known Vulnerabilities](https://snyk.io/test/github/sebastian-struecker/simple-feature-toggles/badge.svg)](https://snyk.io/test/github/sebastian-struecker/simple-feature-toggles)
+[![Documentation](https://img.shields.io/badge/Documentation-F33A6A.svg)](https://sebastian-struecker.github.io/simple-feature-toggles)
+[![License](https://img.shields.io/github/license/sebastian-struecker/simple-feature-toggles?color=pink)](https://github.com/sebastian-struecker/simple-feature-toggles/blob/main/LICENSE)
+
+[![Codecov](https://codecov.io/gh/sebastian-struecker/simple-feature-toggles/graph/badge.svg?token=QODH0DNVSL)](https://codecov.io/gh/sebastian-struecker/simple-feature-toggles)
+[![Snyk](https://snyk.io/test/github/sebastian-struecker/simple-feature-toggles/badge.svg)](https://snyk.io/test/github/sebastian-struecker/simple-feature-toggles)
+
+[![Service - CI](https://github.com/sebastian-struecker/simple-feature-toggles/actions/workflows/service-build-image.yml/badge.svg)](https://github.com/sebastian-struecker/simple-feature-toggles/actions/workflows/service-build-image.yml)
 
 ## Why use simple-feature-toggles
 - Simple service for feature toggles
@@ -18,3 +20,6 @@
 
 ## Documentation
 https://sebastian-struecker.github.io/simple-feature-toggles
+
+
+## License

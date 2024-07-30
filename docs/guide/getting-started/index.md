@@ -7,7 +7,6 @@ Get started with simple-feature-toggles on your machine.
 Make sure you have a running:
 - [Docker](https://www.docker.com/) environment.
 - [PostgreSQL](https://www.postgresql.org/) instance version 16 or higher.
-- Authentication provider, like [Keycloak](https://www.keycloak.org/).
 
 ## Decide how to use simple-feature-toggles
 
