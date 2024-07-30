@@ -6,8 +6,7 @@ on:
       - 'main'
       - 'feat/**'
     paths:
-      - '.github/**'
-      - 'README.md'
+      - '.github/service-check-code-quality.yml'
       - 'service/**'
   pull_request:
     types: [ opened, reopened ]

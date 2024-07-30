@@ -5,8 +5,7 @@ on:
     branches:
       - 'main'
     paths:
-      - '.github/**'
-      - 'README.md'
+      - '.github/service-build-image.yml'
       - 'service/**'
 
 permissions:
