@@ -6,7 +6,7 @@
 [![Codecov](https://codecov.io/gh/sebastian-struecker/simple-feature-toggles/graph/badge.svg?token=QODH0DNVSL)](https://codecov.io/gh/sebastian-struecker/simple-feature-toggles)
 [![Snyk](https://snyk.io/test/github/sebastian-struecker/simple-feature-toggles/badge.svg)](https://snyk.io/test/github/sebastian-struecker/simple-feature-toggles)
 
-[![Service - CI](https://github.com/sebastian-struecker/simple-feature-toggles/actions/workflows/service-build-image.yml/badge.svg)](https://github.com/sebastian-struecker/simple-feature-toggles/actions/workflows/service-build-image.yml)
+[![CI](https://github.com/sebastian-struecker/simple-feature-toggles/actions/workflows/build-image.yml/badge.svg)](https://github.com/sebastian-struecker/simple-feature-toggles/actions/workflows/build-image.yml)
 
 ## Why use simple-feature-toggles
 - Simple service for feature toggles
@@ -17,9 +17,3 @@
 ## Requirements
 - PostgreSQL with version 16 or higher
 - Authentication provider, like Keycloak
-
-## Documentation
-https://sebastian-struecker.github.io/simple-feature-toggles
-
-
-## License

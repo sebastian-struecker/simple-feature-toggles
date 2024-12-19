@@ -9,7 +9,7 @@ hero:
   actions:
     - theme: brand
       text: Quickstart
-      link: /getting-started/service
+      link: /getting-started
     - theme: alt
       text: Configuration
       link: /configuration-references

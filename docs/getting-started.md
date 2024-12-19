@@ -1,4 +1,4 @@
-# Service <Badge type="warning" text="1.0.0-SNAPSHOT" />
+# Getting Started <Badge type="warning" text="1.0.0-SNAPSHOT" />
 
 Get started with simple-feature-toggles on your machine.
 
