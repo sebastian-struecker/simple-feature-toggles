@@ -20,6 +20,26 @@ quarkus:
   tls:
     trust-all: true
 
+  filter:
+    others:
+      header:
+        Cache-Control: no-cache
+      matches: /.*
+      methods: GET
+      order: 0
+      static:
+        header:
+          Cache-Control: max-age=31536000
+        matches: /static/.+
+        methods: GET
+        order: 1
+
+  quinoa:
+    enable-spa-routing: true
+    dev-server:
+      port: 3000
+    build-dir: dist
+
 api:
   key:
     values: ${SERVICE_API_KEY_VALUES}

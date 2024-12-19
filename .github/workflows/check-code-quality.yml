@@ -1,15 +1,13 @@
-name: Service - Check Code Quality
+name: Check Code Quality
 
 on:
   push:
     branches:
       - 'main'
       - 'feat/**'
-    paths:
-      - '.github/service-check-code-quality.yml'
-      - 'service/**'
   pull_request:
     types: [ opened, reopened ]
+  workflow_dispatch:
 
 jobs:
   test:
@@ -25,7 +23,7 @@ jobs:
           cache: maven
 
       - name: Maven Test
-        run: ./service/mvnw -B verify -f ./service/pom.xml
+        run: ./mvnw -B verify -f ./pom.xml
 
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@v4.0.1

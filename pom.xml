@@ -3,7 +3,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>simple-feature-toggles</groupId>
-    <artifactId>service</artifactId>
+    <artifactId>simple-feature-toggles</artifactId>
     <version>1.0.0-SNAPSHOT</version>
 
     <properties>
@@ -76,6 +76,11 @@
         <dependency>
             <groupId>io.quarkus</groupId>
             <artifactId>quarkus-oidc</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.quarkiverse.quinoa</groupId>
+            <artifactId>quarkus-quinoa</artifactId>
+            <version>2.5.1</version>
         </dependency>
 
         <!-- Test -->
@@ -226,7 +231,7 @@
                         </goals>
                         <configuration>
                             <exclClassLoaders>*QuarkusClassLoader</exclClassLoaders>
-                            <destFile>${project.build.directory}/jacoco-quarkus.exec</destFile>
+                            <destFile>target/jacoco-quarkus.exec</destFile>
                             <append>true</append>
                         </configuration>
                     </execution>
@@ -243,7 +248,7 @@
                             <goal>prepare-agent-integration</goal>
                         </goals>
                         <configuration>
-                            <destFile>${project.build.directory}/jacoco-quarkus.exec</destFile>
+                            <destFile>target/jacoco-quarkus.exec</destFile>
                             <append>true</append>
                         </configuration>
                     </execution>
@@ -254,8 +259,8 @@
                             <goal>report</goal>
                         </goals>
                         <configuration>
-                            <dataFile>${project.build.directory}/jacoco-quarkus.exec</dataFile>
-                            <outputDirectory>${project.build.directory}/jacoco-report</outputDirectory>
+                            <dataFile>target/jacoco-quarkus.exec</dataFile>
+                            <outputDirectory>target/jacoco-report</outputDirectory>
                         </configuration>
                     </execution>
                 </executions>
