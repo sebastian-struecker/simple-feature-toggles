@@ -1,6 +1,6 @@
-# Service
+# Service <Badge type="warning" text="1.0.0-SNAPSHOT" />
 
-Get started with the simple-feature-toggles **Service** container.
+Get started with simple-feature-toggles on your machine.
 
 ## Before you start
 
@@ -24,4 +24,5 @@ docker run -p 8080:8080 \
 ghcr.io/sebastian-struecker/simple-feature-toggles/service:1.0.0-snapshot
 ```
 
-## Configuration References
+> More configurations can be found [here](/configuration-references)
+

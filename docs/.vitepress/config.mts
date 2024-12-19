@@ -5,16 +5,22 @@ export default defineConfig({
     title: "simple-feature-toggles",
     description: "Feature Toggles in Minutes",
     themeConfig: {
-        nav: [{text: 'Home', link: '/'}, {text: 'Guide', link: '/guide/getting-started'}],
+        search: {
+            provider: 'local'
+        },
+
+        nav: [{text: 'Home', link: '/'}, {text: 'Guide', link: '/getting-started/service'}],
 
         sidebar: [{
-            text: 'Getting Started',
-            link: '/guide/getting-started/',
-            items: [{text: 'Service', link: '/guide/getting-started/service'}, {
-                text: 'API Client', link: '/guide/getting-started/api-client'
-            }, {text: 'UI', link: '/guide/getting-started/ui'}]
+            text: 'Getting Started', items: [{text: 'Service', link: '/getting-started/service'}, {
+                text: 'API Client', link: '/getting-started/api-client'
+            }, {text: 'UI', link: '/getting-started/ui'}]
         }, {
             text: 'Configuration References', link: '/configuration-references'
+        }, {
+            text: 'API References', link: '/api-references'
+        }, {
+            text: 'Test', link: '/test'
         }],
 
         socialLinks: [{icon: 'github', link: 'https://github.com/sebastian-struecker/simple-feature-toggles'}]
