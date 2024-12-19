@@ -1,6 +1,6 @@
-# Configuration References
+# Configuration References <Badge type="warning" text="1.0.0-SNAPSHOT" />
 
-## Service Configurations <Badge type="warning" text="1.0.0-SNAPSHOT" />
+## Backend Configurations
 
 | Configuration property           | Description                                                                                                                                                                               | Type     | Default |
 |----------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|----------|---------|

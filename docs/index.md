@@ -5,7 +5,7 @@ layout: home
 hero:
   name: "simple-feature-toggles"
   text: "Easy to integrate Feature Toggles for your applications"
-  tagline: Ready to use in minutes
+  tagline: Ready to use in minutes 
   actions:
     - theme: brand
       text: Quickstart
