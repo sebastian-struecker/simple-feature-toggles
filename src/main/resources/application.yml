@@ -17,6 +17,7 @@ quarkus:
       headers: origin, host, referer, accept, accept-encoding, accept-language, authorization, content-type, x-api-key
       access-control-allow-credentials: true
       methods: GET,PUT,POST,PATCH,DELETE
+
   tls:
     trust-all: true
 
@@ -42,19 +43,17 @@ quarkus:
 
 api:
   key:
-    values: ${SERVICE_API_KEY_VALUES}
+    values: ${API_KEY_VALUES}
   authorization:
-    enable: ${SERVICE_API_AUTHORIZATION_ENABLE:true}
-
-use-testing-context: ${SERVICE_USE_TESTING_CONTEXT:false}
+    enable: ${API_AUTHORIZATION_ENABLE:true}
 
 "%prod":
   quarkus:
     datasource:
-      username: ${SERVICE_DATASOURCE_USERNAME}
-      password: ${SERVICE_DATASOURCE_PASSWORD}
+      username: ${DATASOURCE_USERNAME}
+      password: ${DATASOURCE_PASSWORD}
       reactive:
-        url: vertx-reactive:postgresql://${SERVICE_DATASOURCE_HOST}:${SERVICE_DATASOURCE_PORT}/${SERVICE_DATASOURCE_DATABASE}
+        url: vertx-reactive:postgresql://${DATASOURCE_HOST}:${DATASOURCE_PORT}/${DATASOURCE_DATABASE}
     hibernate-orm:
       database:
         generation:
@@ -62,20 +61,22 @@ use-testing-context: ${SERVICE_USE_TESTING_CONTEXT:false}
           create-schemas: true
 
     oidc:
-      auth-server-url: ${SERVICE_OIDC_AUTH_SERVER_URL}
-      client-id: ${SERVICE_OIDC_CLIENT_ID}
+      auth-server-url: ${OIDC_AUTH_SERVER_URL}
+      client-id: ${OIDC_CLIENT_ID}
       token:
-        issuer: ${SERVICE_OIDC_TOKEN_JWT_ISSUER}
-        audience: ${SERVICE_OIDC_TOKEN_JWT_AUDIENCE}
+        issuer: ${OIDC_TOKEN_JWT_ISSUER}
+        audience: ${OIDC_TOKEN_JWT_AUDIENCE}
 
 "%test":
   quarkus:
+    quinoa: false
+
     datasource:
       devservices:
         enabled: true
         port: 5432
-        username: service
-        password: service
+        username: sft
+        password: sft
     hibernate-orm:
       database:
         generation: drop-and-create
@@ -92,21 +93,29 @@ use-testing-context: ${SERVICE_USE_TESTING_CONTEXT:false}
 
 "%dev":
   quarkus:
+    quinoa: false
+
     log:
       level:
         category:
-          "insta_toggles":
+          "simple_feature_toggles":
             level: DEBUG
 
     datasource:
       devservices:
         enabled: true
         port: 5432
-        username: service
-        password: service
+        username: sft
+        password: sft
     hibernate-orm:
       database:
         generation: drop-and-create
+
+    oidc:
+      client-id: simple-feature-toggles
+      token:
+        issuer: http://localhost:8000/realms/simple-feature-toggles
+        audience: simple-feature-toggles
 
     keycloak:
       devservices:

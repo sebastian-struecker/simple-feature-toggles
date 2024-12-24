@@ -1,9 +1,9 @@
 package simple_feature_toggles.repository
 
-import simple_feature_toggles.FeatureToggle
 import jakarta.persistence.*
 import org.hibernate.annotations.OnDelete
 import org.hibernate.annotations.OnDeleteAction
+import simple_feature_toggles.FeatureToggle
 
 
 @Entity
@@ -29,7 +29,8 @@ class FeatureToggleEntity(
     constructor() : this(null, "", "", "", mutableListOf())
 
     fun toDomain(): FeatureToggle {
-        return FeatureToggle(id ?: throw IllegalStateException("ID cannot be null"),
+        return FeatureToggle(
+            id ?: throw IllegalStateException("ID cannot be null"),
             key,
             name,
             description,

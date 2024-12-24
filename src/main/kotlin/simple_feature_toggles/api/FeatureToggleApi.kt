@@ -20,12 +20,13 @@ import org.eclipse.microprofile.openapi.annotations.tags.Tag
 import org.jboss.resteasy.reactive.NoCache
 import org.jboss.resteasy.reactive.RestResponse
 import simple_feature_toggles.Context
+import simple_feature_toggles.DefaultRoles
 import simple_feature_toggles.FeatureToggle
 import simple_feature_toggles.FeatureToggleRepository
 import simple_feature_toggles.api.models.ContextApiModel
 import simple_feature_toggles.api.models.CreateFeatureToggleRequest
 import simple_feature_toggles.api.models.FeatureToggleResponse
-import simple_feature_toggles.api.models.FeatureToggleUpdateRequest
+import simple_feature_toggles.api.models.UpdateFeatureToggleRequest
 
 @ApplicationScoped
 @Path("feature-toggles")
@@ -33,7 +34,7 @@ import simple_feature_toggles.api.models.FeatureToggleUpdateRequest
 @SecurityScheme(
     securitySchemeName = "JWT", type = SecuritySchemeType.HTTP, scheme = "bearer", bearerFormat = "JWT"
 )
-class ManagementApi(
+class FeatureToggleApi(
     val featureToggleRepository: FeatureToggleRepository
 ) {
 
@@ -92,8 +93,12 @@ class ManagementApi(
     )
     fun create(request: CreateFeatureToggleRequest): Uni<RestResponse<FeatureToggleResponse>> {
         Log.debug("[FeatureToggleApi] Calling method: post url: /feature-toggles body: $request")
-        return featureToggleRepository.create(request.key, request.name, request.description).onItem()
-            .transform { RestResponse.ok(it.toResponse()) }
+        try {
+            return featureToggleRepository.create(request.key, request.name, request.description).onFailure()
+                .transform { BadRequestException() }.onItem().transform { RestResponse.ok(it.toResponse()) }
+        } catch (e: IllegalArgumentException) {
+            throw BadRequestException(e)
+        }
     }
 
     @PATCH
@@ -113,7 +118,7 @@ class ManagementApi(
         )]
     )
     fun partialUpdate(
-        id: Long, updates: FeatureToggleUpdateRequest
+        id: Long, updates: UpdateFeatureToggleRequest
     ): Uni<RestResponse<FeatureToggleResponse>> {
         Log.debug("[FeatureToggleApi] Calling method: patch url: /feature-toggles/$id body: $updates")
         return featureToggleRepository.update(id, updates).onItem().transform {

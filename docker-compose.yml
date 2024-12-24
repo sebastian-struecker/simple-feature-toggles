@@ -38,7 +38,7 @@ services:
       KEYCLOAK_DATABASE_PASSWORD: keycloak
       KEYCLOAK_EXTRA_ARGS: --import-realm
     volumes:
-      - './service/src/main/resources:/opt/bitnami/keycloak/data/import'
+      - './src/main/resources:/opt/bitnami/keycloak/data/import'
     depends_on:
       - keycloak_database
     ports:

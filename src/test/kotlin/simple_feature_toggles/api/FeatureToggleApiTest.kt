@@ -4,7 +4,7 @@ import simple_feature_toggles.Context
 import simple_feature_toggles.ContextName
 import simple_feature_toggles.FeatureToggle
 import simple_feature_toggles.api.models.CreateFeatureToggleRequest
-import simple_feature_toggles.api.models.FeatureToggleUpdateRequest
+import simple_feature_toggles.api.models.UpdateFeatureToggleRequest
 import simple_feature_toggles.repository.FeatureTogglePanacheRepository
 import io.quarkus.test.InjectMock
 import io.quarkus.test.junit.QuarkusTest
@@ -18,10 +18,11 @@ import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito
+import simple_feature_toggles.DefaultRoles
 
 
 @QuarkusTest
-class ManagementApiTest {
+class FeatureToggleApiTest {
 
     @InjectMock
     lateinit var repositoryMock: FeatureTogglePanacheRepository
@@ -141,14 +142,14 @@ class ManagementApiTest {
 
     @Test
     fun partialUpdate_unauthorized_test() {
-        val request = FeatureToggleUpdateRequest(null, null, null)
+        val request = UpdateFeatureToggleRequest(null, null, null)
         partialUpdateRequest(request).then().statusCode(401)
     }
 
     @Test
     @TestSecurity(user = "admin", roles = [DefaultRoles.ADMIN])
     fun partialUpdate_notFound_test() {
-        val request = FeatureToggleUpdateRequest(null, null, null)
+        val request = UpdateFeatureToggleRequest(null, null, null)
         partialUpdateRequest(request).then().statusCode(404)
     }
 
@@ -156,7 +157,7 @@ class ManagementApiTest {
     @TestSecurity(user = "admin", roles = [DefaultRoles.ADMIN])
     fun partialUpdate_authorized_admin_test() {
         val feature = feature()
-        val request = FeatureToggleUpdateRequest(
+        val request = UpdateFeatureToggleRequest(
             "updated", "updated", null
         )
         Mockito.`when`(
@@ -176,14 +177,14 @@ class ManagementApiTest {
     @Test
     @TestSecurity(user = "viewer", roles = [DefaultRoles.VIEWER])
     fun partialUpdate_unauthorized_viewer_test() {
-        val request = FeatureToggleUpdateRequest(null, null, null)
+        val request = UpdateFeatureToggleRequest(null, null, null)
         partialUpdateRequest(request).then().statusCode(403)
     }
 
     @Test
     @TestSecurity(user = "release_manager", roles = [DefaultRoles.RELEASE_MANAGER])
     fun partialUpdate_unauthorized_release_manager_test() {
-        val request = FeatureToggleUpdateRequest(null, null, null)
+        val request = UpdateFeatureToggleRequest(null, null, null)
         partialUpdateRequest(request).then().statusCode(403)
     }
 
@@ -240,7 +241,7 @@ class ManagementApiTest {
     private fun createRequest(request: CreateFeatureToggleRequest): Response =
         given().`when`().body(request).contentType(ContentType.JSON).post(BASE_URL)
 
-    private fun partialUpdateRequest(request: FeatureToggleUpdateRequest, id: Long = 1): Response =
+    private fun partialUpdateRequest(request: UpdateFeatureToggleRequest, id: Long = 1): Response =
         given().`when`().body(request).contentType(ContentType.JSON).patch("$BASE_URL/$id")
 
     private fun deleteByIdRequest(id: Long = 1): Response = given().`when`().delete("$BASE_URL/$id")

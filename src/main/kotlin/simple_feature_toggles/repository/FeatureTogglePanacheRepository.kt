@@ -1,10 +1,6 @@
 package simple_feature_toggles.repository
 
 
-import simple_feature_toggles.ContextName
-import simple_feature_toggles.FeatureToggle
-import simple_feature_toggles.FeatureToggleRepository
-import simple_feature_toggles.api.models.FeatureToggleUpdateRequest
 import io.quarkus.hibernate.reactive.panache.Panache
 import io.quarkus.hibernate.reactive.panache.PanacheRepository
 import io.quarkus.panache.common.Parameters
@@ -12,11 +8,13 @@ import io.smallrye.mutiny.Multi
 import io.smallrye.mutiny.Uni
 import io.smallrye.mutiny.replaceWithUnit
 import jakarta.enterprise.context.ApplicationScoped
-import org.eclipse.microprofile.config.inject.ConfigProperty
+import simple_feature_toggles.ContextName
+import simple_feature_toggles.FeatureToggle
+import simple_feature_toggles.FeatureToggleRepository
+import simple_feature_toggles.api.models.UpdateFeatureToggleRequest
 
 @ApplicationScoped
-class FeatureTogglePanacheRepository(@ConfigProperty(name = "use-testing-context") var useTestingContext: Boolean) :
-    PanacheRepository<FeatureToggleEntity>, FeatureToggleRepository {
+class FeatureTogglePanacheRepository : PanacheRepository<FeatureToggleEntity>, FeatureToggleRepository {
 
     override fun getAll(): Multi<FeatureToggle> {
         return Panache.withTransaction { listAll() }.toMulti().flatMap(Multi.createFrom()::iterable)
@@ -49,11 +47,11 @@ class FeatureTogglePanacheRepository(@ConfigProperty(name = "use-testing-context
         entity.key = key
         entity.name = name
         entity.description = description
-        entity.contexts = createContexts(useTestingContext)
+        entity.contexts = createContexts()
         return Panache.withTransaction { persistAndFlush(entity).map { it.toDomain() } }
     }
 
-    override fun update(id: Long, updates: FeatureToggleUpdateRequest): Uni<FeatureToggle> {
+    override fun update(id: Long, updates: UpdateFeatureToggleRequest): Uni<FeatureToggle> {
         return Panache.withTransaction {
             findById(id).onItem().ifNull().failWith(NoSuchElementException("Feature with id $id not found")).map {
                 it.apply {
@@ -89,14 +87,10 @@ class FeatureTogglePanacheRepository(@ConfigProperty(name = "use-testing-context
         }.chain { _ -> Uni.createFrom().voidItem().replaceWithUnit() }
     }
 
-    fun createContexts(testContext: Boolean): MutableList<ContextEntity> {
-        if (testContext) {
-            return mutableListOf(
-                ContextEntity.create(ContextName.testing),
-                ContextEntity.create(ContextName.production)
-            )
-        }
-        return mutableListOf(ContextEntity.create(ContextName.production))
+    fun createContexts(): MutableList<ContextEntity> {
+        return mutableListOf(
+            ContextEntity.create(ContextName.testing), ContextEntity.create(ContextName.production)
+        )
     }
 
 }

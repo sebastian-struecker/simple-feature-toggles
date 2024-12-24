@@ -5,7 +5,7 @@ import simple_feature_toggles.Context
 import simple_feature_toggles.ContextName
 import simple_feature_toggles.FeatureToggle
 import simple_feature_toggles.api.models.ContextApiModel
-import simple_feature_toggles.api.models.FeatureToggleUpdateRequest
+import simple_feature_toggles.api.models.UpdateFeatureToggleRequest
 import io.quarkus.test.TestReactiveTransaction
 import io.quarkus.test.junit.QuarkusTest
 import io.quarkus.test.vertx.RunOnVertxContext
@@ -64,7 +64,7 @@ class FeatureTogglePanacheRepositoryTest {
         asserter.assertThat({
             repository.create("key", "name", "description").chain { it ->
                 repository.update(
-                    it.id, FeatureToggleUpdateRequest(
+                    it.id, UpdateFeatureToggleRequest(
                         null, null, listOf(ContextApiModel(ContextName.production.toString(), true))
                     )
                 ).chain { _ ->
@@ -139,7 +139,7 @@ class FeatureTogglePanacheRepositoryTest {
         asserter.assertThat({
             repository.create("key", "name", "description").chain { it ->
                 repository.update(
-                    it.id, FeatureToggleUpdateRequest(
+                    it.id, UpdateFeatureToggleRequest(
                         "updated", "updated", listOf(
                             ContextApiModel(ContextName.testing.toString(), true),
                             ContextApiModel(ContextName.production.toString(), true)
@@ -159,7 +159,7 @@ class FeatureTogglePanacheRepositoryTest {
     fun update_whenPartialUpdate_onlyName_shouldUpdateOnlyProvidedFields(asserter: UniAsserter) {
         asserter.assertThat({
             repository.create("key", "name", "description").chain { it ->
-                repository.update(it.id, FeatureToggleUpdateRequest(name = "partially updated"))
+                repository.update(it.id, UpdateFeatureToggleRequest(name = "partially updated"))
             }.chain { it ->
                 repository.getById(it.id)
             }
@@ -173,7 +173,7 @@ class FeatureTogglePanacheRepositoryTest {
     fun update_whenPartialUpdate_onlyDescription_shouldUpdateOnlyProvidedFields(asserter: UniAsserter) {
         asserter.assertThat({
             repository.create("key", "name", "description").chain { it ->
-                repository.update(it.id, FeatureToggleUpdateRequest(description = "partially updated"))
+                repository.update(it.id, UpdateFeatureToggleRequest(description = "partially updated"))
             }.chain { it ->
                 repository.getById(it.id)
             }
@@ -189,7 +189,7 @@ class FeatureTogglePanacheRepositoryTest {
             repository.create("key", "name", "description").chain { it ->
                 repository.update(
                     it.id,
-                    FeatureToggleUpdateRequest(contexts = listOf(ContextApiModel(ContextName.testing.toString(), true)))
+                    UpdateFeatureToggleRequest(contexts = listOf(ContextApiModel(ContextName.testing.toString(), true)))
                 )
             }.chain { it ->
                 repository.getById(it.id)
@@ -205,7 +205,7 @@ class FeatureTogglePanacheRepositoryTest {
         asserter.assertThat({
             repository.create("key", "name", "description").chain { it ->
                 repository.update(
-                    1, FeatureToggleUpdateRequest()
+                    1, UpdateFeatureToggleRequest()
                 )
             }.chain { it ->
                 repository.getById(1)
@@ -219,7 +219,7 @@ class FeatureTogglePanacheRepositoryTest {
     @TestReactiveTransaction
     fun update_whenEntityDoesNotExist_shouldThrowException(asserter: UniAsserter) {
         asserter.assertFailedWith({
-            repository.update(1, FeatureToggleUpdateRequest("updated", "updated"))
+            repository.update(1, UpdateFeatureToggleRequest("updated", "updated"))
         }, NoSuchElementException::class.java)
     }
 
@@ -248,25 +248,17 @@ class FeatureTogglePanacheRepositoryTest {
     @Test
     @TestReactiveTransaction
     fun createContexts_withTestContexts_returnTwoContexts(asserter: UniAsserter) {
-        val contexts = repository.createContexts(true)
+        val contexts = repository.createContexts()
         assertEquals(2, contexts.size)
         assertContextEntity(contexts.get(0), ContextName.testing)
         assertContextEntity(contexts.get(1), ContextName.production)
-    }
-
-    @Test
-    @TestReactiveTransaction
-    fun createContexts_withOutTestContexts_returnOneContext(asserter: UniAsserter) {
-        val contexts = repository.createContexts(false)
-        assertEquals(1, contexts.size)
-        assertContextEntity(contexts.get(0), ContextName.production)
     }
 
     private fun assertFeatureToggle(it: FeatureToggle) {
         assertEquals("key", it.key)
         assertEquals("name", it.name)
         assertEquals("description", it.description)
-        assertContext(it.contexts[0], ContextName.production)
+        assertContext(it.contexts[0], ContextName.testing)
     }
 
     private fun assertContext(context: Context, name: ContextName) {

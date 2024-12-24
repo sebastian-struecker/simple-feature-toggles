@@ -57,7 +57,7 @@
       },
       {
         "id": "5318f992-f80f-4f2e-b706-53073a7a3ef3",
-        "name": "feature_toggle_admin",
+        "name": "admin",
         "description": "",
         "composite": false,
         "clientRole": false,
@@ -75,7 +75,7 @@
       },
       {
         "id": "a605a399-8d32-471b-bef4-b398747b3fdd",
-        "name": "feature_toggle_release_manager",
+        "name": "release_manager",
         "description": "",
         "composite": false,
         "clientRole": false,
@@ -84,7 +84,7 @@
       },
       {
         "id": "ef70f3de-e4f5-4833-abcc-79d2d63f2846",
-        "name": "feature_toggle_viewer",
+        "name": "viewer",
         "description": "",
         "composite": false,
         "clientRole": false,
@@ -497,7 +497,7 @@
         }
       ],
       "realmRoles": [
-        "feature_toggle_admin"
+        "admin"
       ]
     },
     {
@@ -514,7 +514,7 @@
         }
       ],
       "realmRoles": [
-        "feature_toggle_viewer"
+        "viewer"
       ]
     },
     {
@@ -531,7 +531,7 @@
         }
       ],
       "realmRoles": [
-        "feature_toggle_release_manager"
+        "release_manager"
       ]
     }
   ],
@@ -845,7 +845,7 @@
       "enabled": true,
       "alwaysDisplayInConsole": false,
       "clientAuthenticatorType": "client-secret",
-      "secret": "Rv6y3PXKCIG6ENItAuMYjjchx2fqPvn8",
+      "secret": "simple-feature-toggles",
       "redirectUris": [
         "http://localhost:3000/*"
       ],
