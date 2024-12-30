@@ -57,7 +57,7 @@
       },
       {
         "id": "5318f992-f80f-4f2e-b706-53073a7a3ef3",
-        "name": "admin",
+        "name": "sft_admin",
         "description": "",
         "composite": false,
         "clientRole": false,
@@ -74,17 +74,8 @@
         "attributes": {}
       },
       {
-        "id": "a605a399-8d32-471b-bef4-b398747b3fdd",
-        "name": "release_manager",
-        "description": "",
-        "composite": false,
-        "clientRole": false,
-        "containerId": "3f250268-9af4-4f27-9e42-445840e11baa",
-        "attributes": {}
-      },
-      {
         "id": "ef70f3de-e4f5-4833-abcc-79d2d63f2846",
-        "name": "viewer",
+        "name": "sft_viewer",
         "description": "",
         "composite": false,
         "clientRole": false,
@@ -497,7 +488,7 @@
         }
       ],
       "realmRoles": [
-        "admin"
+        "sft_admin"
       ]
     },
     {
@@ -514,24 +505,7 @@
         }
       ],
       "realmRoles": [
-        "viewer"
-      ]
-    },
-    {
-      "username": "release_manager",
-      "enabled": true,
-      "emailVerified": true,
-      "firstName": "",
-      "lastName": "",
-      "email": "",
-      "credentials": [
-        {
-          "type": "password",
-          "value": "release_manager"
-        }
-      ],
-      "realmRoles": [
-        "release_manager"
+        "sft_viewer"
       ]
     }
   ],

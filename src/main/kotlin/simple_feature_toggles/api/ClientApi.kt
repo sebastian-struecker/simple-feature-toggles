@@ -19,7 +19,7 @@ import org.eclipse.microprofile.openapi.annotations.security.SecurityRequirement
 import org.eclipse.microprofile.openapi.annotations.security.SecurityScheme
 import org.eclipse.microprofile.openapi.annotations.tags.Tag
 import org.jboss.resteasy.reactive.NoCache
-import simple_feature_toggles.ContextName
+import org.jboss.resteasy.reactive.RestQuery
 import simple_feature_toggles.FeatureToggleRepository
 
 @ApplicationScoped
@@ -38,7 +38,7 @@ class ClientApi(
     @GET
     @NoCache
     @Produces(MediaType.APPLICATION_JSON)
-    @Path("feature-toggles/{context}")
+    @Path("feature-toggles")
     @SecurityRequirement(name = "APIKEY")
     @Operation(operationId = "getAllActiveFeaturesForContext", summary = "Get all active features for a given context")
     @APIResponses(
@@ -48,11 +48,10 @@ class ClientApi(
             )]
         ), APIResponse(responseCode = "401", description = "Invalid api-key")]
     )
-    fun getAllActiveFeaturesForContext(context: String): Multi<String> {
-        Log.debug("[ClientApi] Calling method: get url: /feature-toggles/$context")
+    fun getAllActiveFeaturesForContext(@RestQuery environment: String): Multi<String> {
+        Log.debug("[ClientApi] Calling method: get url: /feature-toggles?environment=$environment")
         try {
-            val contextName: ContextName = ContextName.valueOf(context.lowercase())
-            return featureToggleRepository.getAllActive(contextName).onItem().transform { it.name }
+            return featureToggleRepository.getAllActive(environment.lowercase()).onItem().transform { it.name }
         } catch (ex: IllegalArgumentException) {
             return Multi.createFrom().empty()
         }

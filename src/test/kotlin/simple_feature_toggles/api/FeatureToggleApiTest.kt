@@ -1,11 +1,5 @@
 package simple_feature_toggles.api
 
-import simple_feature_toggles.Context
-import simple_feature_toggles.ContextName
-import simple_feature_toggles.FeatureToggle
-import simple_feature_toggles.api.models.CreateFeatureToggleRequest
-import simple_feature_toggles.api.models.UpdateFeatureToggleRequest
-import simple_feature_toggles.repository.FeatureTogglePanacheRepository
 import io.quarkus.test.InjectMock
 import io.quarkus.test.junit.QuarkusTest
 import io.quarkus.test.security.TestSecurity
@@ -19,6 +13,10 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito
 import simple_feature_toggles.DefaultRoles
+import simple_feature_toggles.FeatureToggle
+import simple_feature_toggles.api.models.CreateFeatureToggleRequest
+import simple_feature_toggles.api.models.UpdateFeatureToggleRequest
+import simple_feature_toggles.repository.FeatureTogglePanacheRepository
 
 
 @QuarkusTest
@@ -59,12 +57,6 @@ class FeatureToggleApiTest {
     }
 
     @Test
-    @TestSecurity(user = "release_manager", roles = [DefaultRoles.RELEASE_MANAGER])
-    fun getAll_authorized_release_manager_test() {
-        getAllRequest().then().statusCode(200)
-    }
-
-    @Test
     fun getById_unauthorized_test() {
         getByIdRequest(1).then().statusCode(401)
     }
@@ -98,17 +90,6 @@ class FeatureToggleApiTest {
     }
 
     @Test
-    @TestSecurity(user = "release_manager", roles = [DefaultRoles.RELEASE_MANAGER])
-    fun getById_authorized_release_manager_test() {
-        val feature = feature()
-        Mockito.`when`(repositoryMock.getById(1)).thenReturn(
-            Uni.createFrom().item(feature)
-        )
-        getByIdRequest().then().statusCode(200).body("name", `is`(feature.name))
-            .body("description", `is`(feature.description))
-    }
-
-    @Test
     fun create_unauthorized_test() {
         val request = CreateFeatureToggleRequest("key", "name", "description")
         createRequest(request).then().statusCode(401)
@@ -118,10 +99,10 @@ class FeatureToggleApiTest {
     @TestSecurity(user = "admin", roles = [DefaultRoles.ADMIN])
     fun create_authorized_admin_test() {
         val feature = feature()
-        Mockito.`when`(repositoryMock.create(feature.key, feature.name, feature.description)).thenReturn(
+        val request = CreateFeatureToggleRequest(feature.key, feature.name, feature.description, mutableMapOf())
+        Mockito.`when`(repositoryMock.create(request)).thenReturn(
             Uni.createFrom().item(feature)
         )
-        val request = CreateFeatureToggleRequest(feature.key, feature.name, feature.description)
         createRequest(request).then().statusCode(200).body("name", `is`(request.name))
             .body("description", `is`(request.description))
     }
@@ -129,13 +110,6 @@ class FeatureToggleApiTest {
     @Test
     @TestSecurity(user = "viewer", roles = [DefaultRoles.VIEWER])
     fun create_unauthorized_viewer_test() {
-        val request = CreateFeatureToggleRequest("key", "name", "description")
-        createRequest(request).then().statusCode(403)
-    }
-
-    @Test
-    @TestSecurity(user = "release-manager", roles = [DefaultRoles.RELEASE_MANAGER])
-    fun create_unauthorized_release_manager_test() {
         val request = CreateFeatureToggleRequest("key", "name", "description")
         createRequest(request).then().statusCode(403)
     }
@@ -182,13 +156,6 @@ class FeatureToggleApiTest {
     }
 
     @Test
-    @TestSecurity(user = "release_manager", roles = [DefaultRoles.RELEASE_MANAGER])
-    fun partialUpdate_unauthorized_release_manager_test() {
-        val request = UpdateFeatureToggleRequest(null, null, null)
-        partialUpdateRequest(request).then().statusCode(403)
-    }
-
-    @Test
     @TestSecurity(user = "admin", roles = [DefaultRoles.ADMIN])
     fun deleteById_authorized_admin_test() {
         Mockito.`when`(
@@ -202,12 +169,6 @@ class FeatureToggleApiTest {
     @Test
     @TestSecurity(user = "viewer", roles = [DefaultRoles.VIEWER])
     fun deleteById_unauthorized_viewer_test() {
-        deleteByIdRequest().then().statusCode(403)
-    }
-
-    @Test
-    @TestSecurity(user = "release_manager", roles = [DefaultRoles.RELEASE_MANAGER])
-    fun deleteById_unauthorized_release_manager_test() {
         deleteByIdRequest().then().statusCode(403)
     }
 
@@ -228,12 +189,6 @@ class FeatureToggleApiTest {
         deleteAllRequest().then().statusCode(403)
     }
 
-    @Test
-    @TestSecurity(user = "release_manager", roles = [DefaultRoles.RELEASE_MANAGER])
-    fun deleteAll_unauthorized_release_manager_test() {
-        deleteAllRequest().then().statusCode(403)
-    }
-
     private fun getAllRequest(): Response = given().`when`().get(BASE_URL)
 
     private fun getByIdRequest(id: Long = 1): Response = given().`when`().get("$BASE_URL/$id")
@@ -249,9 +204,9 @@ class FeatureToggleApiTest {
     private fun deleteAllRequest(): Response = given().`when`().delete(BASE_URL)
 
     private fun feature() = FeatureToggle(
-        1L, "key", "name", "description", listOf(
-            Context(1, ContextName.testing.toString(), ContextName.testing.toString(), false),
-            Context(2, ContextName.production.toString(), ContextName.production.toString(), false)
+        1L, "key", "name", "description", mutableMapOf(
+            "dev" to true,
+            "prod" to true,
         )
     )
 

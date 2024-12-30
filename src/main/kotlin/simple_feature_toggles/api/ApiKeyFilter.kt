@@ -1,16 +1,18 @@
 package simple_feature_toggles.api
 
+import io.smallrye.mutiny.Uni
 import jakarta.enterprise.context.ApplicationScoped
 import jakarta.ws.rs.NotAuthorizedException
 import jakarta.ws.rs.container.ContainerRequestContext
-import org.eclipse.microprofile.config.inject.ConfigProperty
 import org.jboss.resteasy.reactive.server.ServerRequestFilter
-import java.util.Optional
+import simple_feature_toggles.ApiKeyRepository
+import java.time.Duration
+
+private const val INVALID_API_KEY = "Invalid Api-Key"
 
 @ApplicationScoped
 class ApiKeyFilter(
-    @ConfigProperty(name = "api.key.values")
-    val apiKeyValuesOptional: Optional<List<String>>,
+    val apiKeyRepository: ApiKeyRepository
 ) {
 
     companion object {
@@ -18,20 +20,37 @@ class ApiKeyFilter(
     }
 
     @ServerRequestFilter(preMatching = true)
-    fun filter(requestContext: ContainerRequestContext) {
-        if (apiKeyValuesOptional.isEmpty) return
+    fun filter(requestContext: ContainerRequestContext): Uni<Void> {
+        val apiKeyHeader = requestContext.getHeaderString(apiKeyHeaderName)
         val path = requestContext.uriInfo.path
-        if (isApiKeySecurePath(path)) {
-            val apiKeyValues = apiKeyValuesOptional.get()
-            val apiKeyHeader = requestContext.getHeaderString(apiKeyHeaderName)
-            if (apiKeyHeader == null || !apiKeyValues.contains(apiKeyHeader)) {
-                throw NotAuthorizedException("Api-Key is missing")
-            }
+        val queryParameters: MutableList<String>? = requestContext.uriInfo.queryParameters["environment"]
+        if (!isApiKeySecurePath(path)) {
+            return Uni.createFrom().voidItem()
         }
+        if (queryParameters?.isEmpty() == true || queryParameters?.first() == null) {
+            return Uni.createFrom().failure(NotAuthorizedException(INVALID_API_KEY))
+        }
+        if (apiKeyHeader == null) {
+            return Uni.createFrom().failure(NotAuthorizedException(INVALID_API_KEY))
+        }
+        val env: String = queryParameters.first()
+        return apiKeyRepository.getAll().onItem().transformToUni { apiKeys ->
+            var isApiKeyCorrect = false
+            apiKeys.forEach {
+                if (it.environmentActivation[env] == true) {
+                    isApiKeyCorrect = true
+                }
+            }
+            if (isApiKeyCorrect) {
+                Uni.createFrom().voidItem()
+            } else {
+                Uni.createFrom().failure(NotAuthorizedException(INVALID_API_KEY))
+            }
+        }.ifNoItem().after(Duration.ofMillis(100)).failWith(NotAuthorizedException(INVALID_API_KEY))
     }
 
     private fun isApiKeySecurePath(path: String): Boolean {
-        return path.contains("feature-toggles/testing") || path.contains("feature-toggles/production")
+        return path.contains("client/feature-toggles")
     }
 
 }

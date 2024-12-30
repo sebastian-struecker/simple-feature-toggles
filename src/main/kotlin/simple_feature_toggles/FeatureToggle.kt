@@ -1,7 +1,11 @@
 package simple_feature_toggles
 
 class FeatureToggle(
-    val id: Long, val key: String, var name: String, var description: String, val contexts: List<Context>
+    val id: Long,
+    val key: String,
+    var name: String,
+    var description: String,
+    val environmentActivation: MutableMap<String, Boolean>
 ) {
     init {
         checkInputs(key, name)
@@ -20,13 +24,16 @@ class FeatureToggle(
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
-        if (other?.javaClass != this.javaClass) return false
+        if (javaClass != other?.javaClass) return false
+
         other as FeatureToggle
+
         if (id != other.id) return false
         if (key != other.key) return false
         if (name != other.name) return false
         if (description != other.description) return false
-        if (contexts != other.contexts) return false
+        if (environmentActivation != other.environmentActivation) return false
+
         return true
     }
 
@@ -35,8 +42,7 @@ class FeatureToggle(
         result = 31 * result + key.hashCode()
         result = 31 * result + name.hashCode()
         result = 31 * result + description.hashCode()
-        result = 31 * result + contexts.hashCode()
+        result = 31 * result + environmentActivation.hashCode()
         return result
     }
-
 }

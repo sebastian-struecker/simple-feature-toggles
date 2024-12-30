@@ -1,6 +1,5 @@
 package simple_feature_toggles.repository
 
-import simple_feature_toggles.ContextName
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -9,31 +8,31 @@ class FeatureToggleEntityTest {
 
     @Test
     fun constructor_noArgs_test() {
-        val featureToggle = FeatureToggleEntity()
-        assertNotNull(featureToggle)
-        assertNull(featureToggle.id)
-        assertEquals("", featureToggle.key)
-        assertEquals("", featureToggle.name)
-        assertEquals("", featureToggle.description)
-        assertTrue(featureToggle.contexts.isEmpty())
+        val entity = FeatureToggleEntity()
+        assertNotNull(entity)
+        assertNull(entity.id)
+        assertEquals("", entity.key)
+        assertEquals("", entity.name)
+        assertEquals("", entity.description)
+        assertTrue(entity.environmentActivation.isEmpty())
     }
 
     @Test
     fun constructor_allArgs_test() {
-        val featureToggle = featureToggleEntity()
-        assertNotNull(featureToggle)
-        assertEquals(1L, featureToggle.id)
-        assertEquals("key", featureToggle.key)
-        assertEquals("name", featureToggle.name)
-        assertEquals("description", featureToggle.description)
-        assertTrue(featureToggle.contexts.isNotEmpty())
-        assertEquals(2, featureToggle.contexts.size)
+        val entity = featureToggleEntity()
+        assertNotNull(entity)
+        assertEquals(1L, entity.id)
+        assertEquals("key", entity.key)
+        assertEquals("name", entity.name)
+        assertEquals("description", entity.description)
+        assertTrue(entity.environmentActivation.isNotEmpty())
+        assertEquals(2, entity.environmentActivation.size)
     }
 
     @Test
     fun constructor_nullId_test() {
-        val featureToggle = featureToggleEntity(null)
-        assertNull(featureToggle.id)
+        val entity = featureToggleEntity(null)
+        assertNull(entity.id)
     }
 
     @Test
@@ -44,13 +43,11 @@ class FeatureToggleEntityTest {
         assertEquals("key", domain.key)
         assertEquals("name", domain.name)
         assertEquals("description", domain.description)
-        assertEquals(2, domain.contexts.size)
-        assertEquals("testing", domain.contexts[0].key)
-        assertEquals("testing", domain.contexts[0].name)
-        assertFalse(domain.contexts[0].isActive)
-        assertEquals("production", domain.contexts[1].key)
-        assertEquals("production", domain.contexts[1].name)
-        assertFalse(domain.contexts[1].isActive)
+        assertEquals(2, domain.environmentActivation.size)
+        assertEquals("dev", domain.environmentActivation.keys.first())
+        assertTrue(domain.environmentActivation.values.first())
+        assertEquals("prod", domain.environmentActivation.keys.elementAt(1))
+        assertTrue(domain.environmentActivation.values.elementAt(1))
     }
 
     @Test
@@ -60,17 +57,13 @@ class FeatureToggleEntityTest {
         }
     }
 
-    fun featureToggleEntity(id: Long? = 1): FeatureToggleEntity {
-        return FeatureToggleEntity(id, "key", "name", "description", contextEntities())
+    private fun featureToggleEntity(id: Long? = 1): FeatureToggleEntity {
+        return FeatureToggleEntity(id, "key", "name", "description", environmentEntities())
     }
 
-    private fun contextEntities(): MutableList<ContextEntity> {
-        return mutableListOf(
-            ContextEntity(
-                1, ContextName.testing.toString(), ContextName.testing.toString(), false
-            ), ContextEntity(
-                2, ContextName.production.toString(), ContextName.production.toString(), false
-            )
+    private fun environmentEntities(): MutableMap<String, Boolean> {
+        return mutableMapOf(
+            "dev" to true, "prod" to true
         )
     }
 

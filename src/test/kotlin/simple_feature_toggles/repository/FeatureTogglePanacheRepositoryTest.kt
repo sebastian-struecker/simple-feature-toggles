@@ -1,28 +1,28 @@
 package simple_feature_toggles.repository
 
 
-import simple_feature_toggles.Context
-import simple_feature_toggles.ContextName
-import simple_feature_toggles.FeatureToggle
-import simple_feature_toggles.api.models.ContextApiModel
-import simple_feature_toggles.api.models.UpdateFeatureToggleRequest
 import io.quarkus.test.TestReactiveTransaction
 import io.quarkus.test.junit.QuarkusTest
-import io.quarkus.test.vertx.RunOnVertxContext
 import io.quarkus.test.vertx.UniAsserter
 import jakarta.inject.Inject
-import org.junit.jupiter.api.Assertions
-import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
+import simple_feature_toggles.EnvironmentRepository
+import simple_feature_toggles.FeatureToggle
+import simple_feature_toggles.FeatureToggleRepository
+import simple_feature_toggles.api.models.CreateEnvironmentRequest
+import simple_feature_toggles.api.models.CreateFeatureToggleRequest
+import simple_feature_toggles.api.models.UpdateFeatureToggleRequest
 
 
 @QuarkusTest
-@RunOnVertxContext
 class FeatureTogglePanacheRepositoryTest {
 
     @Inject
-    lateinit var repository: FeatureTogglePanacheRepository
+    lateinit var repository: FeatureToggleRepository
+
+    @Inject
+    lateinit var environmentRepository: EnvironmentRepository
 
     @Test
     @TestReactiveTransaction
@@ -38,7 +38,7 @@ class FeatureTogglePanacheRepositoryTest {
     @TestReactiveTransaction
     fun getAll_whenOneEntity_shouldReturnListWithOneEntity(asserter: UniAsserter) {
         asserter.assertThat({
-            repository.create("key", "name", "description").chain { it ->
+            repository.create(createFeatureToggleRequest()).chain { it ->
                 repository.getAll().collect().asList()
             }
         }, {
@@ -48,28 +48,24 @@ class FeatureTogglePanacheRepositoryTest {
 
     @Test
     @TestReactiveTransaction
-    fun getAllActive_whenNoActiveContexts_shouldReturnEmptyList(asserter: UniAsserter) {
+    fun getAllActive_whenNoActiveEnvironments_shouldReturnEmptyList(asserter: UniAsserter) {
+        val environmentActivation = createEnvironments(asserter, false)
         asserter.assertThat({
-            repository.create("key", "name", "description").chain { it ->
-                repository.getAllActive(ContextName.testing).collect().asList()
+            repository.create(createFeatureToggleRequest(environmentActivation = environmentActivation)).chain { it ->
+                repository.getAllActive("dev").collect().asList()
             }
         }, {
-            it.isEmpty()
+            assertTrue(it.size == 0)
         })
     }
 
     @Test
     @TestReactiveTransaction
-    fun getAllActive_whenActiveProductionContext_shouldReturnListWithOneEntity(asserter: UniAsserter) {
+    fun getAllActive_whenActiveContext_shouldReturnListWithOneEntity(asserter: UniAsserter) {
+        val environmentActivation = createEnvironments(asserter)
         asserter.assertThat({
-            repository.create("key", "name", "description").chain { it ->
-                repository.update(
-                    it.id, UpdateFeatureToggleRequest(
-                        null, null, listOf(ContextApiModel(ContextName.production.toString(), true))
-                    )
-                ).chain { _ ->
-                    repository.getAllActive(ContextName.production).collect().asList()
-                }
+            repository.create(createFeatureToggleRequest(environmentActivation = environmentActivation)).chain { it ->
+                repository.getAllActive("dev").collect().asList()
             }
         }, {
             assertTrue(it.size == 1)
@@ -80,7 +76,7 @@ class FeatureTogglePanacheRepositoryTest {
     @TestReactiveTransaction
     fun getById_whenEntityExists_shouldReturnEntity(asserter: UniAsserter) {
         asserter.assertThat({
-            repository.create("key", "name", "description").chain { it ->
+            repository.create(createFeatureToggleRequest()).chain { it ->
                 repository.getById(it.id)
             }
         }, {
@@ -100,7 +96,7 @@ class FeatureTogglePanacheRepositoryTest {
     @TestReactiveTransaction
     fun getByKey_whenEntityExists_shouldReturnEntity(asserter: UniAsserter) {
         asserter.assertThat({
-            repository.create("key", "name", "description").chain { it ->
+            repository.create(createFeatureToggleRequest()).chain { it ->
                 repository.getByKey(it.key)
             }
         }, {
@@ -119,38 +115,43 @@ class FeatureTogglePanacheRepositoryTest {
     @Test
     @TestReactiveTransaction
     fun create_whenValidInput_shouldCreateEntity(asserter: UniAsserter) {
+        val environmentActivation = createEnvironments(asserter)
+
         asserter.assertThat({
-            repository.create("key", "name", "description")
+            repository.create(
+                CreateFeatureToggleRequest(
+                    "key", "name", "description", environmentActivation
+                )
+            )
         }, {
             assertFeatureToggle(it)
+            assertEnvironmentActivation(it)
         })
     }
 
     @Test
     @TestReactiveTransaction
     fun create_whenInvalidInput_shouldThrowException(asserter: UniAsserter) {
-        Assertions.assertThrows(IllegalArgumentException::class.java,
-            { repository.create("12_", "name", "description") })
+        assertThrows(
+            IllegalArgumentException::class.java, { repository.create(createFeatureToggleRequest(key = "123")) })
     }
 
     @Test
     @TestReactiveTransaction
     fun update_whenEntityExists_shouldUpdateEntity(asserter: UniAsserter) {
+        val environmentActivation = createEnvironments(asserter, true)
         asserter.assertThat({
-            repository.create("key", "name", "description").chain { it ->
+            repository.create(createFeatureToggleRequest()).chain { it ->
                 repository.update(
                     it.id, UpdateFeatureToggleRequest(
-                        "updated", "updated", listOf(
-                            ContextApiModel(ContextName.testing.toString(), true),
-                            ContextApiModel(ContextName.production.toString(), true)
-                        )
+                        "updated", "updated", environmentActivation
                     )
                 )
             }.chain { it ->
                 repository.getById(it.id)
             }
         }, {
-            it.name == "updated" && it.description == "updated" && it.contexts[0].isActive
+            it.name == "updated" && it.description == "updated" && it.environmentActivation.entries.first().value
         })
     }
 
@@ -158,13 +159,13 @@ class FeatureTogglePanacheRepositoryTest {
     @TestReactiveTransaction
     fun update_whenPartialUpdate_onlyName_shouldUpdateOnlyProvidedFields(asserter: UniAsserter) {
         asserter.assertThat({
-            repository.create("key", "name", "description").chain { it ->
+            repository.create(createFeatureToggleRequest()).chain { it ->
                 repository.update(it.id, UpdateFeatureToggleRequest(name = "partially updated"))
             }.chain { it ->
                 repository.getById(it.id)
             }
         }, {
-
+            it.name == "partially updated" && it.environmentActivation.entries.isEmpty()
         })
     }
 
@@ -172,7 +173,7 @@ class FeatureTogglePanacheRepositoryTest {
     @TestReactiveTransaction
     fun update_whenPartialUpdate_onlyDescription_shouldUpdateOnlyProvidedFields(asserter: UniAsserter) {
         asserter.assertThat({
-            repository.create("key", "name", "description").chain { it ->
+            repository.create(createFeatureToggleRequest()).chain { it ->
                 repository.update(it.id, UpdateFeatureToggleRequest(description = "partially updated"))
             }.chain { it ->
                 repository.getById(it.id)
@@ -185,17 +186,21 @@ class FeatureTogglePanacheRepositoryTest {
     @Test
     @TestReactiveTransaction
     fun update_whenPartialUpdate_onlyContexts_shouldUpdateOnlyProvidedFields(asserter: UniAsserter) {
+        val environmentActivation = createEnvironments(asserter, false)
         asserter.assertThat({
-            repository.create("key", "name", "description").chain { it ->
+            repository.create(createFeatureToggleRequest(environmentActivation = environmentActivation)).chain { it ->
                 repository.update(
-                    it.id,
-                    UpdateFeatureToggleRequest(contexts = listOf(ContextApiModel(ContextName.testing.toString(), true)))
+                    it.id, UpdateFeatureToggleRequest(
+                        environmentActivation = mutableMapOf(
+                            "dev" to true, "prod" to true
+                        )
+                    )
                 )
             }.chain { it ->
                 repository.getById(it.id)
             }
         }, { it ->
-            it.contexts.first { it.key == ContextName.production.toString() }.isActive
+            it.environmentActivation.entries.first().value
         })
     }
 
@@ -203,7 +208,7 @@ class FeatureTogglePanacheRepositoryTest {
     @TestReactiveTransaction
     fun update_whenNoUpdates_shouldNotChangeEntity(asserter: UniAsserter) {
         asserter.assertThat({
-            repository.create("key", "name", "description").chain { it ->
+            repository.create(createFeatureToggleRequest()).chain { it ->
                 repository.update(
                     1, UpdateFeatureToggleRequest()
                 )
@@ -211,7 +216,7 @@ class FeatureTogglePanacheRepositoryTest {
                 repository.getById(1)
             }
         }, { it ->
-            it.name == "name" && it.description == "description" && it.contexts.first { it.key == ContextName.production.toString() }.isActive
+            it.name == "name" && it.description == "description" && it.environmentActivation.isEmpty()
         })
     }
 
@@ -227,7 +232,7 @@ class FeatureTogglePanacheRepositoryTest {
     @TestReactiveTransaction
     fun removeById_whenEntityExists_shouldRemoveEntity(asserter: UniAsserter) {
         asserter.assertThat({
-            repository.create("key", "name", "description").chain { it ->
+            repository.create(createFeatureToggleRequest()).chain { it ->
                 repository.removeById(it.id)
             }
         }, {
@@ -245,32 +250,44 @@ class FeatureTogglePanacheRepositoryTest {
         })
     }
 
-    @Test
-    @TestReactiveTransaction
-    fun createContexts_withTestContexts_returnTwoContexts(asserter: UniAsserter) {
-        val contexts = repository.createContexts()
-        assertEquals(2, contexts.size)
-        assertContextEntity(contexts.get(0), ContextName.testing)
-        assertContextEntity(contexts.get(1), ContextName.production)
-    }
-
     private fun assertFeatureToggle(it: FeatureToggle) {
         assertEquals("key", it.key)
         assertEquals("name", it.name)
         assertEquals("description", it.description)
-        assertContext(it.contexts[0], ContextName.testing)
     }
 
-    private fun assertContext(context: Context, name: ContextName) {
-        assertEquals(name.toString(), context.key)
-        assertEquals(name.toString(), context.name)
-        assertEquals(false, context.isActive)
+    private fun assertEnvironmentActivation(it: FeatureToggle) {
+        assertEquals("dev", it.environmentActivation.entries.elementAt(0).key)
+        assertEquals(true, it.environmentActivation.entries.elementAt(0).value)
+        assertEquals("prod", it.environmentActivation.entries.elementAt(1).key)
+        assertEquals(true, it.environmentActivation.entries.elementAt(1).value)
     }
 
-    private fun assertContextEntity(contextEntity: ContextEntity, name: ContextName) {
-        assertEquals(name.toString(), contextEntity.key)
-        assertEquals(name.toString(), contextEntity.name)
-        assertEquals(false, contextEntity.isActive)
+    private fun createEnvironments(
+        asserter: UniAsserter, isActive: Boolean = true
+    ): MutableMap<String, Boolean> {
+        asserter.assertThat({
+            environmentRepository.create(CreateEnvironmentRequest("dev", "dev"))
+        }, {
+            assertNotNull(it)
+        })
+        asserter.assertThat({
+            environmentRepository.create(CreateEnvironmentRequest("prod", "prod"))
+        }, {
+            assertNotNull(it)
+        })
+        return mutableMapOf(
+            "dev" to isActive, "prod" to isActive
+        )
     }
+
+    private fun createFeatureToggleRequest(
+        key: String = "key", environmentActivation: MutableMap<String, Boolean> = mutableMapOf()
+    ): CreateFeatureToggleRequest {
+        return CreateFeatureToggleRequest(
+            key, "name", "description", environmentActivation
+        )
+    }
+
 
 }

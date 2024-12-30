@@ -1,5 +1,5 @@
 package simple_feature_toggles.api.models
 
 data class UpdateFeatureToggleRequest(
-    var name: String? = null, var description: String? = null, var contexts: List<ContextApiModel>? = null
+    val name: String? = null, val description: String? = null, val environmentActivation: Map<String, Boolean>? = null
 )

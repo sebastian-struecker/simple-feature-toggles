@@ -10,16 +10,16 @@ class FeatureToggleTest {
     @Test
     fun create_instance_test() {
         assertDoesNotThrow {
-            FeatureToggle(1, "key", "name", "description", contexts())
+            FeatureToggle(1, "key", "name", "description", mutableMapOf())
         }
     }
 
     @Test
     fun validate_key_pattern_test() {
         assertThrows<IllegalArgumentException> {
-            FeatureToggle(1, "123456", "name", "description", contexts())
-            FeatureToggle(1, "abc_", "name", "description", contexts())
-            FeatureToggle(1, "abc_12", "name", "description", contexts())
+            FeatureToggle(1, "123456", "name", "description", mutableMapOf())
+            FeatureToggle(1, "abc_", "name", "description", mutableMapOf())
+            FeatureToggle(1, "abc_12", "name", "description", mutableMapOf())
 
         }
     }
@@ -27,7 +27,15 @@ class FeatureToggleTest {
     @Test
     fun validate_name_test() {
         assertThrows<IllegalArgumentException> {
-            FeatureToggle(1, "key", "", "description", contexts())
+            FeatureToggle(1, "key", "", "description", mutableMapOf())
+        }
+    }
+
+    @Test
+    fun check_activation_test() {
+        val featureToggle = featureToggle()
+        featureToggle.environmentActivation.forEach { (_, value) ->
+            Assertions.assertTrue(value)
         }
     }
 
@@ -43,7 +51,7 @@ class FeatureToggleTest {
             featureToggle(key = "one") == featureToggle(key = "two")
             featureToggle(name = "one") == featureToggle(name = "two")
             featureToggle(description = "one") == featureToggle(description = "two")
-            featureToggle() == featureToggle(contexts = listOf())
+            featureToggle() == featureToggle(environmentActivation = mutableMapOf())
         })
     }
 
@@ -59,11 +67,10 @@ class FeatureToggleTest {
         key: String = "key",
         name: String = "name",
         description: String = "description",
-        contexts: List<Context> = contexts()
-    ) = FeatureToggle(id, key, name, description, contexts)
+        environmentActivation: MutableMap<String, Boolean> = environmentActivation()
+    ) = FeatureToggle(id, key, name, description, environmentActivation)
 
-    private fun contexts() = listOf(
-        Context(1, ContextName.testing.toString(), ContextName.testing.toString(), false),
-        Context(1, ContextName.production.toString(), ContextName.production.toString(), false)
+    private fun environmentActivation() = mutableMapOf(
+        "dev" to true, "prod" to true
     )
 }

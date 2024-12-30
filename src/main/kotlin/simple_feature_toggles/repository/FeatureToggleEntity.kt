@@ -1,40 +1,48 @@
 package simple_feature_toggles.repository
 
 import jakarta.persistence.*
-import org.hibernate.annotations.OnDelete
-import org.hibernate.annotations.OnDeleteAction
 import simple_feature_toggles.FeatureToggle
 
 
 @Entity
-@NamedQueries(
-    NamedQuery(
-        name = "FeatureToggleEntity.findWithActiveContext", query = """
-            SELECT f FROM FeatureToggleEntity f 
-            JOIN f.contexts c 
-            WHERE c.key = :contextKey 
-            AND c.isActive = true
-        """
-    )
-)
 class FeatureToggleEntity(
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY) var id: Long? = null,
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    var id: Long? = null,
     @Column(nullable = false, unique = true) var key: String,
     @Column(nullable = false) var name: String,
     var description: String,
-    @OneToMany(
-        fetch = FetchType.EAGER, cascade = [CascadeType.ALL], orphanRemoval = true
-    ) @JoinColumn(name = "featuretoggleentity_id") @OnDelete(action = OnDeleteAction.CASCADE) var contexts: MutableList<ContextEntity>
+    @ElementCollection
+    @CollectionTable(
+        name = "featureToggleEnvironmentActivation",
+        joinColumns = [JoinColumn(name = "featuretoggleentity_id")]
+    )
+    @MapKeyJoinColumn(name = "environmententity_key")
+    @Column(name = "activation", nullable = true)
+    var environmentActivation: MutableMap<String, Boolean> = mutableMapOf(),
 ) {
-    constructor() : this(null, "", "", "", mutableListOf())
+    constructor() : this(null, "", "", "", mutableMapOf())
+
+    companion object {
+        fun create(
+            key: String,
+            name: String,
+            description: String,
+            environmentActivation: MutableMap<String, Boolean>
+        ): FeatureToggleEntity {
+            val entity = FeatureToggleEntity()
+            entity.key = key
+            entity.name = name
+            entity.description = description
+            entity.environmentActivation = environmentActivation
+            return entity
+        }
+    }
 
     fun toDomain(): FeatureToggle {
         return FeatureToggle(
-            id ?: throw IllegalStateException("ID cannot be null"),
-            key,
-            name,
-            description,
-            contexts.map { it.toDomain() })
+            id ?: throw IllegalStateException("ID cannot be null"), key, name, description, environmentActivation
+        )
     }
 
 }

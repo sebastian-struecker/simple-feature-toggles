@@ -19,11 +19,9 @@ import org.eclipse.microprofile.openapi.annotations.security.SecurityScheme
 import org.eclipse.microprofile.openapi.annotations.tags.Tag
 import org.jboss.resteasy.reactive.NoCache
 import org.jboss.resteasy.reactive.RestResponse
-import simple_feature_toggles.Context
 import simple_feature_toggles.DefaultRoles
 import simple_feature_toggles.FeatureToggle
 import simple_feature_toggles.FeatureToggleRepository
-import simple_feature_toggles.api.models.ContextApiModel
 import simple_feature_toggles.api.models.CreateFeatureToggleRequest
 import simple_feature_toggles.api.models.FeatureToggleResponse
 import simple_feature_toggles.api.models.UpdateFeatureToggleRequest
@@ -35,13 +33,13 @@ import simple_feature_toggles.api.models.UpdateFeatureToggleRequest
     securitySchemeName = "JWT", type = SecuritySchemeType.HTTP, scheme = "bearer", bearerFormat = "JWT"
 )
 class FeatureToggleApi(
-    val featureToggleRepository: FeatureToggleRepository
+    val repository: FeatureToggleRepository
 ) {
 
     @GET
     @NoCache
     @Produces(MediaType.APPLICATION_JSON)
-    @RolesAllowed(DefaultRoles.ADMIN, DefaultRoles.RELEASE_MANAGER, DefaultRoles.VIEWER)
+    @RolesAllowed(DefaultRoles.ADMIN, DefaultRoles.VIEWER)
     @SecurityRequirement(name = "JWT")
     @Operation(operationId = "getAll", summary = "Get all feature toggles")
     @APIResponses(
@@ -54,13 +52,13 @@ class FeatureToggleApi(
     )
     fun getAll(): Multi<FeatureToggleResponse> {
         Log.debug("[FeatureToggleApi] Calling method: get url: /feature-toggles")
-        return featureToggleRepository.getAll().map { it.toResponse() }
+        return repository.getAll().map { it.toResponse() }
     }
 
     @GET
     @NoCache
     @Produces(MediaType.APPLICATION_JSON)
-    @RolesAllowed(DefaultRoles.ADMIN, DefaultRoles.RELEASE_MANAGER, DefaultRoles.VIEWER)
+    @RolesAllowed(DefaultRoles.ADMIN, DefaultRoles.VIEWER)
     @Path("{id}")
     @SecurityRequirement(name = "JWT")
     @Operation(operationId = "getById", summary = "Get a feature toggle by ID")
@@ -73,7 +71,7 @@ class FeatureToggleApi(
     )
     fun getById(id: Long): Uni<RestResponse<FeatureToggleResponse>> {
         Log.debug("[FeatureToggleApi] Calling method: get url: /feature-toggles/$id")
-        return featureToggleRepository.getById(id).onItem().transform {
+        return repository.getById(id).onItem().transform {
             RestResponse.ok(it.toResponse())
         }.onFailure().transform { NotFoundException() }
     }
@@ -94,8 +92,8 @@ class FeatureToggleApi(
     fun create(request: CreateFeatureToggleRequest): Uni<RestResponse<FeatureToggleResponse>> {
         Log.debug("[FeatureToggleApi] Calling method: post url: /feature-toggles body: $request")
         try {
-            return featureToggleRepository.create(request.key, request.name, request.description).onFailure()
-                .transform { BadRequestException() }.onItem().transform { RestResponse.ok(it.toResponse()) }
+            return repository.create(request).onFailure().transform { BadRequestException() }.onItem()
+                .transform { RestResponse.ok(it.toResponse()) }
         } catch (e: IllegalArgumentException) {
             throw BadRequestException(e)
         }
@@ -121,7 +119,7 @@ class FeatureToggleApi(
         id: Long, updates: UpdateFeatureToggleRequest
     ): Uni<RestResponse<FeatureToggleResponse>> {
         Log.debug("[FeatureToggleApi] Calling method: patch url: /feature-toggles/$id body: $updates")
-        return featureToggleRepository.update(id, updates).onItem().transform {
+        return repository.update(id, updates).onItem().transform {
             RestResponse.ok(it.toResponse())
         }.onFailure().transform { NotFoundException() }
     }
@@ -138,7 +136,7 @@ class FeatureToggleApi(
     )
     fun deleteById(id: Long): Uni<RestResponse<Unit>> {
         Log.debug("[FeatureToggleApi] Calling method: delete url: /feature-toggles/$id")
-        return featureToggleRepository.removeById(id).onItem().transform {
+        return repository.removeById(id).onItem().transform {
             RestResponse.ok(it)
         }.onFailure().transform { NotFoundException() }
     }
@@ -152,16 +150,18 @@ class FeatureToggleApi(
     )
     fun deleteAll(): Uni<RestResponse<Unit>> {
         Log.debug("[FeatureToggleApi] Calling method: delete url: /feature-toggles")
-        return featureToggleRepository.removeAll().onItem().transform {
+        return repository.removeAll().onItem().transform {
             RestResponse.ok(it)
         }.onFailure().transform { NotFoundException() }
     }
 
     fun FeatureToggle.toResponse(): FeatureToggleResponse {
-        return FeatureToggleResponse(id, key, name, description, contexts.map { it.toResponse() })
-    }
-
-    fun Context.toResponse(): ContextApiModel {
-        return ContextApiModel(key, isActive)
+        return FeatureToggleResponse(
+            id = id,
+            key = key,
+            name = name,
+            description = description,
+            environmentActivation = environmentActivation.map { (key, value) -> key to value }.toMap()
+        )
     }
 }
