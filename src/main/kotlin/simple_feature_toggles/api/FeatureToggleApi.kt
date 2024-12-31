@@ -50,7 +50,7 @@ class FeatureToggleApi(
             )]
         )]
     )
-    fun getAll(): Multi<FeatureToggleResponse> {
+    fun getAllFeatureToggles(): Multi<FeatureToggleResponse> {
         Log.debug("[FeatureToggleApi] Calling method: get url: /feature-toggles")
         return repository.getAll().map { it.toResponse() }
     }
@@ -69,7 +69,7 @@ class FeatureToggleApi(
             )]
         ), APIResponse(responseCode = "404", description = "Feature toggle not found")]
     )
-    fun getById(id: Long): Uni<RestResponse<FeatureToggleResponse>> {
+    fun getFeatureToggleById(id: Long): Uni<RestResponse<FeatureToggleResponse>> {
         Log.debug("[FeatureToggleApi] Calling method: get url: /feature-toggles/$id")
         return repository.getById(id).onItem().transform {
             RestResponse.ok(it.toResponse())
@@ -89,7 +89,7 @@ class FeatureToggleApi(
             )]
         ), APIResponse(responseCode = "400", description = "Invalid input")]
     )
-    fun create(request: CreateFeatureToggleRequest): Uni<RestResponse<FeatureToggleResponse>> {
+    fun createFeatureToggle(request: CreateFeatureToggleRequest): Uni<RestResponse<FeatureToggleResponse>> {
         Log.debug("[FeatureToggleApi] Calling method: post url: /feature-toggles body: $request")
         try {
             return repository.create(request).onFailure().transform { BadRequestException() }.onItem()
@@ -115,7 +115,7 @@ class FeatureToggleApi(
             responseCode = "404", description = "Feature toggle not found"
         )]
     )
-    fun partialUpdate(
+    fun partialFeatureToggleUpdate(
         id: Long, updates: UpdateFeatureToggleRequest
     ): Uni<RestResponse<FeatureToggleResponse>> {
         Log.debug("[FeatureToggleApi] Calling method: patch url: /feature-toggles/$id body: $updates")
@@ -131,13 +131,13 @@ class FeatureToggleApi(
     @Operation(operationId = "deleteById", summary = "Delete a feature toggle by ID")
     @APIResponses(
         value = [APIResponse(
-            responseCode = "200", description = "Feature toggle deleted"
+            responseCode = "204", description = "Feature toggle deleted"
         ), APIResponse(responseCode = "404", description = "Feature toggle not found")]
     )
-    fun deleteById(id: Long): Uni<RestResponse<Unit>> {
+    fun deleteFeatureToggleById(id: Long): Uni<RestResponse<Unit>> {
         Log.debug("[FeatureToggleApi] Calling method: delete url: /feature-toggles/$id")
         return repository.removeById(id).onItem().transform {
-            RestResponse.ok(it)
+            RestResponse.noContent<Unit>()
         }.onFailure().transform { NotFoundException() }
     }
 
@@ -146,12 +146,12 @@ class FeatureToggleApi(
     @SecurityRequirement(name = "JWT")
     @Operation(operationId = "deleteAll", summary = "Delete all feature toggles")
     @APIResponses(
-        value = [APIResponse(responseCode = "200", description = "All feature toggles deleted")]
+        value = [APIResponse(responseCode = "204", description = "All feature toggles deleted")]
     )
-    fun deleteAll(): Uni<RestResponse<Unit>> {
+    fun deleteAllFeatureToggles(): Uni<RestResponse<Unit>> {
         Log.debug("[FeatureToggleApi] Calling method: delete url: /feature-toggles")
         return repository.removeAll().onItem().transform {
-            RestResponse.ok(it)
+            RestResponse.noContent<Unit>()
         }.onFailure().transform { NotFoundException() }
     }
 

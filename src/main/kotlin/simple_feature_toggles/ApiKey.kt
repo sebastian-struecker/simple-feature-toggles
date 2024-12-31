@@ -6,7 +6,7 @@ import javax.crypto.Mac
 import javax.crypto.spec.SecretKeySpec
 
 class ApiKey(
-    val id: Long, var name: String, val value: String, val environmentActivation: MutableMap<String, Boolean>
+    val id: Long, var name: String, val secret: String, val environmentActivation: MutableMap<String, Boolean>
 ) {
     init {
         checkInputs(name)
@@ -43,7 +43,7 @@ class ApiKey(
 
         if (id != other.id) return false
         if (name != other.name) return false
-        if (value != other.value) return false
+        if (secret != other.secret) return false
         if (environmentActivation != other.environmentActivation) return false
 
         return true
@@ -52,7 +52,7 @@ class ApiKey(
     override fun hashCode(): Int {
         var result = id.hashCode()
         result = 31 * result + name.hashCode()
-        result = 31 * result + value.hashCode()
+        result = 31 * result + secret.hashCode()
         result = 31 * result + environmentActivation.hashCode()
         return result
     }

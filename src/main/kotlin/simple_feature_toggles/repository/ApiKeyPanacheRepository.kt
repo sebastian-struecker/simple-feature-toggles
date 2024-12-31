@@ -28,7 +28,7 @@ class ApiKeyPanacheRepository(private val environmentRepository: EnvironmentRepo
 
     override fun create(createRequest: CreateApiKeyRequest): Uni<ApiKey> {
         if (createRequest.environmentActivation.isEmpty()) {
-            val entity = ApiKeyEntity.create(createRequest.name, "value", mutableMapOf())
+            val entity = ApiKeyEntity.create(createRequest.name, mutableMapOf())
             return Panache.withTransaction {
                 persistAndFlush(entity).map {
                     it.toDomain()
@@ -43,7 +43,7 @@ class ApiKeyPanacheRepository(private val environmentRepository: EnvironmentRepo
                     val mappedEnvironmentActivation = createRequest.environmentActivation.map { entry ->
                         entry.key to entry.value
                     }.toMap().toMutableMap()
-                    val entity = ApiKeyEntity.create(createRequest.name, "value", mappedEnvironmentActivation)
+                    val entity = ApiKeyEntity.create(createRequest.name, mappedEnvironmentActivation)
                     Panache.withTransaction {
                         persistAndFlush(entity).map { it.toDomain() }
                     }

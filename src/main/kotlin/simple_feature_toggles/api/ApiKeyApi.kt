@@ -51,7 +51,7 @@ class ApiKeyApi(
             )]
         )]
     )
-    fun getAll(): Multi<ApiKeyResponse> {
+    fun getAllApiKeys(): Multi<ApiKeyResponse> {
         Log.debug("[ApiKeyApi] Calling method: get url: /api-keys")
         return repository.getAll().toMulti().flatMap { list -> Multi.createFrom().iterable(list) }
             .map { it.toResponse() }
@@ -71,7 +71,7 @@ class ApiKeyApi(
             )]
         ), APIResponse(responseCode = "404", description = "api key not found")]
     )
-    fun getById(id: Long): Uni<RestResponse<ApiKeyResponse>> {
+    fun getApiKeyById(id: Long): Uni<RestResponse<ApiKeyResponse>> {
         Log.debug("[ApiKeyApi] Calling method: get url: /api-keys/$id")
         return repository.getById(id).onItem().transform {
             RestResponse.ok(it.toResponse())
@@ -91,7 +91,7 @@ class ApiKeyApi(
             )]
         ), APIResponse(responseCode = "400", description = "Invalid input")]
     )
-    fun create(request: CreateApiKeyRequest): Uni<RestResponse<ApiKeyResponse>> {
+    fun createApiKey(request: CreateApiKeyRequest): Uni<RestResponse<ApiKeyResponse>> {
         Log.debug("[ApiKeyApi] Calling method: post url: /api-keys body: $request")
         try {
             return repository.create(request).onFailure().transform { BadRequestException() }.onItem()
@@ -117,7 +117,7 @@ class ApiKeyApi(
             responseCode = "404", description = "api key not found"
         )]
     )
-    fun partialUpdate(
+    fun partialApiKeyUpdate(
         id: Long, updates: UpdateApiKeyRequest
     ): Uni<RestResponse<ApiKeyResponse>> {
         Log.debug("[ApiKeyApi] Calling method: patch url: /api-keys/$id body: $updates")
@@ -133,13 +133,13 @@ class ApiKeyApi(
     @Operation(operationId = "deleteById", summary = "Delete an api key by ID")
     @APIResponses(
         value = [APIResponse(
-            responseCode = "200", description = "api key deleted"
+            responseCode = "204", description = "api key deleted"
         ), APIResponse(responseCode = "404", description = "api key not found")]
     )
-    fun deleteById(id: Long): Uni<RestResponse<Unit>> {
+    fun deleteApiKeyById(id: Long): Uni<RestResponse<Unit>> {
         Log.debug("[ApiKeyApi] Calling method: delete url: /api-keys/$id")
         return repository.removeById(id).onItem().transform {
-            RestResponse.ok(it)
+            RestResponse.noContent<Unit>()
         }.onFailure().transform { NotFoundException() }
     }
 
@@ -148,12 +148,12 @@ class ApiKeyApi(
     @SecurityRequirement(name = "JWT")
     @Operation(operationId = "deleteAll", summary = "Delete all api keys")
     @APIResponses(
-        value = [APIResponse(responseCode = "200", description = "All api keys deleted")]
+        value = [APIResponse(responseCode = "204", description = "All api keys deleted")]
     )
-    fun deleteAll(): Uni<RestResponse<Unit>> {
+    fun deleteAllApiKeys(): Uni<RestResponse<Unit>> {
         Log.debug("[ApiKeyApi] Calling method: delete url: /api-keys")
         return repository.removeAll().onItem().transform {
-            RestResponse.ok(it)
+            RestResponse.noContent<Unit>()
         }.onFailure().transform { NotFoundException() }
     }
 
@@ -161,7 +161,7 @@ class ApiKeyApi(
         return ApiKeyResponse(
             id = id,
             name = name,
-            value = value,
+            secret = secret,
             environmentActivation = environmentActivation.map { (key, value) -> key to value }.toMap()
         )
     }

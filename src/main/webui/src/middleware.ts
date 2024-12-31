@@ -11,6 +11,7 @@ export default auth((req) => {
             return Response.redirect(newUrl)
         }
     }
+    console.log(req?.auth?.access_token);
 })
 
 export const config = {

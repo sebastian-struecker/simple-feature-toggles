@@ -50,7 +50,7 @@ class EnvironmentApi(
             )]
         )]
     )
-    fun getAll(): Multi<EnvironmentApiResponse> {
+    fun getAllEnvironments(): Multi<EnvironmentApiResponse> {
         Log.debug("[EnvironmentApi] Calling method: get url: /environments")
         return repository.getAll().map { it.toResponse() }
     }
@@ -69,7 +69,7 @@ class EnvironmentApi(
             )]
         ), APIResponse(responseCode = "404", description = "environment not found")]
     )
-    fun getById(id: Long): Uni<RestResponse<EnvironmentApiResponse>> {
+    fun getEnvironmentById(id: Long): Uni<RestResponse<EnvironmentApiResponse>> {
         Log.debug("[EnvironmentApi] Calling method: get url: /environments/$id")
         return repository.getById(id).onItem().transform {
             RestResponse.ok(it.toResponse())
@@ -89,7 +89,7 @@ class EnvironmentApi(
             )]
         ), APIResponse(responseCode = "400", description = "Invalid input")]
     )
-    fun create(request: CreateEnvironmentRequest): Uni<RestResponse<EnvironmentApiResponse>> {
+    fun createEnvironment(request: CreateEnvironmentRequest): Uni<RestResponse<EnvironmentApiResponse>> {
         Log.debug("[EnvironmentApi] Calling method: post url: /environments body: $request")
         try {
             return repository.create(request).onFailure().transform { BadRequestException() }.onItem()
@@ -115,7 +115,7 @@ class EnvironmentApi(
             responseCode = "404", description = "environment not found"
         )]
     )
-    fun partialUpdate(
+    fun partialEnvironmentUpdate(
         id: Long, updates: UpdateEnvironmentRequest
     ): Uni<RestResponse<EnvironmentApiResponse>> {
         Log.debug("[EnvironmentApi] Calling method: patch url: /environments/$id body: $updates")
@@ -131,13 +131,13 @@ class EnvironmentApi(
     @Operation(operationId = "deleteById", summary = "Delete an environment by ID")
     @APIResponses(
         value = [APIResponse(
-            responseCode = "200", description = "environment deleted"
+            responseCode = "204", description = "environment deleted"
         ), APIResponse(responseCode = "404", description = "environment not found")]
     )
-    fun deleteById(id: Long): Uni<RestResponse<Unit>> {
+    fun deleteEnvironmentById(id: Long): Uni<RestResponse<Unit>> {
         Log.debug("[EnvironmentApi] Calling method: delete url: /environments/$id")
         return repository.removeById(id).onItem().transform {
-            RestResponse.ok(it)
+            RestResponse.noContent<Unit>()
         }.onFailure().transform { NotFoundException() }
     }
 
@@ -146,12 +146,12 @@ class EnvironmentApi(
     @SecurityRequirement(name = "JWT")
     @Operation(operationId = "deleteAll", summary = "Delete all environments")
     @APIResponses(
-        value = [APIResponse(responseCode = "200", description = "All environments deleted")]
+        value = [APIResponse(responseCode = "204", description = "All environments deleted")]
     )
-    fun deleteAll(): Uni<RestResponse<Unit>> {
+    fun deleteAllEnvironments(): Uni<RestResponse<Unit>> {
         Log.debug("[EnvironmentApi] Calling method: delete url: /environments")
         return repository.removeAll().onItem().transform {
-            RestResponse.ok(it)
+            RestResponse.noContent<Unit>()
         }.onFailure().transform { NotFoundException() }
     }
 

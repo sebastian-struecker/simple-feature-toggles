@@ -37,7 +37,7 @@ class ApiKeyFilter(
         return apiKeyRepository.getAll().onItem().transformToUni { apiKeys ->
             var isApiKeyCorrect = false
             apiKeys.forEach {
-                if (it.environmentActivation[env] == true) {
+                if (it.secret == apiKeyHeader && it.environmentActivation[env] == true) {
                     isApiKeyCorrect = true
                 }
             }
