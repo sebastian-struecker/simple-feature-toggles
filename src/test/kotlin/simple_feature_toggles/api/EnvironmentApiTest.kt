@@ -20,7 +20,7 @@ import simple_feature_toggles.repository.EnvironmentPanacheRepository
 
 
 @QuarkusTest
-class EnvironmentTest {
+class EnvironmentApiTest {
 
     @InjectMock
     lateinit var repositoryMock: EnvironmentPanacheRepository
