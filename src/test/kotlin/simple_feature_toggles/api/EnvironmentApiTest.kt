@@ -68,7 +68,8 @@ class EnvironmentApiTest {
         Mockito.`when`(repositoryMock.getById(1)).thenReturn(
             Uni.createFrom().item(environment)
         )
-        getEnvironmentByIdRequest().then().statusCode(200).body("name", `is`(environment.name)).body("key", `is`(environment.key))
+        getEnvironmentByIdRequest().then().statusCode(200).body("name", `is`(environment.name))
+            .body("key", `is`(environment.key))
     }
 
     @Test
