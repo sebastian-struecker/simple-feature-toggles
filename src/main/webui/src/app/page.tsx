@@ -9,7 +9,7 @@ export default function Page() {
     const router = useRouter();
 
     return (<>
-        <div>
+        <div className="h-full min-h-96">
             Hello
         </div>
     </>);

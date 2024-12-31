@@ -1,23 +1,20 @@
 import React from "react";
 import {SubmitHandler, useForm} from "react-hook-form";
-import {useFeatureToggleStore} from "@/src/providers/feature-toggle-store-provider";
-import {CreateFeatureToggleInputs} from "@/src/types/create-feature-toggle-inputs";
+import {useApiKeyStore} from "@/src/providers/api-key-store-provider";
+import {CreateApiKeyInputs} from "@/src/types/create-api-key-inputs";
 
 type Inputs = {
     modalId: string;
 }
 
-export function AddFeatureToggleModal({modalId}: Inputs) {
+export function AddApiKeyModal({modalId}: Inputs) {
     const {
         register, handleSubmit, reset, formState: {errors, isSubmitting},
-    } = useForm<CreateFeatureToggleInputs>();
-    const {create} = useFeatureToggleStore((state) => state);
+    } = useForm<CreateApiKeyInputs>();
+    const {create} = useApiKeyStore((state) => state);
 
-    const onSubmit: SubmitHandler<CreateFeatureToggleInputs> = async (values: CreateFeatureToggleInputs) => {
+    const onSubmit: SubmitHandler<CreateApiKeyInputs> = async (values: CreateApiKeyInputs) => {
         values.environmentActivation = new Map();
-        if (!values.description) {
-            values.description = "";
-        }
         create(values);
         reset();
         document.getElementById(modalId)?.close();
@@ -32,32 +29,9 @@ export function AddFeatureToggleModal({modalId}: Inputs) {
                 }}>✕
                 </button>
                 <h3 className="text-center text-xl sm:text-xl font-semibold">
-                    Create a Feature Toggle
+                    Create an Api Key
                 </h3>
                 <div className="flex flex-col">
-                    <label className="form-control">
-                        <div className="label">
-                            <span className="label-text">
-                                Key
-                                <span className="text-error">*</span>
-                            </span>
-                        </div>
-                        <input
-                            {...register("key", {required: true, pattern: /^[a-z_]*[a-z]$/})}
-                            disabled={isSubmitting}
-                            type="text"
-                            name="key"
-                            placeholder="Enter a key"
-                            className={`input input-primary input-md w-full ${errors.key ? "input-error" : ""}`}
-                        />
-                        <div className="label">
-                            <span className="label-text-alt"></span>
-                            {errors.key?.type == "pattern" && (
-                                <span className="label-text-alt text-error">Example of a valid key: A_NEW_KEY</span>)}
-                            {errors.key?.type == "required" && (
-                                <span className="label-text-alt text-error">Please enter a valid key</span>)}
-                        </div>
-                    </label>
                     <label className="form-control">
                         <div className="label">
                             <span className="label-text">
@@ -76,24 +50,6 @@ export function AddFeatureToggleModal({modalId}: Inputs) {
                             <span className="label-text-alt"></span>
                             {errors.name?.type == "required" && (
                                 <span className="label-text-alt text-error">Please enter a valid name</span>)}
-                        </div>
-                    </label>
-                    <label className="form-control">
-                        <div className="label">
-                            <span className="label-text">
-                                Description
-                            </span>
-                        </div>
-                        <textarea
-                            {...register("description", {minLength: 1})} disabled={isSubmitting}
-                            className={`textarea textarea-primary textarea-bordered textarea-md w-full ${errors.description ? "input-error" : ""}`}
-                            placeholder="Enter a description"
-                            name="description"
-                        />
-                        <div className="label">
-                            <span className="label-text-alt"></span>
-                            {errors.description?.type == "minLength" && (
-                                <span className="label-text-alt text-error">Please enter a description</span>)}
                         </div>
                     </label>
                 </div>

@@ -20,10 +20,10 @@ export default async function RootLayout({
     const session = await auth();
     return (<html lang="en" data-theme="emerald">
     <body className={"h-full light text-foreground bg-background" + inter}>
-        <ProviderWrapper session={session}>
-            <NavigationBar/>
-            {children}
-        </ProviderWrapper>
+    <ProviderWrapper session={session}>
+        <NavigationBar/>
+        {children}
+    </ProviderWrapper>
     </body>
     </html>);
 }

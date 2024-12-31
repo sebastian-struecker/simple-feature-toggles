@@ -5,6 +5,7 @@ import {LoadingSpinner} from "@/src/components/molecules/loading-spinner";
 import {useFeatureToggleStore} from "@/src/providers/feature-toggle-store-provider";
 import {FeatureToggle} from "@/src/types/feature-toggle";
 import {MdDelete} from "react-icons/md";
+import {UrlPath} from "@/src/constants/url-path";
 
 export default function FeatureToggleDetailPage({params}: {
     params: Promise<{ slug: string }>
@@ -32,11 +33,11 @@ export default function FeatureToggleDetailPage({params}: {
         return (<LoadingSpinner/>)
     }
 
-    return (<div className="p-6">
+    return (<div className="p-6 h-full min-h-96">
         <div className="breadcrumbs text-sm">
             <ul>
-                <li><a>Feature-Toggles</a></li>
-                <li>Feature: {featureToggle?.name}</li>
+                <li><a href={`/${UrlPath.featureToggles}`}>Feature-Toggles</a></li>
+                <li>{featureToggle?.name}</li>
             </ul>
         </div>
         <div className="hero">

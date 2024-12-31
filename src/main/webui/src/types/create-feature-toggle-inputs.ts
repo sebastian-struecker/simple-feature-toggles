@@ -1,3 +1,3 @@
 export type CreateFeatureToggleInputs = {
-    key: string; name: string; description: string;
+    key: string; name: string; description: string; environmentActivation: Map<string, boolean>;
 };

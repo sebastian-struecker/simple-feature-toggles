@@ -3,9 +3,7 @@
 import {useRouter} from "next/navigation";
 import {useEffect} from "react";
 
-export default function NotFoundErrorPage({
-                                        error, reset,
-                                    }: {
+export default function NotFoundErrorPage({}: {
     error: Error & { digest?: string }
     reset: () => void
 }) {

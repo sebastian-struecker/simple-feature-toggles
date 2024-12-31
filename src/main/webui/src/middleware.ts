@@ -4,14 +4,13 @@ export default auth((req) => {
     if (!req.auth && !req.nextUrl.pathname.includes("/api/auth/signin")) {
         const newUrl = new URL("/api/auth/signin", req.nextUrl.origin)
         return Response.redirect(newUrl)
-    } else if(req?.auth?.expires_at && !req.nextUrl.pathname.includes("/api/auth/signin")) {
+    } else if (req?.auth?.expires_at && !req.nextUrl.pathname.includes("/api/auth/signin")) {
         const expirationDate = new Date(req?.auth?.expires_at * 1000);
-        if(expirationDate.valueOf() < Date.now()) {
+        if (expirationDate.valueOf() < Date.now()) {
             const newUrl = new URL("/api/auth/signin", req.nextUrl.origin)
             return Response.redirect(newUrl)
         }
     }
-    console.log(req?.auth?.access_token);
 })
 
 export const config = {

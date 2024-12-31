@@ -26,11 +26,11 @@ export const FeatureToggleStoreProvider = ({
 }
 
 export const useFeatureToggleStore = <T, >(selector: (store: FeatureToggleStore) => T,): T => {
-    const featureToggleStoreContext = useContext(FeatureToggleStoreContext)
+    const context = useContext(FeatureToggleStoreContext)
 
-    if (!featureToggleStoreContext) {
+    if (!context) {
         throw new Error(`useFeatureToggleStore must be used within FeatureToggleStoreProvider`);
     }
 
-    return useStore(featureToggleStoreContext, selector);
+    return useStore(context, selector);
 }

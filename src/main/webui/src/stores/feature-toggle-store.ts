@@ -4,9 +4,11 @@ import {
     featureToggles_create,
     featureToggles_deleteById,
     featureToggles_getAll,
-    featureToggles_getById
+    featureToggles_getById,
+    featureToggles_update
 } from "@/src/actions/feature-toggles";
 import {CreateFeatureToggleInputs} from "@/src/types/create-feature-toggle-inputs";
+import {UpdateFeatureToggleInputs} from "@/src/types/update-feature-toggle-inputs";
 
 export type FeatureToggleState = {
     featureToggles: FeatureToggle[]
@@ -16,6 +18,7 @@ export type FeatureToggleActions = {
     getById: (id: number) => Promise<FeatureToggle>
     getAll: () => Promise<FeatureToggle[]>
     create: (input: CreateFeatureToggleInputs) => void
+    update: (input: UpdateFeatureToggleInputs) => void
     deleteById: (id: number) => void
 }
 
@@ -30,22 +33,28 @@ export const createFeatureToggleStore = (initState: FeatureToggleState = default
         ...initState, getById: async (id: number) => {
             return await featureToggles_getById(id);
         }, getAll: async () => {
-            const featureTogglesResponse = await featureToggles_getAll();
-            set((state) => ({
-                featureToggles: featureTogglesResponse
+            const response = await featureToggles_getAll();
+            set(() => ({
+                featureToggles: response
             }));
-            return featureTogglesResponse;
+            return response;
         }, create: async (input: CreateFeatureToggleInputs) => {
             await featureToggles_create(input);
-            const featureTogglesResponse = await featureToggles_getAll();
-            set((state) => ({
-                featureToggles: featureTogglesResponse
+            const response = await featureToggles_getAll();
+            set(() => ({
+                featureToggles: response
+            }));
+        }, update: async (input: UpdateFeatureToggleInputs) => {
+            await featureToggles_update(input);
+            const response = await featureToggles_getAll();
+            set(() => ({
+                featureToggles: response
             }));
         }, deleteById: async (id: number) => {
             await featureToggles_deleteById(id);
-            const featureTogglesResponse = await featureToggles_getAll();
-            set((state) => ({
-                featureToggles: featureTogglesResponse
+            const response = await featureToggles_getAll();
+            set(() => ({
+                featureToggles: response
             }));
         },
     }))

@@ -43,7 +43,7 @@ class FeatureTogglePanacheRepository(private val environmentRepository: Environm
     }
 
     override fun create(createRequest: CreateFeatureToggleRequest): Uni<FeatureToggle> {
-        FeatureToggle.checkInputs(createRequest.key, createRequest.description)
+        FeatureToggle.checkInputs(createRequest.key, createRequest.name)
         if (createRequest.environmentActivation.isEmpty()) {
             val entity = FeatureToggleEntity.create(
                 createRequest.key, createRequest.name, createRequest.description, mutableMapOf()
