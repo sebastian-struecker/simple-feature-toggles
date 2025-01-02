@@ -5,6 +5,7 @@ import {auth} from "@/auth";
 import ProviderWrapper from "@/src/providers/provider-wrapper";
 import React from "react";
 import {NavigationBar} from "@/src/components/organisms/navigation-bar";
+import {Toaster} from "react-hot-toast";
 
 const inter = Inter({subsets: ["latin"]});
 
@@ -22,6 +23,7 @@ export default async function RootLayout({
     <body className={"h-full light text-foreground bg-background" + inter}>
     <ProviderWrapper session={session}>
         <NavigationBar/>
+        <Toaster position="top-right" toastOptions={{duration: 4000}}/>
         {children}
     </ProviderWrapper>
     </body>

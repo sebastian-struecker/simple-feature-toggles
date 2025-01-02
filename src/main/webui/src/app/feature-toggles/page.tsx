@@ -3,7 +3,7 @@
 import React, {useEffect, useState} from "react";
 import {LoadingSpinner} from "@/src/components/molecules/loading-spinner";
 import {useFeatureToggleStore} from "@/src/providers/feature-toggle-store-provider";
-import {FaPlus} from "react-icons/fa";
+import {FaPen, FaPlus, FaTrash} from "react-icons/fa";
 import {CreateFirstTemplate} from "@/src/components/organisms/create-first-template";
 import {UrlPath} from "@/src/constants/url-path";
 import {useRouter} from "next/navigation";
@@ -30,8 +30,8 @@ export default function FeatureTogglesPage() {
     }
 
     return (<div className="h-full min-h-96 p-6 flex justify-center">
-        {featureToggles.length == 0 && <CreateFirstTemplate elementName={"Feature Toggle"} modalId={modalId}/>}
-        {featureToggles.length > 0 && <div className="w-5/6 flex flex-col">
+        {featureToggles?.length == 0 && <CreateFirstTemplate elementName={"Feature Toggle"} modalId={modalId}/>}
+        {featureToggles?.length > 0 && <div className="w-5/6 flex flex-col">
             <div className="flex justify-between flex-row">
                 <div className="text-xl font-semibold">
                     Feature Toggles

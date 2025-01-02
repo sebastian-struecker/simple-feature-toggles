@@ -30,8 +30,8 @@ export default function ApiKeysPage() {
     }
 
     return (<div className="h-full min-h-96 p-6 flex justify-center">
-        {apiKeys.length == 0 && <CreateFirstTemplate elementName={"Api Key"} modalId={modalId}/>}
-        {apiKeys.length > 0 && <div className="w-5/6 flex flex-col">
+        {apiKeys?.length == 0 && <CreateFirstTemplate elementName={"Api Key"} modalId={modalId}/>}
+        {apiKeys?.length > 0 && <div className="w-5/6 flex flex-col">
             <div className="flex justify-between flex-row">
                 <div className="text-xl font-semibold">
                     Api Keys

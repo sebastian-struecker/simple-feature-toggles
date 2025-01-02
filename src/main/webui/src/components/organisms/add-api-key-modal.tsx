@@ -2,6 +2,8 @@ import React from "react";
 import {SubmitHandler, useForm} from "react-hook-form";
 import {useApiKeyStore} from "@/src/providers/api-key-store-provider";
 import {CreateApiKeyInputs} from "@/src/types/create-api-key-inputs";
+import {TextInputField, UsedPatterns} from "@/src/components/molecules/text-input-field";
+import {EnvironmentInputField} from "@/src/components/molecules/environment-input-field";
 
 type Inputs = {
     modalId: string;
@@ -9,12 +11,11 @@ type Inputs = {
 
 export function AddApiKeyModal({modalId}: Inputs) {
     const {
-        register, handleSubmit, reset, formState: {errors, isSubmitting},
-    } = useForm<CreateApiKeyInputs>();
+        control, register, handleSubmit, reset, formState: {errors, isSubmitting},
+    } = useForm<CreateApiKeyInputs>({defaultValues: {environmentActivation: new Map()}});
     const {create} = useApiKeyStore((state) => state);
 
     const onSubmit: SubmitHandler<CreateApiKeyInputs> = async (values: CreateApiKeyInputs) => {
-        values.environmentActivation = new Map();
         create(values);
         reset();
         document.getElementById(modalId)?.close();
@@ -32,26 +33,13 @@ export function AddApiKeyModal({modalId}: Inputs) {
                     Create an Api Key
                 </h3>
                 <div className="flex flex-col">
-                    <label className="form-control">
-                        <div className="label">
-                            <span className="label-text">
-                                Name
-                                <span className="text-error">*</span>
-                            </span>
-                        </div>
-                        <input
-                            {...register("name", {required: true})} disabled={isSubmitting}
-                            type="text"
-                            name="name"
-                            placeholder="Enter a name"
-                            className={`input input-bordered input-primary input-md w-full ${errors.name ? "input-error" : ""}`}
-                        />
-                        <div className="label">
-                            <span className="label-text-alt"></span>
-                            {errors.name?.type == "required" && (
-                                <span className="label-text-alt text-error">Please enter a valid name</span>)}
-                        </div>
-                    </label>
+                    <TextInputField label={"Name"} placeholder={"Enter a name"} example={"Some new api key"}
+                                    isRequired={true}
+                                    pattern={UsedPatterns.default} formKey={"name"} register={register}
+                                    error={errors.name} isSubmitting={isSubmitting}/>
+                    <EnvironmentInputField label={"Environment"} control={control} isRequired={false} formKey={"environment"}
+                                           register={register} error={errors.environmentActivation}
+                                           isSubmitting={isSubmitting} />
                 </div>
                 <div className="modal-action flex justify-center">
                     <button className="btn btn-active btn-primary btn-block max-w-[200px]" type="submit">

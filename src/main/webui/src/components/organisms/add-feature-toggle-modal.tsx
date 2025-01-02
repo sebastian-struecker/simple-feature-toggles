@@ -2,6 +2,8 @@ import React from "react";
 import {SubmitHandler, useForm} from "react-hook-form";
 import {useFeatureToggleStore} from "@/src/providers/feature-toggle-store-provider";
 import {CreateFeatureToggleInputs} from "@/src/types/create-feature-toggle-inputs";
+import {TextInputField, UsedPatterns} from "@/src/components/molecules/text-input-field";
+import {EnvironmentInputField} from "@/src/components/molecules/environment-input-field";
 
 type Inputs = {
     modalId: string;
@@ -9,15 +11,11 @@ type Inputs = {
 
 export function AddFeatureToggleModal({modalId}: Inputs) {
     const {
-        register, handleSubmit, reset, formState: {errors, isSubmitting},
-    } = useForm<CreateFeatureToggleInputs>();
+        control, register, handleSubmit, reset, formState: {errors, isSubmitting},
+    } = useForm<CreateFeatureToggleInputs>({defaultValues: {environmentActivation: new Map(), description: ""}});
     const {create} = useFeatureToggleStore((state) => state);
 
     const onSubmit: SubmitHandler<CreateFeatureToggleInputs> = async (values: CreateFeatureToggleInputs) => {
-        values.environmentActivation = new Map();
-        if (!values.description) {
-            values.description = "";
-        }
         create(values);
         reset();
         document.getElementById(modalId)?.close();
@@ -35,49 +33,13 @@ export function AddFeatureToggleModal({modalId}: Inputs) {
                     Create a Feature Toggle
                 </h3>
                 <div className="flex flex-col">
-                    <label className="form-control">
-                        <div className="label">
-                            <span className="label-text">
-                                Key
-                                <span className="text-error">*</span>
-                            </span>
-                        </div>
-                        <input
-                            {...register("key", {required: true, pattern: /^[a-z_]*[a-z]$/})}
-                            disabled={isSubmitting}
-                            type="text"
-                            name="key"
-                            placeholder="Enter a key"
-                            className={`input input-primary input-md w-full ${errors.key ? "input-error" : ""}`}
-                        />
-                        <div className="label">
-                            <span className="label-text-alt"></span>
-                            {errors.key?.type == "pattern" && (
-                                <span className="label-text-alt text-error">Example of a valid key: A_NEW_KEY</span>)}
-                            {errors.key?.type == "required" && (
-                                <span className="label-text-alt text-error">Please enter a valid key</span>)}
-                        </div>
-                    </label>
-                    <label className="form-control">
-                        <div className="label">
-                            <span className="label-text">
-                                Name
-                                <span className="text-error">*</span>
-                            </span>
-                        </div>
-                        <input
-                            {...register("name", {required: true})} disabled={isSubmitting}
-                            type="text"
-                            name="name"
-                            placeholder="Enter a name"
-                            className={`input input-bordered input-primary input-md w-full ${errors.name ? "input-error" : ""}`}
-                        />
-                        <div className="label">
-                            <span className="label-text-alt"></span>
-                            {errors.name?.type == "required" && (
-                                <span className="label-text-alt text-error">Please enter a valid name</span>)}
-                        </div>
-                    </label>
+                    <TextInputField label={"Key"} placeholder={"Enter a key"} example={"new_feature"} isRequired={true}
+                                    pattern={UsedPatterns.key} formKey={"key"} register={register}
+                                    error={errors.key} isSubmitting={isSubmitting}/>
+                    <TextInputField label={"Name"} placeholder={"Enter a name"} example={"Some new feature"}
+                                    isRequired={true}
+                                    pattern={UsedPatterns.default} formKey={"name"} register={register}
+                                    error={errors.name} isSubmitting={isSubmitting}/>
                     <label className="form-control">
                         <div className="label">
                             <span className="label-text">
@@ -96,6 +58,10 @@ export function AddFeatureToggleModal({modalId}: Inputs) {
                                 <span className="label-text-alt text-error">Please enter a description</span>)}
                         </div>
                     </label>
+                    <EnvironmentInputField label={"Environment"} control={control} isRequired={false}
+                                           formKey={"environment"}
+                                           register={register} error={errors.environmentActivation}
+                                           isSubmitting={isSubmitting}/>
                 </div>
                 <div className="modal-action flex justify-center">
                     <button className="btn btn-active btn-primary btn-block max-w-[200px]" type="submit">

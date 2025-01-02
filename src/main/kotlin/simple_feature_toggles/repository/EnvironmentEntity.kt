@@ -9,7 +9,7 @@ class EnvironmentEntity(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Long? = null,
-    @Column(nullable = false) var key: String,
+    @Column(nullable = false, unique = true) var key: String,
     @Column(nullable = false) var name: String,
 ) {
     constructor() : this(null, "", "")

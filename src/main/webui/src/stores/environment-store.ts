@@ -9,6 +9,9 @@ import {
     environments_update
 } from '@/src/actions/environments';
 import {UpdateEnvironmentInputs} from "@/src/types/update-environment-inputs";
+import toast from "react-hot-toast";
+import { FaCheck } from "react-icons/fa";
+
 
 export type EnvironmentState = {
     environments: Environment[]

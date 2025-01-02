@@ -1,11 +1,23 @@
-import React from "react";
+import React, {useEffect} from "react";
+import {useEnvironmentStore} from "@/src/providers/environment-store-provider";
 
 type CreateFirstTemplateInputs = {
-    elementName: string;
-    modalId: string;
+    elementName: string; modalId: string; environmentNotice: boolean;
 }
 
-export function CreateFirstTemplate({elementName, modalId}: CreateFirstTemplateInputs) {
+export function CreateFirstTemplate({elementName, modalId, environmentNotice = false}: CreateFirstTemplateInputs) {
+    const {environments, getAll} = useEnvironmentStore((state) => state);
+
+    useEffect(() => {
+        async function awaitGetAll() {
+            await getAll();
+        }
+
+        if (environmentNotice) {
+            awaitGetAll();
+        }
+    }, [environmentNotice, getAll])
+
     return (<>
         <div className="hero bg-base-100 min-h-[80vh]">
             <div className="hero-content text-center">

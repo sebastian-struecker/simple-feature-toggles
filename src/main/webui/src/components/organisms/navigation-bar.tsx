@@ -14,14 +14,14 @@ export function NavigationBar() {
     return (<div className="navbar bg-base-100">
         <div className="navbar-start">
             <button className="btn btn-ghost">
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-0.5">
                     <Image src={ICON} alt={"icon"} className="h-12 w-12"/>
                     <p>simple-feature-toggles</p>
                 </div>
             </button>
         </div>
         <div className="navbar-center">
-            <ul className="menu menu-horizontal gap-2">
+            <ul className="menu menu-horizontal gap-0.5">
                 <li>
                     <a className={`${pathname == "/" ? "btn btn-primary" : "btn btn-ghost"}`} href={"/"}>Home</a>
                 </li>

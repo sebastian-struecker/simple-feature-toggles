@@ -1,4 +1,5 @@
 import {auth} from "@/auth";
+import toast from "react-hot-toast";
 
 export default async function fetcher(path: string, options: RequestInit = {}) {
     const session = await auth();
@@ -7,6 +8,8 @@ export default async function fetcher(path: string, options: RequestInit = {}) {
     options.headers = {
         ...options.headers, Authorization: `Bearer ${session?.access_token}`,
     };
-    console.log("before", options.body)
-    return fetch(url + path, options);
+    return fetch(url + path, options).catch((error) => {
+        console.error(error);
+        toast.success('Error:', error);
+    });
 }
