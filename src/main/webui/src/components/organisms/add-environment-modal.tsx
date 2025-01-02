@@ -32,13 +32,24 @@ export function AddEnvironmentModal({modalId}: Inputs) {
                     Create an Environment
                 </h3>
                 <div className="flex flex-col">
-                    <TextInputField label={"Key"} placeholder={"Enter a key"} example={"dev_stage"} isRequired={true}
-                                    pattern={UsedPatterns.key} formKey={"key"} register={register}
-                                    error={errors.key} isSubmitting={isSubmitting}/>
-                    <TextInputField label={"Name"} placeholder={"Enter a name"} example={"Development Stage"}
-                                    isRequired={true}
-                                    pattern={UsedPatterns.default} formKey={"name"} register={register}
-                                    error={errors.name} isSubmitting={isSubmitting}/>
+                    <TextInputField label={"Key"} placeholder={"Enter a key"}
+                                    control={{key: "key", register: register, isSubmitting: isSubmitting}}
+                                    validation={{
+                                        validatorHint: "Enter a valid key",
+                                        minLength: 3,
+                                        pattern: UsedPatterns.key,
+                                        isRequired: true
+                                    }}
+                    />
+                    <TextInputField label={"Name"} placeholder={"Enter a name"}
+                                    control={{key: "name", register: register, isSubmitting: isSubmitting}}
+                                    validation={{
+                                        validatorHint: "Enter a valid name",
+                                        minLength: 1,
+                                        pattern: UsedPatterns.default,
+                                        isRequired: true
+                                    }}
+                    />
                 </div>
                 <div className="modal-action flex justify-center">
                     <button className="btn btn-active btn-primary btn-block max-w-[200px]" type="submit">

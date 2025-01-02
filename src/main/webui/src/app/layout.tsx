@@ -19,7 +19,7 @@ export default async function RootLayout({
     children: React.ReactNode;
 }>) {
     const session = await auth();
-    return (<html lang="en" data-theme="emerald">
+    return (<html lang="en">
     <body className={"h-full light text-foreground bg-background" + inter}>
     <ProviderWrapper session={session}>
         <NavigationBar/>

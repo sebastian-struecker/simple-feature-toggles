@@ -1,11 +1,13 @@
 import React, {useEffect} from "react";
 import {useEnvironmentStore} from "@/src/providers/environment-store-provider";
+import {UrlPath} from "@/src/constants/url-path";
 
 type CreateFirstTemplateInputs = {
-    elementName: string; modalId: string; environmentNotice: boolean;
+    elementName: string; modalId: string; environmentNotice?: boolean;
 }
 
-export function CreateFirstTemplate({elementName, modalId, environmentNotice = false}: CreateFirstTemplateInputs) {
+export function CreateFirstTemplate({elementName, modalId, environmentNotice = true}: CreateFirstTemplateInputs) {
+
     const {environments, getAll} = useEnvironmentStore((state) => state);
 
     useEffect(() => {
@@ -17,6 +19,19 @@ export function CreateFirstTemplate({elementName, modalId, environmentNotice = f
             awaitGetAll();
         }
     }, [environmentNotice, getAll])
+
+    if (environmentNotice && environments.length == 0) {
+        return (<>
+            <div className="hero bg-base-100 min-h-[80vh]">
+                <div className="hero-content text-center">
+                    <div className="max-w-md gap-2">
+                        <h1 className="text-2xl font-bold pb-6">Start by creating an environment</h1>
+                        <a className="btn btn-primary" href={`/${UrlPath.environments}`}>Start here</a>
+                    </div>
+                </div>
+            </div>
+        </>);
+    }
 
     return (<>
         <div className="hero bg-base-100 min-h-[80vh]">
@@ -32,5 +47,5 @@ export function CreateFirstTemplate({elementName, modalId, environmentNotice = f
                 </div>
             </div>
         </div>
-    </>)
+    </>);
 }
