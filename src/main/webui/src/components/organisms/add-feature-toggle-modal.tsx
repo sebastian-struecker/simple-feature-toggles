@@ -4,6 +4,7 @@ import {useFeatureToggleStore} from "@/src/providers/feature-toggle-store-provid
 import {CreateFeatureToggleInputs} from "@/src/types/create-feature-toggle-inputs";
 import {TextInputField, UsedPatterns} from "@/src/components/molecules/text-input-field";
 import {EnvironmentInputField} from "@/src/components/molecules/environment-input-field";
+import {TextInputArea} from "@/src/components/molecules/text-input-area";
 
 type Inputs = {
     modalId: string;
@@ -33,31 +34,30 @@ export function AddFeatureToggleModal({modalId}: Inputs) {
                     Create a Feature Toggle
                 </h3>
                 <div className="flex flex-col">
-                    <TextInputField label={"Key"} placeholder={"Enter a key"} example={"new_feature"} isRequired={true}
-                                    pattern={UsedPatterns.key} formKey={"key"} register={register}
-                                    error={errors.key} isSubmitting={isSubmitting}/>
-                    <TextInputField label={"Name"} placeholder={"Enter a name"} example={"Some new feature"}
-                                    isRequired={true}
-                                    pattern={UsedPatterns.default} formKey={"name"} register={register}
-                                    error={errors.name} isSubmitting={isSubmitting}/>
-                    <label className="form-control">
-                        <div className="label">
-                            <span className="label-text">
-                                Description
-                            </span>
-                        </div>
-                        <textarea
-                            {...register("description", {minLength: 1})} disabled={isSubmitting}
-                            className={`textarea textarea-primary textarea-bordered textarea-md w-full ${errors.description ? "input-error" : ""}`}
-                            placeholder="Enter a description"
-                            name="description"
-                        />
-                        <div className="label">
-                            <span className="label-text-alt"></span>
-                            {errors.description?.type == "minLength" && (
-                                <span className="label-text-alt text-error">Please enter a description</span>)}
-                        </div>
-                    </label>
+                    <TextInputField label={"Key"} placeholder={"Enter a key"}
+                                    control={{key: "key", register: register, isSubmitting: isSubmitting}}
+                                    validation={{
+                                        validatorHint: "Enter a valid key",
+                                        minLength: 3,
+                                        pattern: UsedPatterns.key,
+                                        isRequired: true
+                                    }}
+                    />
+                    <TextInputField label={"Name"} placeholder={"Enter a name"}
+                                    control={{key: "name", register: register, isSubmitting: isSubmitting}}
+                                    validation={{
+                                        validatorHint: "Enter a valid name",
+                                        minLength: 1,
+                                        pattern: UsedPatterns.default,
+                                        isRequired: true
+                                    }}
+                    />
+                    <TextInputArea label={"Description"} placeholder={"Enter a description"}
+                                   control={{key: "description", register: register, isSubmitting: isSubmitting}}
+                                   validation={{
+                                       validatorHint: "Enter a description", minLength: 1, isRequired: false
+                                   }}
+                    />
                     <EnvironmentInputField label={"Environment"} control={control} isRequired={false}
                                            formKey={"environment"}
                                            register={register} error={errors.environmentActivation}

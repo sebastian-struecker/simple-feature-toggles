@@ -33,10 +33,15 @@ export function AddApiKeyModal({modalId}: Inputs) {
                     Create an Api Key
                 </h3>
                 <div className="flex flex-col">
-                    <TextInputField label={"Name"} placeholder={"Enter a name"} example={"Some new api key"}
-                                    isRequired={true}
-                                    pattern={UsedPatterns.default} formKey={"name"} register={register}
-                                    error={errors.name} isSubmitting={isSubmitting}/>
+                    <TextInputField label={"Name"} placeholder={"Enter a name"}
+                                    control={{key: "name", register, isSubmitting}}
+                                    validation={{
+                                        validatorHint: "Some new api key",
+                                        minLength: 1,
+                                        pattern: UsedPatterns.default,
+                                        isRequired: true
+                                    }}
+                    />
                     <EnvironmentInputField label={"Environment"} control={control} isRequired={false} formKey={"environment"}
                                            register={register} error={errors.environmentActivation}
                                            isSubmitting={isSubmitting} />

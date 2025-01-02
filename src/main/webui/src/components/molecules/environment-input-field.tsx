@@ -19,27 +19,26 @@ export function EnvironmentInputField({
         awaitGetAll();
     }, [getAll])
 
-    return (<label className="form-control">
-        <div className="label">
-                            <span className="label-text">
-                                {label}
-                                {isRequired && <span className="text-error">*</span>}
-                            </span>
-        </div>
-        <Controller
-            control={control}
-            name="multipleSelect"
-            render={({field}) => {
-                return (<>
-                    {environments.map((env) => (<>{env.name}</>))}
-                </>);
-            }}
-        />
-        <div className="label">
-            <span className="label-text-alt"></span>
-            {error && (<span
-                className="label-text-alt text-error">Please enter a valid {label.toLowerCase()}</span>)}
-        </div>
-    </label>)
+    return (<>
+        <fieldset className="fieldset">
+            <legend className="fieldset-legend">{label}
+            </legend>
+
+
+            <Controller
+                control={control}
+                name="multipleSelect"
+                render={({field}) => {
+                    return (<>
+                        {environments.map((env) => (<>
+                            <label className="fieldset-label font-black text-black font-normal">
+                                <input type="checkbox" defaultChecked className="checkbox"/>
+                                {env.name}
+                            </label>
+                        </>))}
+                    </>);
+                }}
+            /></fieldset>
+    </>)
 
 }
