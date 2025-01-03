@@ -9,9 +9,11 @@ import {
 } from "@/src/actions/feature-toggles";
 import {CreateFeatureToggleInputs} from "@/src/types/create-feature-toggle-inputs";
 import {UpdateFeatureToggleInputs} from "@/src/types/update-feature-toggle-inputs";
+import {persist} from "zustand/middleware";
 
 export type FeatureToggleState = {
     featureToggles: FeatureToggle[]
+    hasHydrated: boolean
 }
 
 export type FeatureToggleActions = {
@@ -20,16 +22,17 @@ export type FeatureToggleActions = {
     create: (input: CreateFeatureToggleInputs) => void
     update: (input: UpdateFeatureToggleInputs) => void
     deleteById: (id: number) => void
+    setHasHydrated: (value: boolean) => void
 }
 
 export type FeatureToggleStore = FeatureToggleState & FeatureToggleActions
 
 const defaultInitState: FeatureToggleState = {
-    featureToggles: [],
+    featureToggles: [], hasHydrated: false
 }
 
 export const createFeatureToggleStore = (initState: FeatureToggleState = defaultInitState) => {
-    return createStore<FeatureToggleStore>()((set) => ({
+    return createStore<FeatureToggleStore>()(persist((set) => ({
         ...initState, getById: async (id: number) => {
             return await featureToggles_getById(id);
         }, getAll: async () => {
@@ -56,6 +59,16 @@ export const createFeatureToggleStore = (initState: FeatureToggleState = default
             set(() => ({
                 featureToggles: response
             }));
-        },
+        }, setHasHydrated: (value: boolean) => {
+            set({
+                hasHydrated: value
+            });
+        }
+    }), {
+        name: 'feature-toggle-storage', partialize: (state) => ({
+            environments: state.featureToggles
+        }), onRehydrateStorage: (state) => {
+            return () => state.setHasHydrated(true);
+        }
     }))
 }

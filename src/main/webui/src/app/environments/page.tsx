@@ -1,37 +1,69 @@
 "use client"
 
-import React, {useEffect, useState} from 'react'
-import {LoadingSpinner} from "@/src/components/molecules/loading-spinner";
-import {CreateFirstTemplate} from "@/src/components/organisms/create-first-template";
+import React, {useEffect} from 'react'
 import {FaPen, FaPlus, FaTrash} from "react-icons/fa";
 import {useEnvironmentStore} from "@/src/providers/environment-store-provider";
-import {useRouter} from "next/navigation";
 import {AddEnvironmentModal} from "@/src/components/organisms/add-environment-modal";
 
 const modalId = "add_environment_modal";
 
 export default function EnvironmentsPage() {
-    const router = useRouter();
-    const {environments, getAll} = useEnvironmentStore((state) => state);
-    const [loading, setLoading] = useState(true);
+    const {environments, hasHydrated, getAll} = useEnvironmentStore((state) => state);
 
     useEffect(() => {
         async function awaitGetAll() {
             await getAll();
-            setLoading(false);
         }
 
         awaitGetAll();
     }, [getAll])
 
-    if (loading) {
-        return (<LoadingSpinner/>)
+    const renderSkeletonRows = () => {
+        return (<tbody>
+        {Array.from(Array(10).keys()).map(i => {
+            return (<tr key={"skeleton-" + i}>
+                <td>
+                    <div className="skeleton h-9"></div>
+                </td>
+                <td>
+                    <div className="skeleton h-9"></div>
+                </td>
+                <td>
+                    <div className="skeleton h-9"></div>
+                </td>
+            </tr>);
+        })}
+        </tbody>);
+    };
+
+    const renderDataRows = () => {
+        return (<tbody>
+        {environments?.map((environment) => {
+            return (<tr key={environment.name + environment.id}
+                        className="hover">
+                <td>
+                    <div>{environment.key}</div>
+                </td>
+                <td>
+                    <div>{environment.name}</div>
+                </td>
+                <td className="max-w-0.5">
+                    <div className="flex gap-2">
+                        <div className="lg:tooltip" data-tip="Edit">
+                            <button className="btn btn-soft btn-secondary"><FaPen/></button>
+                        </div>
+                        <div className="lg:tooltip" data-tip="Remove">
+                            <button className="btn btn-soft btn-secondary"><FaTrash/></button>
+                        </div>
+                    </div>
+                </td>
+            </tr>);
+        })}
+        </tbody>);
     }
 
     return (<div className="h-full min-h-96 p-6 flex justify-center">
-        {environments?.length == 0 &&
-            <CreateFirstTemplate elementName={"Environment"} modalId={modalId} environmentNotice={false}/>}
-        {environments?.length > 0 && <div className="w-5/6 flex flex-col">
+        <div className="w-5/6 flex flex-col">
             <div className="flex justify-between flex-row">
                 <div className="text-xl font-semibold">
                     Environments
@@ -50,32 +82,11 @@ export default function EnvironmentsPage() {
                         <th>Actions</th>
                     </tr>
                     </thead>
-                    <tbody>
-                    {environments.map((environment) => {
-                        return (<tr key={environment.name + environment.id}
-                                    className="hover">
-                            <td>
-                                <div>{environment.key}</div>
-                            </td>
-                            <td>
-                                <div>{environment.name}</div>
-                            </td>
-                            <td className="max-w-0.5">
-                                <div className="flex gap-2">
-                                    <div className="lg:tooltip" data-tip="Edit">
-                                        <button className="btn btn-outline"><FaPen/></button>
-                                    </div>
-                                    <div className="lg:tooltip" data-tip="Remove">
-                                        <button className="btn btn-outline"><FaTrash/></button>
-                                    </div>
-                                </div>
-                            </td>
-                        </tr>);
-                    })}
-                    </tbody>
+                    {hasHydrated && renderSkeletonRows()}
+                    {renderDataRows()}
                 </table>
             </div>
-        </div>}
+        </div>
         <AddEnvironmentModal modalId={modalId}/>
     </div>);
 }

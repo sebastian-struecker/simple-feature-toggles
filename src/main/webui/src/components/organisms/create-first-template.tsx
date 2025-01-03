@@ -1,6 +1,8 @@
 import React, {useEffect} from "react";
 import {useEnvironmentStore} from "@/src/providers/environment-store-provider";
 import {UrlPath} from "@/src/constants/url-path";
+import {FaPen, FaPlus, FaTrash} from "react-icons/fa";
+import {AddEnvironmentModal} from "@/src/components/organisms/add-environment-modal";
 
 type CreateFirstTemplateInputs = {
     elementName: string; modalId: string; environmentNotice?: boolean;
@@ -34,18 +36,26 @@ export function CreateFirstTemplate({elementName, modalId, environmentNotice = t
     }
 
     return (<>
-        <div className="hero bg-base-100 min-h-[80vh]">
-            <div className="hero-content text-center">
-                <div className="max-w-md">
-                    <h1 className="text-4xl font-bold">Pretty empty here</h1>
-                    <p className="py-6">
-                        Start by creating your first <b>{elementName}!</b>
-                    </p>
-                    <button className="btn btn-primary"
-                            onClick={() => document.getElementById(modalId)?.showModal()}>Start here
-                    </button>
+        <div className="h-full min-h-96 p-6">
+            <div className="flex flex-col">
+                <div className="text-xl font-semibold">
+                    Environments
+                </div>
+                <div className="hero bg-base-100 min-h-[80vh]">
+                    <div className="hero-content text-center">
+                        <div className="max-w-md">
+                            <h1 className="text-4xl font-bold">Pretty empty here</h1>
+                            <p className="py-6">
+                                Start by creating your first <b>{elementName}!</b>
+                            </p>
+                            <button className="btn btn-primary"
+                                    onClick={() => document.getElementById(modalId)?.showModal()}>Start here
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
+
     </>);
 }

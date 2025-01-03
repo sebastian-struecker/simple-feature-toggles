@@ -1,7 +1,7 @@
 "use client"
 
 import React from "react";
-import {usePathname} from "next/navigation";
+import {usePathname, useRouter} from "next/navigation";
 import Image from "next/image";
 import {HiDotsHorizontal} from "react-icons/hi";
 import ICON from "@/public/icon.svg";
@@ -10,21 +10,51 @@ import {UrlPath} from "@/src/constants/url-path";
 
 export function NavigationBar() {
     const pathname = usePathname();
+    const router = useRouter();
 
-    return (<div className="navbar bg-base-100">
+    return (<div className="navbar bg-base-100 shadow-sm">
         <div className="navbar-start">
-            <button className="btn btn-ghost">
+            <div className="dropdown">
+                <div tabIndex={0} role="button" className="btn btn-ghost lg:hidden">
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-5 w-5"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth="2"
+                            d="M4 6h16M4 12h8m-8 6h16"/>
+                    </svg>
+                </div>
+                <ul
+                    tabIndex={0}
+                    className="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow gap-0.5">
+                    <li>
+                        <a className={`${pathname.includes(UrlPath.featureToggles) ? "btn btn-primary" : "btn btn-ghost"}`}
+                           href={`/${UrlPath.featureToggles}`}>Feature-Toggles</a>
+                    </li>
+                    <li>
+                        <a className={`${pathname.includes(UrlPath.apiKeys) ? "btn btn-primary" : "btn btn-ghost"}`}
+                           href={`/${UrlPath.apiKeys}`}>Api-Keys</a>
+                    </li>
+                    <li>
+                        <a className={`${pathname.includes(UrlPath.environments) ? "btn btn-primary" : "btn btn-ghost"}`}
+                           href={`/${UrlPath.environments}`}>Environments</a>
+                    </li>
+                </ul>
+            </div>
+            <a href={"/"} className="btn btn-ghost hover:bg-base-100 hover:border-base-100">
                 <div className="flex items-center gap-0.5">
                     <Image src={ICON} alt={"icon"} className="h-12 w-12"/>
                     <p>simple-feature-toggles</p>
                 </div>
-            </button>
+            </a>
         </div>
-        <div className="navbar-center">
+        <div className="navbar-center hidden lg:flex">
             <ul className="menu menu-horizontal gap-0.5">
-                <li>
-                    <a className={`${pathname == "/" ? "btn btn-primary" : "btn btn-ghost"}`} href={"/"}>Home</a>
-                </li>
                 <li>
                     <a className={`${pathname.includes(UrlPath.featureToggles) ? "btn btn-primary" : "btn btn-ghost"}`}
                        href={`/${UrlPath.featureToggles}`}>Feature-Toggles</a>
@@ -48,7 +78,8 @@ export function NavigationBar() {
                     tabIndex={0}
                     className="menu menu-md dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-52 p-2 shadow">
                     <li><a onClick={() => {
-                        signOutAction()
+                        signOutAction();
+                        router.push("/api/auth/signin");
                     }}>Logout</a></li>
                 </ul>
             </div>

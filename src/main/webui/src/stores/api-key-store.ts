@@ -9,9 +9,11 @@ import {
     apiKeys_update
 } from "@/src/actions/api-keys";
 import {UpdateApiKeyInputs} from "@/src/types/update-api-key-inputs";
+import {persist} from 'zustand/middleware'
 
 export type ApiKeyState = {
     apiKeys: ApiKey[]
+    hasHydrated: boolean
 }
 
 export type ApiKeyActions = {
@@ -20,16 +22,17 @@ export type ApiKeyActions = {
     create: (input: CreateApiKeyInputs) => void
     update: (input: UpdateApiKeyInputs) => void
     deleteById: (id: number) => void
+    setHasHydrated: (value: boolean) => void
 }
 
 export type ApiKeyStore = ApiKeyState & ApiKeyActions
 
 const defaultInitState: ApiKeyState = {
-    apiKeys: [],
+    apiKeys: [], hasHydrated: false
 }
 
 export const createApiKeyStore = (initState: ApiKeyState = defaultInitState) => {
-    return createStore<ApiKeyStore>()((set) => ({
+    return createStore<ApiKeyStore>()(persist((set) => ({
         ...initState, getById: async (id: number) => {
             return await apiKeys_getById(id);
         }, getAll: async () => {
@@ -56,6 +59,16 @@ export const createApiKeyStore = (initState: ApiKeyState = defaultInitState) => 
             set(() => ({
                 apiKeys: response
             }));
-        },
-    }))
+        }, setHasHydrated: (value: boolean) => {
+            set({
+                hasHydrated: value
+            });
+        }
+    }), {
+        name: 'api-key-storage',
+        partialize: (state) => ({environments: state.apiKeys}),
+        onRehydrateStorage: (state) => {
+            return () => state.setHasHydrated(true);
+        }
+    }));
 }

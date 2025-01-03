@@ -9,12 +9,12 @@ import {
     environments_update
 } from '@/src/actions/environments';
 import {UpdateEnvironmentInputs} from "@/src/types/update-environment-inputs";
-import toast from "react-hot-toast";
-import { FaCheck } from "react-icons/fa";
+import {persist} from 'zustand/middleware'
 
 
 export type EnvironmentState = {
     environments: Environment[]
+    hasHydrated: boolean
 }
 
 export type EnvironmentActions = {
@@ -23,16 +23,17 @@ export type EnvironmentActions = {
     create: (input: CreateEnvironmentInputs) => void
     update: (input: UpdateEnvironmentInputs) => void
     deleteById: (id: number) => void
+    setHasHydrated: (value: boolean) => void
 }
 
 export type EnvironmentStore = EnvironmentState & EnvironmentActions
 
 const defaultInitState: EnvironmentState = {
-    environments: [],
+    environments: [], hasHydrated: false
 }
 
 export const createEnvironmentStore = (initState: EnvironmentState = defaultInitState) => {
-    return createStore<EnvironmentStore>()((set) => ({
+    return createStore<EnvironmentStore>()(persist((set) => ({
         ...initState, getById: async (id: number) => {
             return await environments_getById(id);
         }, getAll: async () => {
@@ -59,6 +60,16 @@ export const createEnvironmentStore = (initState: EnvironmentState = defaultInit
             set(() => ({
                 environments: response
             }));
-        },
-    }))
+        }, setHasHydrated: (value: boolean) => {
+            set({
+                hasHydrated: value
+            });
+        }
+    }), {
+        name: 'environment-storage',
+        partialize: (state) => ({environments: state.environments}),
+        onRehydrateStorage: (state) => {
+            return () => state.setHasHydrated(true);
+        }
+    }));
 }

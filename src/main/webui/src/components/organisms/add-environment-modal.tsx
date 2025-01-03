@@ -16,6 +16,10 @@ export function AddEnvironmentModal({modalId}: Inputs) {
 
     const onSubmit: SubmitHandler<CreateEnvironmentInputs> = async (values: CreateEnvironmentInputs) => {
         create(values);
+        onClose();
+    };
+
+    const onClose = () => {
         reset();
         document.getElementById(modalId)?.close();
     };
@@ -23,10 +27,8 @@ export function AddEnvironmentModal({modalId}: Inputs) {
     return (<dialog id={modalId} className="modal modal-bottom sm:modal-middle">
         <div className="modal-box">
             <form method="dialog" className="flex flex-col gap-3" onSubmit={handleSubmit(onSubmit)}>
-                <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2" type="reset" onClick={() => {
-                    reset();
-                    document.getElementById(modalId)?.close();
-                }}>✕
+                <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2" type="reset"
+                        onClick={onClose}>✕
                 </button>
                 <h3 className="text-center text-xl sm:text-xl font-semibold">
                     Create an Environment
@@ -52,23 +54,18 @@ export function AddEnvironmentModal({modalId}: Inputs) {
                     />
                 </div>
                 <div className="modal-action flex justify-center">
-                    <button className="btn btn-active btn-primary btn-block max-w-[200px]" type="submit">
+                    <button className="btn btn-primary btn-block max-w-[12rem]" type="submit">
                         Create
                     </button>
-                    <button className="btn btn-outline btn-primary btn-block max-w-[200px]" type="reset"
-                            onClick={() => {
-                                reset();
-                                document.getElementById(modalId)?.close();
-                            }}>
+                    <button className="btn btn-outline btn-primary btn-block max-w-[12rem]" type="reset"
+                            onClick={onClose}>
                         Cancel
                     </button>
                 </div>
             </form>
         </div>
         <form method="dialog" className="modal-backdrop">
-            <button onClick={() => {
-                reset();
-            }}>Close on background click
+            <button onClick={onClose}>Close on background click
             </button>
         </form>
     </dialog>)
