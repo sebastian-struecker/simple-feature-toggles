@@ -1,6 +1,6 @@
 "use client"
 
-import React, {useEffect, useState} from "react";
+import React, {useEffect} from "react";
 import {useFeatureToggleStore} from "@/src/providers/feature-toggle-store-provider";
 import {FaPlus} from "react-icons/fa";
 import {UrlPath} from "@/src/constants/url-path";
@@ -11,13 +11,11 @@ const modalId = "add_feature_toggle_modal";
 
 export default function FeatureTogglesPage() {
     const router = useRouter();
-    const {featureToggles, getAll} = useFeatureToggleStore((state) => state);
-    const [loading, setLoading] = useState(true);
+    const {featureToggles, isLoading, getAll} = useFeatureToggleStore((state) => state);
 
     useEffect(() => {
         async function awaitGetAll() {
             await getAll();
-            setLoading(false);
         }
 
         awaitGetAll();
@@ -49,7 +47,7 @@ export default function FeatureTogglesPage() {
         {featureToggles.map((featureToggle) => {
             return (<tr key={featureToggle.key + featureToggle.id}
                         onClick={() => router.push(`/${UrlPath.featureToggles}/` + featureToggle.id)}
-                        className="hover hover:cursor-pointer">
+                        className="hover hover:bg-base-200 hover:cursor-pointer">
                 <td className="w-1/5">
                     <div className="flex flex-col gap-3">
                         <span className="font-semibold">{featureToggle.name}</span>
@@ -87,8 +85,8 @@ export default function FeatureTogglesPage() {
                         <th>Activation</th>
                     </tr>
                     </thead>
-                    {loading && renderSkeletonRows()}
-                    {renderDataRows()}
+                    {isLoading && renderSkeletonRows()}
+                    {!isLoading && renderDataRows()}
                 </table>
             </div>
         </div>

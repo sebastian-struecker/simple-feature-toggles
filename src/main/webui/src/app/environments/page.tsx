@@ -8,7 +8,7 @@ import {AddEnvironmentModal} from "@/src/components/organisms/add-environment-mo
 const modalId = "add_environment_modal";
 
 export default function EnvironmentsPage() {
-    const {environments, hasHydrated, getAll} = useEnvironmentStore((state) => state);
+    const {environments, isLoading, getAll} = useEnvironmentStore((state) => state);
 
     useEffect(() => {
         async function awaitGetAll() {
@@ -40,7 +40,7 @@ export default function EnvironmentsPage() {
         return (<tbody>
         {environments?.map((environment) => {
             return (<tr key={environment.name + environment.id}
-                        className="hover">
+                        className="hover hover:bg-base-200 hover:cursor-pointer">
                 <td>
                     <div>{environment.key}</div>
                 </td>
@@ -50,7 +50,10 @@ export default function EnvironmentsPage() {
                 <td className="max-w-0.5">
                     <div className="flex gap-2">
                         <div className="lg:tooltip" data-tip="Edit">
-                            <button className="btn btn-soft btn-secondary"><FaPen/></button>
+                            <button className="btn btn-soft btn-secondary"
+                                    onClick={() => {
+                                        document.getElementById(modalId)?.showModal()
+                                    }}><FaPen/></button>
                         </div>
                         <div className="lg:tooltip" data-tip="Remove">
                             <button className="btn btn-soft btn-secondary"><FaTrash/></button>
@@ -82,8 +85,8 @@ export default function EnvironmentsPage() {
                         <th>Actions</th>
                     </tr>
                     </thead>
-                    {hasHydrated && renderSkeletonRows()}
-                    {renderDataRows()}
+                    {isLoading && renderSkeletonRows()}
+                    {!isLoading && renderDataRows()}
                 </table>
             </div>
         </div>

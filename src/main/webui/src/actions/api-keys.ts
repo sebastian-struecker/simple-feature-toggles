@@ -22,18 +22,28 @@ export async function apiKeys_create(input: CreateApiKeyInputs): Promise<ApiKey>
     const response = await fetcher(`${path}`, {
         method: "POST", body: JSON.stringify(input), headers: {"Content-Type": "application/json"}
     })
-    return response.json();
+    if (response && response.status === 200) {
+        return response.json();
+    }
+    throw new Error("Error while creating an api key");
 }
 
 export async function apiKeys_update(input: UpdateApiKeyInputs): Promise<ApiKey> {
     const response = await fetcher(`${path}`, {
         method: "PATCH", body: JSON.stringify(input), headers: {"Content-Type": "application/json"}
     })
-    return response.json();
+    if (response && response.status === 200) {
+        return response.json();
+    }
+    throw new Error("Error while updating an api key");
 }
 
 export async function apiKeys_deleteById(id: number) {
-    await fetcher(`${path}/` + id, {
+    const response = await fetcher(`${path}/` + id, {
         method: "DELETE"
     });
+    if (response && response.status === 200) {
+        return response.json();
+    }
+    throw new Error("Error while deleting an api key");
 }

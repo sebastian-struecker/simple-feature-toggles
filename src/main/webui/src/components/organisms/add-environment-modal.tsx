@@ -10,7 +10,7 @@ type Inputs = {
 
 export function AddEnvironmentModal({modalId}: Inputs) {
     const {
-        register, handleSubmit, reset, formState: {errors, isSubmitting},
+        register, handleSubmit, reset, formState: {isSubmitting},
     } = useForm<CreateEnvironmentInputs>();
     const {create} = useEnvironmentStore((state) => state);
 
@@ -20,8 +20,8 @@ export function AddEnvironmentModal({modalId}: Inputs) {
     };
 
     const onClose = () => {
-        reset();
         document.getElementById(modalId)?.close();
+        reset();
     };
 
     return (<dialog id={modalId} className="modal modal-bottom sm:modal-middle">
@@ -35,7 +35,9 @@ export function AddEnvironmentModal({modalId}: Inputs) {
                 </h3>
                 <div className="flex flex-col">
                     <TextInputField label={"Key"} placeholder={"Enter a key"}
-                                    control={{key: "key", register: register, isSubmitting: isSubmitting}}
+                                    control={{
+                                        key: "key", register: register, isSubmitting: isSubmitting
+                                    }}
                                     validation={{
                                         validatorHint: "Enter a valid key",
                                         minLength: 3,
@@ -44,7 +46,9 @@ export function AddEnvironmentModal({modalId}: Inputs) {
                                     }}
                     />
                     <TextInputField label={"Name"} placeholder={"Enter a name"}
-                                    control={{key: "name", register: register, isSubmitting: isSubmitting}}
+                                    control={{
+                                        key: "name", register: register, isSubmitting: isSubmitting
+                                    }}
                                     validation={{
                                         validatorHint: "Enter a valid name",
                                         minLength: 1,

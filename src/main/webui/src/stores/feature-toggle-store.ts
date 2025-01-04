@@ -10,10 +10,11 @@ import {
 import {CreateFeatureToggleInputs} from "@/src/types/create-feature-toggle-inputs";
 import {UpdateFeatureToggleInputs} from "@/src/types/update-feature-toggle-inputs";
 import {persist} from "zustand/middleware";
+import toast from "react-hot-toast";
 
 export type FeatureToggleState = {
     featureToggles: FeatureToggle[]
-    hasHydrated: boolean
+    isLoading: boolean
 }
 
 export type FeatureToggleActions = {
@@ -22,13 +23,13 @@ export type FeatureToggleActions = {
     create: (input: CreateFeatureToggleInputs) => void
     update: (input: UpdateFeatureToggleInputs) => void
     deleteById: (id: number) => void
-    setHasHydrated: (value: boolean) => void
+    setIsLoading: (value: boolean) => void
 }
 
 export type FeatureToggleStore = FeatureToggleState & FeatureToggleActions
 
 const defaultInitState: FeatureToggleState = {
-    featureToggles: [], hasHydrated: false
+    featureToggles: [], isLoading: false
 }
 
 export const createFeatureToggleStore = (initState: FeatureToggleState = defaultInitState) => {
@@ -36,39 +37,66 @@ export const createFeatureToggleStore = (initState: FeatureToggleState = default
         ...initState, getById: async (id: number) => {
             return await featureToggles_getById(id);
         }, getAll: async () => {
+            set(() => ({
+                isLoading: true
+            }));
             const response = await featureToggles_getAll();
             set(() => ({
-                featureToggles: response
+                featureToggles: response, isLoading: false
             }));
             return response;
         }, create: async (input: CreateFeatureToggleInputs) => {
-            await featureToggles_create(input);
+            try {
+                await featureToggles_create(input);
+                toast.success("Feature toggle created successfully");
+            } catch (e) {
+                console.error(e);
+                if (e instanceof Error) {
+                    toast.error(e.message);
+                }
+            }
             const response = await featureToggles_getAll();
             set(() => ({
                 featureToggles: response
             }));
         }, update: async (input: UpdateFeatureToggleInputs) => {
-            await featureToggles_update(input);
+            try {
+                await featureToggles_update(input);
+                toast.success("Feature toggle updated successfully");
+            } catch (e) {
+                console.error(e);
+                if (e instanceof Error) {
+                    toast.error(e.message);
+                }
+            }
             const response = await featureToggles_getAll();
             set(() => ({
                 featureToggles: response
             }));
         }, deleteById: async (id: number) => {
-            await featureToggles_deleteById(id);
+            try {
+                await featureToggles_deleteById(id);
+                toast.success("Feature toggle deleted successfully");
+            } catch (e) {
+                console.error(e);
+                if (e instanceof Error) {
+                    toast.error(e.message);
+                }
+            }
             const response = await featureToggles_getAll();
             set(() => ({
                 featureToggles: response
             }));
-        }, setHasHydrated: (value: boolean) => {
+        }, setIsLoading: (value: boolean) => {
             set({
-                hasHydrated: value
+                isLoading: value
             });
         }
     }), {
         name: 'feature-toggle-storage', partialize: (state) => ({
             environments: state.featureToggles
         }), onRehydrateStorage: (state) => {
-            return () => state.setHasHydrated(true);
+            return () => state.setIsLoading(false);
         }
     }))
 }

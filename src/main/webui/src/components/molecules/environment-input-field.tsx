@@ -38,7 +38,8 @@ export function EnvironmentInputField({
                         </>))}
                     </>);
                 }}
-            /></fieldset>
+            />
+        </fieldset>
     </>)
 
 }

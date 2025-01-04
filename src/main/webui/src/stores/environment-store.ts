@@ -10,11 +10,12 @@ import {
 } from '@/src/actions/environments';
 import {UpdateEnvironmentInputs} from "@/src/types/update-environment-inputs";
 import {persist} from 'zustand/middleware'
+import toast from "react-hot-toast";
 
 
 export type EnvironmentState = {
     environments: Environment[]
-    hasHydrated: boolean
+    isLoading: boolean
 }
 
 export type EnvironmentActions = {
@@ -23,13 +24,13 @@ export type EnvironmentActions = {
     create: (input: CreateEnvironmentInputs) => void
     update: (input: UpdateEnvironmentInputs) => void
     deleteById: (id: number) => void
-    setHasHydrated: (value: boolean) => void
+    setIsLoading: (value: boolean) => void
 }
 
 export type EnvironmentStore = EnvironmentState & EnvironmentActions
 
 const defaultInitState: EnvironmentState = {
-    environments: [], hasHydrated: false
+    environments: [], isLoading: false
 }
 
 export const createEnvironmentStore = (initState: EnvironmentState = defaultInitState) => {
@@ -37,39 +38,66 @@ export const createEnvironmentStore = (initState: EnvironmentState = defaultInit
         ...initState, getById: async (id: number) => {
             return await environments_getById(id);
         }, getAll: async () => {
+            set(() => ({
+                isLoading: true
+            }));
             const response = await environments_getAll();
             set(() => ({
-                environments: response
+                environments: response, isLoading: false
             }));
             return response;
         }, create: async (input: CreateEnvironmentInputs) => {
-            await environments_create(input);
+            try {
+                await environments_create(input);
+                toast.success("Environment created successfully");
+            } catch (e) {
+                console.error(e);
+                if (e instanceof Error) {
+                    toast.error(e.message);
+                }
+            }
             const response = await environments_getAll();
             set(() => ({
                 environments: response
             }));
         }, update: async (input: UpdateEnvironmentInputs) => {
-            await environments_update(input);
+            try {
+                await environments_update(input);
+                toast.success("Environment updated successfully");
+            } catch (e) {
+                console.error(e);
+                if (e instanceof Error) {
+                    toast.error(e.message);
+                }
+            }
             const response = await environments_getAll();
             set(() => ({
                 environments: response
             }));
         }, deleteById: async (id: number) => {
-            await environments_deleteById(id);
+            try {
+                await environments_deleteById(id);
+                toast.success("Environment deleted successfully");
+            } catch (e) {
+                console.error(e);
+                if (e instanceof Error) {
+                    toast.error(e.message);
+                }
+            }
             const response = await environments_getAll();
             set(() => ({
                 environments: response
             }));
-        }, setHasHydrated: (value: boolean) => {
+        }, setIsLoading: (value: boolean) => {
             set({
-                hasHydrated: value
+                isLoading: value
             });
         }
     }), {
         name: 'environment-storage',
         partialize: (state) => ({environments: state.environments}),
         onRehydrateStorage: (state) => {
-            return () => state.setHasHydrated(true);
+            return () => state.setIsLoading(false);
         }
     }));
 }

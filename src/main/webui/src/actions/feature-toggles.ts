@@ -21,18 +21,28 @@ export async function featureToggles_create(input: CreateFeatureToggleInputs): P
     const response = await fetcher(`${path}`, {
         method: "POST", body: JSON.stringify(input), headers: {"Content-Type": "application/json"}
     })
-    return response.json();
+    if (response && response.status === 200) {
+        return response.json();
+    }
+    throw new Error("Error while creating feature toggle");
 }
 
 export async function featureToggles_update(input: UpdateFeatureToggleInputs): Promise<FeatureToggle> {
     const response = await fetcher(`${path}`, {
         method: "PATCH", body: JSON.stringify(input), headers: {"Content-Type": "application/json"}
     })
-    return response.json();
+    if (response && response.status === 200) {
+        return response.json();
+    }
+    throw new Error("Error while updating a feature toggle");
 }
 
 export async function featureToggles_deleteById(id: number) {
-    await fetcher(`${path}/` + id, {
+    const response = await fetcher(`${path}/` + id, {
         method: "DELETE"
     });
+    if (response && response.status === 200) {
+        return response.json();
+    }
+    throw new Error("Error while deleting a feature toggle");
 }

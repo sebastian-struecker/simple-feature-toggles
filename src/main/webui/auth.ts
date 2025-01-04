@@ -45,6 +45,7 @@ export const {handlers, auth, signIn, signOut} = NextAuth({
                 session = Object.assign({}, session, {access_token: token.access_token})
                 session.expires_at = token.expires_at;
             }
+            console.log("session");
             return session
         }, async authorized({auth}) {
             return !!auth

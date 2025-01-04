@@ -17,9 +17,15 @@ type Validation = {
 }
 
 export function TextInputField({
-                                   label = "", placeholder = "", control: {key, register, isSubmitting}, validation: {
-        pattern = UsedPatterns.default, isRequired = false, minLength = 0, validatorHint = ""
-    }
+                                   label = "",
+                                   placeholder = "",
+                                   control: {key, register, isSubmitting},
+                                   validation: {
+                                       pattern = UsedPatterns.default,
+                                       isRequired = false,
+                                       minLength = 0,
+                                       validatorHint = ""
+                                   },
                                }: Inputs) {
     return (<>
         <fieldset className="fieldset">

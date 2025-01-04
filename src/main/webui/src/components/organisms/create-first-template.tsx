@@ -1,8 +1,6 @@
 import React, {useEffect} from "react";
 import {useEnvironmentStore} from "@/src/providers/environment-store-provider";
 import {UrlPath} from "@/src/constants/url-path";
-import {FaPen, FaPlus, FaTrash} from "react-icons/fa";
-import {AddEnvironmentModal} from "@/src/components/organisms/add-environment-modal";
 
 type CreateFirstTemplateInputs = {
     elementName: string; modalId: string; environmentNotice?: boolean;

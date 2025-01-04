@@ -13,7 +13,7 @@ export default function Page() {
 
         awaitGetAll();
     }, [getAll])
-    
+
     return (<>
         <div className="h-full min-h-96">
             Hello

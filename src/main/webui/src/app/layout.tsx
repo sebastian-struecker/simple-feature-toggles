@@ -20,10 +20,22 @@ export default async function RootLayout({
 }>) {
     const session = await auth();
     return (<html lang="en">
-    <body className={"h-full light text-foreground bg-background" + inter}>
+    <body className={"h-full text-foreground bg-background" + inter}>
     <ProviderWrapper session={session}>
         <NavigationBar/>
-        <Toaster position="top-right" toastOptions={{duration: 4000}}/>
+        <Toaster position="top-right" toastOptions={{
+            duration: 4000,
+            success: {
+                style: {
+                    background: '#66cc8a',
+                },
+            },
+            error: {
+                style: {
+                    background: '#ff6368',
+                },
+            },
+        }}/>
         {children}
     </ProviderWrapper>
     </body>

@@ -46,7 +46,7 @@ export function NavigationBar() {
                     </li>
                 </ul>
             </div>
-            <a href={"/"} className="btn btn-ghost hover:bg-base-100 hover:border-base-100">
+            <a href={"/"}>
                 <div className="flex items-center gap-0.5">
                     <Image src={ICON} alt={"icon"} className="h-12 w-12"/>
                     <p>simple-feature-toggles</p>

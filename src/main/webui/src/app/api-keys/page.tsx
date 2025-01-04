@@ -1,6 +1,6 @@
 "use client"
 
-import React, {useEffect, useState} from 'react'
+import React, {useEffect} from 'react'
 import {FaPlus} from "react-icons/fa";
 import {AddApiKeyModal} from "@/src/components/organisms/add-api-key-modal";
 import {useApiKeyStore} from "@/src/providers/api-key-store-provider";
@@ -11,13 +11,11 @@ const modalId = "add_api_key_modal";
 
 export default function ApiKeysPage() {
     const router = useRouter();
-    const {apiKeys, getAll} = useApiKeyStore((state) => state);
-    const [loading, setLoading] = useState(true);
+    const {apiKeys, isLoading, getAll} = useApiKeyStore((state) => state);
 
     useEffect(() => {
         async function awaitGetAll() {
             await getAll();
-            setLoading(false);
         }
 
         awaitGetAll();
@@ -46,7 +44,7 @@ export default function ApiKeysPage() {
         {apiKeys.map((apiKey) => {
             return (<tr key={apiKey.name + apiKey.id}
                         onClick={() => router.push(`/${UrlPath.apiKeys}/` + apiKey.id)}
-                        className="hover hover:cursor-pointer">
+                        className="hover hover:bg-base-200 hover:cursor-pointer">
                 <td className="w-1/5">
                     <div>{apiKey.name}</div>
                 </td>
@@ -81,8 +79,8 @@ export default function ApiKeysPage() {
                         <th>Activation</th>
                     </tr>
                     </thead>
-                    {loading && renderSkeletonRows()}
-                    {renderDataRows()}
+                    {isLoading && renderSkeletonRows()}
+                    {!isLoading && renderDataRows()}
                 </table>
             </div>
         </div>

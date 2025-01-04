@@ -10,10 +10,11 @@ import {
 } from "@/src/actions/api-keys";
 import {UpdateApiKeyInputs} from "@/src/types/update-api-key-inputs";
 import {persist} from 'zustand/middleware'
+import toast from "react-hot-toast";
 
 export type ApiKeyState = {
     apiKeys: ApiKey[]
-    hasHydrated: boolean
+    isLoading: boolean
 }
 
 export type ApiKeyActions = {
@@ -22,13 +23,13 @@ export type ApiKeyActions = {
     create: (input: CreateApiKeyInputs) => void
     update: (input: UpdateApiKeyInputs) => void
     deleteById: (id: number) => void
-    setHasHydrated: (value: boolean) => void
+    setIsLoading: (value: boolean) => void
 }
 
 export type ApiKeyStore = ApiKeyState & ApiKeyActions
 
 const defaultInitState: ApiKeyState = {
-    apiKeys: [], hasHydrated: false
+    apiKeys: [], isLoading: false
 }
 
 export const createApiKeyStore = (initState: ApiKeyState = defaultInitState) => {
@@ -36,39 +37,66 @@ export const createApiKeyStore = (initState: ApiKeyState = defaultInitState) => 
         ...initState, getById: async (id: number) => {
             return await apiKeys_getById(id);
         }, getAll: async () => {
+            set(() => ({
+                isLoading: true
+            }));
             const response = await apiKeys_getAll();
             set(() => ({
-                apiKeys: response
+                apiKeys: response, isLoading: false
             }));
             return response;
         }, create: async (input: CreateApiKeyInputs) => {
-            await apiKeys_create(input);
+            try {
+                await apiKeys_create(input);
+                toast.success("Api key created successfully");
+            } catch (e) {
+                console.error(e);
+                if (e instanceof Error) {
+                    toast.error(e.message);
+                }
+            }
             const response = await apiKeys_getAll();
             set(() => ({
                 apiKeys: response
             }));
         }, update: async (input: UpdateApiKeyInputs) => {
-            await apiKeys_update(input);
+            try {
+                await apiKeys_update(input);
+                toast.success("Api key updated successfully");
+            } catch (e) {
+                console.error(e);
+                if (e instanceof Error) {
+                    toast.error(e.message);
+                }
+            }
             const response = await apiKeys_getAll();
             set(() => ({
                 apiKeys: response
             }));
         }, deleteById: async (id: number) => {
-            await apiKeys_deleteById(id);
+            try {
+                await apiKeys_deleteById(id);
+                toast.success("Api key deleted successfully");
+            } catch (e) {
+                console.error(e);
+                if (e instanceof Error) {
+                    toast.error(e.message);
+                }
+            }
             const response = await apiKeys_getAll();
             set(() => ({
                 apiKeys: response
             }));
-        }, setHasHydrated: (value: boolean) => {
+        }, setIsLoading: (value: boolean) => {
             set({
-                hasHydrated: value
+                isLoading: value
             });
         }
     }), {
         name: 'api-key-storage',
         partialize: (state) => ({environments: state.apiKeys}),
         onRehydrateStorage: (state) => {
-            return () => state.setHasHydrated(true);
+            return () => state.setIsLoading(true);
         }
     }));
 }
