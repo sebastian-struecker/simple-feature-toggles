@@ -14,6 +14,7 @@ import toast from "react-hot-toast";
 
 export type FeatureToggleState = {
     featureToggles: FeatureToggle[]
+    selected?: FeatureToggle
     isLoading: boolean
 }
 
@@ -23,13 +24,14 @@ export type FeatureToggleActions = {
     create: (input: CreateFeatureToggleInputs) => void
     update: (input: UpdateFeatureToggleInputs) => void
     deleteById: (id: number) => void
+    setSelected: (value: FeatureToggle | undefined) => void
     setIsLoading: (value: boolean) => void
 }
 
 export type FeatureToggleStore = FeatureToggleState & FeatureToggleActions
 
 const defaultInitState: FeatureToggleState = {
-    featureToggles: [], isLoading: false
+    featureToggles: [], selected: undefined, isLoading: false
 }
 
 export const createFeatureToggleStore = (initState: FeatureToggleState = defaultInitState) => {
@@ -87,6 +89,10 @@ export const createFeatureToggleStore = (initState: FeatureToggleState = default
             set(() => ({
                 featureToggles: response
             }));
+        }, setSelected: (value: FeatureToggle | undefined) => {
+            set({
+                selected: value
+            });
         }, setIsLoading: (value: boolean) => {
             set({
                 isLoading: value

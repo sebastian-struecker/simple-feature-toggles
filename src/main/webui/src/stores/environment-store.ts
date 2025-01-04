@@ -15,6 +15,7 @@ import toast from "react-hot-toast";
 
 export type EnvironmentState = {
     environments: Environment[]
+    selected?: Environment
     isLoading: boolean
 }
 
@@ -24,13 +25,14 @@ export type EnvironmentActions = {
     create: (input: CreateEnvironmentInputs) => void
     update: (input: UpdateEnvironmentInputs) => void
     deleteById: (id: number) => void
+    setSelected: (value: Environment | undefined) => void
     setIsLoading: (value: boolean) => void
 }
 
 export type EnvironmentStore = EnvironmentState & EnvironmentActions
 
 const defaultInitState: EnvironmentState = {
-    environments: [], isLoading: false
+    environments: [], selected: undefined, isLoading: false
 }
 
 export const createEnvironmentStore = (initState: EnvironmentState = defaultInitState) => {
@@ -88,6 +90,10 @@ export const createEnvironmentStore = (initState: EnvironmentState = defaultInit
             set(() => ({
                 environments: response
             }));
+        }, setSelected: (value: Environment | undefined) => {
+            set({
+                selected: value
+            });
         }, setIsLoading: (value: boolean) => {
             set({
                 isLoading: value

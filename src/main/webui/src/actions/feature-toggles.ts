@@ -41,7 +41,7 @@ export async function featureToggles_deleteById(id: number) {
     const response = await fetcher(`${path}/` + id, {
         method: "DELETE"
     });
-    if (response && response.status === 200) {
+    if (response && response.status === 204) {
         return response.json();
     }
     throw new Error("Error while deleting a feature toggle");

@@ -5,12 +5,13 @@ import {CreateFeatureToggleInputs} from "@/src/types/create-feature-toggle-input
 import {TextInputField, UsedPatterns} from "@/src/components/molecules/text-input-field";
 import {EnvironmentInputField} from "@/src/components/molecules/environment-input-field";
 import {TextInputArea} from "@/src/components/molecules/text-input-area";
+import {ModalWrapper} from "@/src/components/molecules/modal-wrapper";
 
 type Inputs = {
-    modalId: string;
+    visible: boolean; onClose: () => void;
 }
 
-export function AddFeatureToggleModal({modalId}: Inputs) {
+export function AddFeatureToggleModal({visible, onClose}: Inputs) {
     const {
         control, register, handleSubmit, reset, formState: {errors, isSubmitting},
     } = useForm<CreateFeatureToggleInputs>({defaultValues: {environmentActivation: new Map(), description: ""}});
@@ -21,65 +22,41 @@ export function AddFeatureToggleModal({modalId}: Inputs) {
         onClose();
     };
 
-    const onClose = () => {
+    const handleClose = () => {
         reset();
-        document.getElementById(modalId)?.close();
+        onClose();
     };
 
-    return (<dialog id={modalId} className="modal modal-bottom sm:modal-middle">
-        <div className="modal-box">
-            <form method="dialog" className="flex flex-col gap-3" onSubmit={handleSubmit(onSubmit)}>
-                <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2" type="reset"
-                        onClick={onClose}>✕
-                </button>
-                <h3 className="text-center text-xl sm:text-xl font-semibold">
-                    Create a Feature Toggle
-                </h3>
-                <div className="flex flex-col">
-                    <TextInputField label={"Key"} placeholder={"Enter a key"}
-                                    control={{key: "key", register: register, isSubmitting: isSubmitting}}
-                                    validation={{
-                                        validatorHint: "Enter a valid key",
-                                        minLength: 3,
-                                        pattern: UsedPatterns.key,
-                                        isRequired: true
-                                    }}
-                    />
-                    <TextInputField label={"Name"} placeholder={"Enter a name"}
-                                    control={{key: "name", register: register, isSubmitting: isSubmitting}}
-                                    validation={{
-                                        validatorHint: "Enter a valid name",
-                                        minLength: 1,
-                                        pattern: UsedPatterns.default,
-                                        isRequired: true
-                                    }}
-                    />
-                    <TextInputArea label={"Description"} placeholder={"Enter a description"}
-                                   control={{key: "description", register: register, isSubmitting: isSubmitting}}
-                                   validation={{
-                                       validatorHint: "Enter a description", minLength: 1, isRequired: false
-                                   }}
-                    />
-                    <EnvironmentInputField label={"Environment"} control={control} isRequired={false}
-                                           formKey={"environment"}
-                                           register={register} error={errors.environmentActivation}
-                                           isSubmitting={isSubmitting}/>
-                </div>
-                <div className="modal-action flex justify-center">
-                    <button className="btn btn-primary btn-block max-w-[12rem]" type="submit">
-                        Create
-                    </button>
-                    <button className="btn btn-outline btn-primary btn-block max-w-[12rem]" type="reset"
-                            onClick={onClose}>
-                        Cancel
-                    </button>
-                </div>
-            </form>
-        </div>
-        <form method="dialog" className="modal-backdrop">
-            <button onClick={onClose}>Close on background click
-            </button>
-        </form>
-    </dialog>)
+    return (<ModalWrapper labels={{title: "Create an Api Key", actionButtonLabel: "Create"}}
+                          controls={{onSubmit: handleSubmit(onSubmit), onClose: handleClose, visible: visible}}>
+        <TextInputField label={"Key"} placeholder={"Enter a key"}
+                        control={{key: "key", register: register, isSubmitting: isSubmitting}}
+                        validation={{
+                            validatorHint: "Enter a valid key",
+                            minLength: 3,
+                            pattern: UsedPatterns.key,
+                            isRequired: true
+                        }}
+        />
+        <TextInputField label={"Name"} placeholder={"Enter a name"}
+                        control={{key: "name", register: register, isSubmitting: isSubmitting}}
+                        validation={{
+                            validatorHint: "Enter a valid name",
+                            minLength: 1,
+                            pattern: UsedPatterns.default,
+                            isRequired: true
+                        }}
+        />
+        <TextInputArea label={"Description"} placeholder={"Enter a description"}
+                       control={{key: "description", register: register, isSubmitting: isSubmitting}}
+                       validation={{
+                           validatorHint: "Enter a description", minLength: 1, isRequired: false
+                       }}
+        />
+        <EnvironmentInputField label={"Environment"} control={control} isRequired={false}
+                               formKey={"environment"}
+                               register={register} error={errors.environmentActivation}
+                               isSubmitting={isSubmitting}/>
+    </ModalWrapper>)
 
 }

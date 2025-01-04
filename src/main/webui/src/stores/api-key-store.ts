@@ -14,6 +14,7 @@ import toast from "react-hot-toast";
 
 export type ApiKeyState = {
     apiKeys: ApiKey[]
+    selected?: ApiKey
     isLoading: boolean
 }
 
@@ -23,13 +24,14 @@ export type ApiKeyActions = {
     create: (input: CreateApiKeyInputs) => void
     update: (input: UpdateApiKeyInputs) => void
     deleteById: (id: number) => void
+    setSelected: (value: ApiKey | undefined) => void
     setIsLoading: (value: boolean) => void
 }
 
 export type ApiKeyStore = ApiKeyState & ApiKeyActions
 
 const defaultInitState: ApiKeyState = {
-    apiKeys: [], isLoading: false
+    apiKeys: [], selected: undefined, isLoading: false
 }
 
 export const createApiKeyStore = (initState: ApiKeyState = defaultInitState) => {
@@ -87,6 +89,10 @@ export const createApiKeyStore = (initState: ApiKeyState = defaultInitState) => 
             set(() => ({
                 apiKeys: response
             }));
+        }, setSelected: (value: ApiKey | undefined) => {
+            set({
+                selected: value
+            });
         }, setIsLoading: (value: boolean) => {
             set({
                 isLoading: value
