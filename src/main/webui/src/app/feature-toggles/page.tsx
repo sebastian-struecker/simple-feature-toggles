@@ -10,46 +10,27 @@ import {EditFeatureToggleModal} from "@/src/components/organisms/edit-feature-to
 
 export default function FeatureTogglesPage() {
     const {
-        featureToggles, selected, setSelected, isLoading, getAll, deleteById
+        featureToggles, selected, setSelected, getAll, deleteById
     } = useFeatureToggleStore((state) => state);
     const [addModalVisible, setAddModalVisible] = useState(false);
     const [editModalVisible, setEditModalVisible] = useState(false);
     const [confirmModalVisible, setConfirmModalVisible] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
         async function awaitGetAll() {
             await getAll();
+            setIsLoading(false);
         }
 
         awaitGetAll();
     }, [getAll])
 
-    const renderSkeletonRows = () => {
-        return (<tbody>
-        {Array.from(Array(10).keys()).map(i => {
-            return (<tr key={"skeleton-" + i}>
-                <td>
-                    <div className="skeleton h-9"></div>
-                </td>
-                <td>
-                    <div className="skeleton h-9"></div>
-                </td>
-                <td>
-                    <div className="skeleton h-9"></div>
-                </td>
-                <td>
-                    <div className="skeleton h-9"></div>
-                </td>
-            </tr>);
-        })}
-        </tbody>);
-    };
-
     const renderDataRows = () => {
         return (<tbody>
         {featureToggles.map((element) => {
             return (<tr key={element.key + element.id}
-                        className="hover hover:bg-base-200 hover:cursor-pointer">
+                        className="hover hover:bg-base-200">
                 <td className="w-1/5">
                     <div className="flex flex-col gap-3">
                         <span className="font-semibold">{element.name}</span>
@@ -106,10 +87,9 @@ export default function FeatureTogglesPage() {
                         <th>Actions</th>
                     </tr>
                     </thead>
-                    {isLoading && renderSkeletonRows()}
-                    {!isLoading && renderDataRows()}
+                    {renderDataRows()}
                 </table>
-                {featureToggles.length == 0 && <div className="flex justify-center w-full">
+                {(!isLoading && featureToggles.length == 0) && <div className="flex justify-center w-full">
                     <div className="text-l font-bold">No elements</div>
                 </div>}
             </div>

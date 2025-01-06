@@ -10,43 +10,27 @@ import {ConfirmationModal} from "@/src/components/organisms/confirmation-modal";
 
 export default function EnvironmentsPage() {
     const {
-        environments, selected, setSelected, isLoading, getAll, deleteById
+        environments, selected, setSelected, getAll, deleteById
     } = useEnvironmentStore((state) => state);
     const [addModalVisible, setAddModalVisible] = useState(false);
     const [editModalVisible, setEditModalVisible] = useState(false);
     const [confirmModalVisible, setConfirmModalVisible] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
         async function awaitGetAll() {
             await getAll();
+            setIsLoading(false);
         }
 
         awaitGetAll();
     }, [getAll])
 
-    const renderSkeletonRows = () => {
-        return (<tbody>
-        {Array.from(Array(10).keys()).map(i => {
-            return (<tr key={"skeleton-" + i}>
-                <td>
-                    <div className="skeleton h-9"></div>
-                </td>
-                <td>
-                    <div className="skeleton h-9"></div>
-                </td>
-                <td>
-                    <div className="skeleton h-9"></div>
-                </td>
-            </tr>);
-        })}
-        </tbody>);
-    };
-
     const renderDataRows = () => {
         return (<tbody>
         {environments?.map((element) => {
             return (<tr key={element.name + element.id}
-                        className="hover hover:bg-base-200 hover:cursor-pointer">
+                        className="hover hover:bg-base-200">
                 <td>
                     <div>{element.key}</div>
                 </td>
@@ -96,10 +80,9 @@ export default function EnvironmentsPage() {
                         <th>Actions</th>
                     </tr>
                     </thead>
-                    {isLoading && renderSkeletonRows()}
-                    {!isLoading && renderDataRows()}
+                    {renderDataRows()}
                 </table>
-                {environments.length == 0 && <div className="flex justify-center w-full">
+                {(!isLoading && environments.length == 0) && <div className="flex justify-center w-full">
                     <div className="text-l font-bold">No elements</div>
                 </div>}
             </div>
@@ -113,7 +96,7 @@ export default function EnvironmentsPage() {
         <ConfirmationModal
             labels={{
                 title: "Confirm delete",
-                description: "Are you sure you want to " + selected?.name + " ?",
+                description: "Are you sure you want to delete: '" + selected?.name + "'?",
                 actionButtonLabel: "Delete"
             }}
             controls={{

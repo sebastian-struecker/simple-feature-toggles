@@ -15,7 +15,6 @@ import toast from "react-hot-toast";
 export type FeatureToggleState = {
     featureToggles: FeatureToggle[]
     selected?: FeatureToggle
-    isLoading: boolean
 }
 
 export type FeatureToggleActions = {
@@ -25,13 +24,12 @@ export type FeatureToggleActions = {
     update: (input: UpdateFeatureToggleInputs) => void
     deleteById: (id: number) => void
     setSelected: (value: FeatureToggle | undefined) => void
-    setIsLoading: (value: boolean) => void
 }
 
 export type FeatureToggleStore = FeatureToggleState & FeatureToggleActions
 
 const defaultInitState: FeatureToggleState = {
-    featureToggles: [], selected: undefined, isLoading: false
+    featureToggles: [], selected: undefined
 }
 
 export const createFeatureToggleStore = (initState: FeatureToggleState = defaultInitState) => {
@@ -39,12 +37,9 @@ export const createFeatureToggleStore = (initState: FeatureToggleState = default
         ...initState, getById: async (id: number) => {
             return await featureToggles_getById(id);
         }, getAll: async () => {
-            set(() => ({
-                isLoading: true
-            }));
             const response = await featureToggles_getAll();
             set(() => ({
-                featureToggles: response, isLoading: false
+                featureToggles: response
             }));
             return response;
         }, create: async (input: CreateFeatureToggleInputs) => {
@@ -93,16 +88,10 @@ export const createFeatureToggleStore = (initState: FeatureToggleState = default
             set({
                 selected: value
             });
-        }, setIsLoading: (value: boolean) => {
-            set({
-                isLoading: value
-            });
         }
     }), {
         name: 'feature-toggle-storage', partialize: (state) => ({
             environments: state.featureToggles
-        }), onRehydrateStorage: (state) => {
-            return () => state.setIsLoading(false);
-        }
+        })
     }))
 }

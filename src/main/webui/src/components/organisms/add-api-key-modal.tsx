@@ -12,7 +12,7 @@ type Inputs = {
 
 export function AddApiKeyModal({visible, onClose}: Inputs) {
     const {
-        control, register, handleSubmit, reset, formState: {errors, isSubmitting},
+        control, register, handleSubmit, reset, setValue, formState: {errors, isSubmitting},
     } = useForm<CreateApiKeyInputs>({defaultValues: {environmentActivation: new Map()}});
     const {create} = useApiKeyStore((state) => state);
 
@@ -38,7 +38,7 @@ export function AddApiKeyModal({visible, onClose}: Inputs) {
                         }}
         />
         <EnvironmentInputField label={"Environment"} control={control} isRequired={false}
-                               formKey={"environment"}
+                               formKey={"environment"} setValue={setValue}
                                register={register} error={errors.environmentActivation}
                                isSubmitting={isSubmitting}/>
     </ModalWrapper>)

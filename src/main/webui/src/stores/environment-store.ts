@@ -16,7 +16,6 @@ import toast from "react-hot-toast";
 export type EnvironmentState = {
     environments: Environment[]
     selected?: Environment
-    isLoading: boolean
 }
 
 export type EnvironmentActions = {
@@ -26,13 +25,12 @@ export type EnvironmentActions = {
     update: (input: UpdateEnvironmentInputs) => void
     deleteById: (id: number) => void
     setSelected: (value: Environment | undefined) => void
-    setIsLoading: (value: boolean) => void
 }
 
 export type EnvironmentStore = EnvironmentState & EnvironmentActions
 
 const defaultInitState: EnvironmentState = {
-    environments: [], selected: undefined, isLoading: false
+    environments: [], selected: undefined
 }
 
 export const createEnvironmentStore = (initState: EnvironmentState = defaultInitState) => {
@@ -40,12 +38,9 @@ export const createEnvironmentStore = (initState: EnvironmentState = defaultInit
         ...initState, getById: async (id: number) => {
             return await environments_getById(id);
         }, getAll: async () => {
-            set(() => ({
-                isLoading: true
-            }));
             const response = await environments_getAll();
             set(() => ({
-                environments: response, isLoading: false
+                environments: response
             }));
             return response;
         }, create: async (input: CreateEnvironmentInputs) => {
@@ -94,16 +89,8 @@ export const createEnvironmentStore = (initState: EnvironmentState = defaultInit
             set({
                 selected: value
             });
-        }, setIsLoading: (value: boolean) => {
-            set({
-                isLoading: value
-            });
         }
     }), {
-        name: 'environment-storage',
-        partialize: (state) => ({environments: state.environments}),
-        onRehydrateStorage: (state) => {
-            return () => state.setIsLoading(false);
-        }
+        name: 'environment-storage', partialize: (state) => ({environments: state.environments}),
     }));
 }

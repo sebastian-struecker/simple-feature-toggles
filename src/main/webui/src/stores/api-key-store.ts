@@ -15,7 +15,6 @@ import toast from "react-hot-toast";
 export type ApiKeyState = {
     apiKeys: ApiKey[]
     selected?: ApiKey
-    isLoading: boolean
 }
 
 export type ApiKeyActions = {
@@ -25,13 +24,12 @@ export type ApiKeyActions = {
     update: (input: UpdateApiKeyInputs) => void
     deleteById: (id: number) => void
     setSelected: (value: ApiKey | undefined) => void
-    setIsLoading: (value: boolean) => void
 }
 
 export type ApiKeyStore = ApiKeyState & ApiKeyActions
 
 const defaultInitState: ApiKeyState = {
-    apiKeys: [], selected: undefined, isLoading: false
+    apiKeys: [], selected: undefined
 }
 
 export const createApiKeyStore = (initState: ApiKeyState = defaultInitState) => {
@@ -39,12 +37,9 @@ export const createApiKeyStore = (initState: ApiKeyState = defaultInitState) => 
         ...initState, getById: async (id: number) => {
             return await apiKeys_getById(id);
         }, getAll: async () => {
-            set(() => ({
-                isLoading: true
-            }));
             const response = await apiKeys_getAll();
             set(() => ({
-                apiKeys: response, isLoading: false
+                apiKeys: response
             }));
             return response;
         }, create: async (input: CreateApiKeyInputs) => {
@@ -93,16 +88,8 @@ export const createApiKeyStore = (initState: ApiKeyState = defaultInitState) => 
             set({
                 selected: value
             });
-        }, setIsLoading: (value: boolean) => {
-            set({
-                isLoading: value
-            });
         }
     }), {
-        name: 'api-key-storage',
-        partialize: (state) => ({environments: state.apiKeys}),
-        onRehydrateStorage: (state) => {
-            return () => state.setIsLoading(true);
-        }
+        name: 'api-key-storage', partialize: (state) => ({environments: state.apiKeys}),
     }));
 }

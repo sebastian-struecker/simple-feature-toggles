@@ -42,7 +42,7 @@ export async function featureToggles_deleteById(id: number) {
         method: "DELETE"
     });
     if (response && response.status === 204) {
-        return response.json();
+        return;
     }
     throw new Error("Error while deleting a feature toggle");
 }

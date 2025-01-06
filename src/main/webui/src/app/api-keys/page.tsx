@@ -9,42 +9,27 @@ import {EditApiKeyModal} from "@/src/components/organisms/edit-api-key-modal";
 
 
 export default function ApiKeysPage() {
-    const {apiKeys, selected, setSelected, isLoading, getAll, deleteById} = useApiKeyStore((state) => state);
+    const {apiKeys, selected, setSelected, getAll, deleteById} = useApiKeyStore((state) => state);
     const [addModalVisible, setAddModalVisible] = useState(false);
     const [editModalVisible, setEditModalVisible] = useState(false);
     const [confirmModalVisible, setConfirmModalVisible] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
         async function awaitGetAll() {
-            await getAll();
+            let apiKeys1 = await getAll();
+            setIsLoading(false);
+            console.log(apiKeys1);
         }
 
         awaitGetAll();
     }, [getAll])
 
-    const renderSkeletonRows = () => {
-        return (<tbody>
-        {Array.from(Array(10).keys()).map(i => {
-            return (<tr key={"skeleton-" + i}>
-                <td>
-                    <div className="skeleton h-9"></div>
-                </td>
-                <td>
-                    <div className="skeleton h-9"></div>
-                </td>
-                <td>
-                    <div className="skeleton h-9"></div>
-                </td>
-            </tr>);
-        })}
-        </tbody>);
-    };
-
     const renderDataRows = () => {
         return (<tbody>
         {apiKeys.map((element) => {
             return (<tr key={element.name + element.id}
-                        className="hover hover:bg-base-200 hover:cursor-pointer">
+                        className="hover hover:bg-base-200">
                 <td className="w-1/5">
                     <div>{element.name}</div>
                 </td>
@@ -52,7 +37,10 @@ export default function ApiKeysPage() {
                     <div>{element.secret}</div>
                 </td>
                 <td>
-                    <div>dev</div>
+                    {element.environmentActivation.size > 0 && element.environmentActivation.entries().map((env) => {
+                        const [key, isActive] = env;
+                        return (<div>{key}</div>)
+                    })}
                 </td>
                 <td className="max-w-0.5">
                     <div className="flex gap-2">
@@ -97,10 +85,9 @@ export default function ApiKeysPage() {
                         <th>Actions</th>
                     </tr>
                     </thead>
-                    {isLoading && renderSkeletonRows()}
-                    {!isLoading && renderDataRows()}
+                    {renderDataRows()}
                 </table>
-                {apiKeys.length == 0 && <div className="flex justify-center w-full">
+                {(!isLoading && apiKeys.length == 0) && <div className="flex justify-center w-full">
                     <div className="text-l font-bold">No elements</div>
                 </div>}
             </div>
