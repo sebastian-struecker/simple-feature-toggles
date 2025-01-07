@@ -1,3 +1,5 @@
+import {EnvironmentActivation} from "@/src/types/environment-activation";
+
 export type CreateApiKeyInputs = {
-    name: string; environmentActivation: Map<string, boolean>;
+    name: string; environmentActivations: EnvironmentActivation[];
 };

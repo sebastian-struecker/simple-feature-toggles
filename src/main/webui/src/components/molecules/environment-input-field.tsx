@@ -1,62 +1,85 @@
 import React, {useEffect, useState} from "react";
 import {useEnvironmentStore} from "@/src/providers/environment-store-provider";
 import {Environment} from "@/src/types/environment";
+import {EnvironmentActivation} from "@/src/types/environment-activation";
+import {OverflowText} from "@/src/components/atoms/overflow-text";
 
 type Inputs = {
-    setValue: any;
-    label: string;
-    isRequired: boolean;
-    formKey: string;
-    control: any,
-    register: any;
-    error: any;
-    isSubmitting: boolean;
+    setValue: any; isSubmitting: boolean; isSubmitSuccessful: boolean;
 }
 
-type EnvironmentActivation = {
+type EnvironmentField = {
     environment: Environment; isSelected: boolean; isActive: boolean
 }
 
 export function EnvironmentInputField({
-                                          setValue, label, isRequired, formKey, control, register, error, isSubmitting
+                                          setValue, isSubmitting, isSubmitSuccessful
                                       }: Inputs) {
-    const {environments, getAll} = useEnvironmentStore((state) => state);
-    const [environmentActivations, setEnvironmentActivations] = useState<EnvironmentActivation[]>([]);
+    const {getAll} = useEnvironmentStore((state) => state);
+    const [environmentActivations, setEnvironmentActivations] = useState<EnvironmentField[]>([]);
 
     useEffect(() => {
         async function awaitGetAll() {
-            const res = await getAll();
-            const list: EnvironmentActivation[] = [];
-            res.map(environment => {
-                list.push({environment: environment, isSelected: false, isActive: false});
-            });
-            setEnvironmentActivations(list);
+            const environments = await getAll();
+            mapEnvironmentActivations(environments);
         }
 
         awaitGetAll();
     }, [getAll])
 
-    const onEnvironmentActivationChange = (updated: EnvironmentActivation) => {
+    useEffect(() => {
+        async function awaitGetAll() {
+            const environments = await getAll();
+            mapEnvironmentActivations(environments);
+        }
+
+        if (isSubmitSuccessful) {
+            awaitGetAll();
+        }
+    }, [isSubmitSuccessful])
+
+    const mapEnvironmentActivations = (environments: Environment[]) => {
+        const list: EnvironmentField[] = [];
+        environments.map(environment => {
+            list.push({environment: environment, isSelected: false, isActive: false});
+        });
+        list.sort(environmentActivationSort);
+        setEnvironmentActivations(list);
+    }
+
+    const onEnvironmentActivationChange = (updated: EnvironmentField) => {
         setEnvironmentActivations(prev => {
             const prevFiltered = [...prev].filter(value => value.environment != updated.environment);
-            const nextValue = [...prevFiltered, updated];
+            const nextValue = [updated, ...prevFiltered];
+            nextValue.sort(environmentActivationSort);
             setFormValue(nextValue);
             return nextValue;
         });
     }
 
-    const setFormValue = (value: EnvironmentActivation[]) => {
-        const map = new Map<string, boolean>;
-        value.forEach((environmentActivation) => {
-            if (environmentActivation.isSelected) {
-                map.set(environmentActivation.environment.key, environmentActivation.isActive);
+    const environmentActivationSort = (a: EnvironmentField, b: EnvironmentField) => {
+        if (a.isSelected && !b.isSelected) {
+            return -1;
+        } else if (!a.isSelected && b.isSelected) {
+            return 1;
+        }
+        return a.environment.key > b.environment.key ? 1 : -1;
+    }
+
+    const setFormValue = (values: EnvironmentField[]) => {
+        const environmentActivations: EnvironmentActivation[] = [];
+        values.forEach((value) => {
+            if (value.isSelected) {
+                environmentActivations.push({
+                    environmentKey: value.environment.key, isActive: value.isActive
+                } as EnvironmentActivation)
             }
         })
-        setValue("environmentActivation", map);
+        setValue("environmentActivations", environmentActivations);
     }
 
     return (<>
-        <fieldset className="fieldset">
+        <fieldset className="fieldset max-h-[12rem] overflow-y-scroll">
             <legend className="fieldset-legend">Environments
                 ({environmentActivations.filter(value => value.isSelected).length})
             </legend>
@@ -67,7 +90,7 @@ export function EnvironmentInputField({
                                  className={`flex flex-row justify-between gap-2 rounded-box p-2 border ${isSelected ? `bg-primary border-primary` : "border-base-200 hover:bg-base-200"}`}>
                         <div className="flex items-center">
                             <input type="checkbox" className={`checkbox ${isSelected ? "checkbox-secondary" : ""}`}
-                                   checked={isSelected}
+                                   checked={isSelected} disabled={isSubmitting}
                                    onChange={(e) => {
                                        onEnvironmentActivationChange({
                                            ...environmentActivation, isSelected: e.target.checked
@@ -75,12 +98,14 @@ export function EnvironmentInputField({
                                    }}/>
                         </div>
                         <div className="flex flex-col justify-center flex-grow">
-                            <div>{environment.name}</div>
-                            <div className="text-xs font-semibold opacity-60">{environment.key}</div>
+                            <OverflowText text={environment.name} length={15}/>
+                            <div className="text-xs font-semibold opacity-60">
+                                <OverflowText text={environment.key} length={15}/>
+                            </div>
                         </div>
                         <div className="flex flex-col items-center">
                             <input type="checkbox" className="toggle toggle-secondary"
-                                   checked={isActive}
+                                   checked={isActive} disabled={isSubmitting}
                                    onChange={(e) => {
                                        onEnvironmentActivationChange({
                                            ...environmentActivation, isActive: e.target.checked

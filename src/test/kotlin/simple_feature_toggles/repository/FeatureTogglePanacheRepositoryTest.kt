@@ -12,6 +12,7 @@ import simple_feature_toggles.FeatureToggle
 import simple_feature_toggles.FeatureToggleRepository
 import simple_feature_toggles.api.models.CreateEnvironmentRequest
 import simple_feature_toggles.api.models.CreateFeatureToggleRequest
+import simple_feature_toggles.api.models.EnvironmentActivationApiModel
 import simple_feature_toggles.api.models.UpdateFeatureToggleRequest
 
 
@@ -191,8 +192,8 @@ class FeatureTogglePanacheRepositoryTest {
             repository.create(createFeatureToggleRequest(environmentActivation = environmentActivation)).chain { it ->
                 repository.update(
                     it.id, UpdateFeatureToggleRequest(
-                        environmentActivation = mutableMapOf(
-                            "dev" to true, "prod" to true
+                        environmentActivations = listOf(
+                            EnvironmentActivationApiModel("dev", true), EnvironmentActivationApiModel("prod", true)
                         )
                     )
                 )
@@ -265,7 +266,7 @@ class FeatureTogglePanacheRepositoryTest {
 
     private fun createEnvironments(
         asserter: UniAsserter, isActive: Boolean = true
-    ): MutableMap<String, Boolean> {
+    ): List<EnvironmentActivationApiModel> {
         asserter.assertThat({
             environmentRepository.create(CreateEnvironmentRequest("dev", "dev"))
         }, {
@@ -276,13 +277,13 @@ class FeatureTogglePanacheRepositoryTest {
         }, {
             assertNotNull(it)
         })
-        return mutableMapOf(
-            "dev" to isActive, "prod" to isActive
+        return listOf(
+            EnvironmentActivationApiModel("dev", isActive), EnvironmentActivationApiModel("prod", isActive)
         )
     }
 
     private fun createFeatureToggleRequest(
-        key: String = "key", environmentActivation: MutableMap<String, Boolean> = mutableMapOf()
+        key: String = "key", environmentActivation: List<EnvironmentActivationApiModel> = listOf()
     ): CreateFeatureToggleRequest {
         return CreateFeatureToggleRequest(
             key, "name", "description", environmentActivation

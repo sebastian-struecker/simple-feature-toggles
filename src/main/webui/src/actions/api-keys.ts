@@ -19,6 +19,8 @@ export async function apiKeys_getAll(): Promise<ApiKey[]> {
 }
 
 export async function apiKeys_create(input: CreateApiKeyInputs): Promise<ApiKey> {
+    console.log(input);
+    console.log(JSON.stringify(input));
     const response = await fetcher(`${path}`, {
         method: "POST", body: JSON.stringify(input), headers: {"Content-Type": "application/json"}
     })
@@ -43,7 +45,7 @@ export async function apiKeys_deleteById(id: number) {
         method: "DELETE"
     });
     if (response && response.status === 204) {
-        return response.json();
+        return;
     }
     throw new Error("Error while deleting an api key");
 }

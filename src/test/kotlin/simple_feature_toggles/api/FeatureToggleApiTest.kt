@@ -99,7 +99,7 @@ class FeatureToggleApiTest {
     @TestSecurity(user = "admin", roles = [DefaultRoles.ADMIN])
     fun create_FeatureToggle_authorized_admin_test() {
         val feature = feature()
-        val request = CreateFeatureToggleRequest(feature.key, feature.name, feature.description, mutableMapOf())
+        val request = CreateFeatureToggleRequest(feature.key, feature.name, feature.description, listOf())
         Mockito.`when`(repositoryMock.create(request)).thenReturn(
             Uni.createFrom().item(feature)
         )

@@ -6,6 +6,7 @@ import {FaPen, FaPlus, FaTrash} from "react-icons/fa";
 import {AddFeatureToggleModal} from "@/src/components/organisms/add-feature-toggle-modal";
 import {ConfirmationModal} from "@/src/components/organisms/confirmation-modal";
 import {EditFeatureToggleModal} from "@/src/components/organisms/edit-feature-toggle-modal";
+import {EnvironmentActivationStatusPill} from "@/src/components/molecules/environment-activation-status-pill";
 
 
 export default function FeatureTogglesPage() {
@@ -40,8 +41,15 @@ export default function FeatureTogglesPage() {
                 <td className="w-1/4">
                     <div>{element.description}</div>
                 </td>
-                <td>
-                    <div>dev</div>
+                <td className="max-w-[16rem]">
+                    <div className="grid grid-cols-3 gap-1">
+                        {element.environmentActivations.length != 0 && element.environmentActivations.map((env) => {
+                            const {environmentKey, isActive} = env;
+                            return (
+                                <EnvironmentActivationStatusPill key={environmentKey + isActive}
+                                                                 environmentKey={environmentKey} isActive={isActive}/>)
+                        })}
+                    </div>
                 </td>
                 <td className="max-w-0.5">
                     <div className="flex gap-2">
@@ -52,7 +60,7 @@ export default function FeatureTogglesPage() {
                             }}><FaPen/></button>
                         </div>
                         <div className="lg:tooltip" data-tip="Remove">
-                            <button className="btn btn-soft btn-secondary" onClick={() => {
+                        <button className="btn btn-soft btn-secondary" onClick={() => {
                                 setSelected(element);
                                 setConfirmModalVisible(true);
                             }}><FaTrash/></button>

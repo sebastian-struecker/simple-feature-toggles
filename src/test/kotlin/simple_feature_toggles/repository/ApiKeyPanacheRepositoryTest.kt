@@ -12,6 +12,7 @@ import simple_feature_toggles.ApiKeyRepository
 import simple_feature_toggles.EnvironmentRepository
 import simple_feature_toggles.api.models.CreateApiKeyRequest
 import simple_feature_toggles.api.models.CreateEnvironmentRequest
+import simple_feature_toggles.api.models.EnvironmentActivationApiModel
 import simple_feature_toggles.api.models.UpdateApiKeyRequest
 
 
@@ -124,8 +125,8 @@ class ApiKeyPanacheRepositoryTest {
             repository.create(createApiKeyRequest(environmentActivation = environmentActivation)).chain { it ->
                 repository.update(
                     it.id, UpdateApiKeyRequest(
-                        environmentActivation = mutableMapOf(
-                            "dev" to true, "prod" to true
+                        environmentActivations = listOf(
+                            EnvironmentActivationApiModel("dev", true), EnvironmentActivationApiModel("prod", true)
                         )
                     )
                 )
@@ -196,7 +197,7 @@ class ApiKeyPanacheRepositoryTest {
 
     private fun createEnvironments(
         asserter: UniAsserter, isActive: Boolean = true
-    ): MutableMap<String, Boolean> {
+    ): List<EnvironmentActivationApiModel> {
         asserter.assertThat({
             environmentRepository.create(CreateEnvironmentRequest("dev", "dev"))
         }, {
@@ -207,13 +208,11 @@ class ApiKeyPanacheRepositoryTest {
         }, {
             assertNotNull(it)
         })
-        return mutableMapOf(
-            "dev" to isActive, "prod" to isActive
-        )
+        return listOf(EnvironmentActivationApiModel("dev", isActive), EnvironmentActivationApiModel("prod", isActive))
     }
 
     private fun createApiKeyRequest(
-        name: String = "name", environmentActivation: MutableMap<String, Boolean> = mutableMapOf()
+        name: String = "name", environmentActivation: List<EnvironmentActivationApiModel> = listOf()
     ): CreateApiKeyRequest {
         return CreateApiKeyRequest(
             name, environmentActivation

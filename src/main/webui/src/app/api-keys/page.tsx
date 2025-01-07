@@ -6,6 +6,8 @@ import {AddApiKeyModal} from "@/src/components/organisms/add-api-key-modal";
 import {useApiKeyStore} from "@/src/providers/api-key-store-provider";
 import {ConfirmationModal} from "@/src/components/organisms/confirmation-modal";
 import {EditApiKeyModal} from "@/src/components/organisms/edit-api-key-modal";
+import {EnvironmentActivationStatusPill} from "@/src/components/molecules/environment-activation-status-pill";
+import {OverflowText} from "@/src/components/atoms/overflow-text";
 
 
 export default function ApiKeysPage() {
@@ -30,17 +32,20 @@ export default function ApiKeysPage() {
         {apiKeys.map((element) => {
             return (<tr key={element.name + element.id}
                         className="hover hover:bg-base-200">
-                <td className="w-1/5">
-                    <div>{element.name}</div>
-                </td>
-                <td className="w-1/4">
-                    <div>{element.secret}</div>
+                <td>
+                    <OverflowText text={element.name} length={12}/>
                 </td>
                 <td>
-                    {element.environmentActivation.size > 0 && element.environmentActivation.entries().map((env) => {
-                        const [key, isActive] = env;
-                        return (<div>{key}</div>)
-                    })}
+                    <div>{element.secret}</div>
+                </td>
+                <td className="max-w-[16rem]">
+                    <div className="grid grid-cols-3 gap-1">
+                        {element.environmentActivations.length != 0 && element.environmentActivations.map((env) => {
+                            const {environmentKey, isActive} = env;
+                            return (
+                                <EnvironmentActivationStatusPill key={environmentKey + isActive} environmentKey={environmentKey} isActive={isActive}/>)
+                        })}
+                    </div>
                 </td>
                 <td className="max-w-0.5">
                     <div className="flex gap-2">

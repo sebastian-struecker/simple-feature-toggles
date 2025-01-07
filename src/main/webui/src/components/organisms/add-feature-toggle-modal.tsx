@@ -13,12 +13,13 @@ type Inputs = {
 
 export function AddFeatureToggleModal({visible, onClose}: Inputs) {
     const {
-        control, register, handleSubmit, reset, formState: {errors, isSubmitting},
-    } = useForm<CreateFeatureToggleInputs>({defaultValues: {environmentActivation: new Map(), description: ""}});
+        register, handleSubmit, reset, setValue, formState: {isSubmitting, isSubmitSuccessful},
+    } = useForm<CreateFeatureToggleInputs>({defaultValues: {environmentActivations: [], description: ""}});
     const {create} = useFeatureToggleStore((state) => state);
 
     const onSubmit: SubmitHandler<CreateFeatureToggleInputs> = async (values: CreateFeatureToggleInputs) => {
         create(values);
+        reset();
         onClose();
     };
 
@@ -27,7 +28,7 @@ export function AddFeatureToggleModal({visible, onClose}: Inputs) {
         onClose();
     };
 
-    return (<ModalWrapper labels={{title: "Create an Api Key", actionButtonLabel: "Create"}}
+    return (<ModalWrapper labels={{title: "Create a Feature Toggle", actionButtonLabel: "Create"}}
                           controls={{onSubmit: handleSubmit(onSubmit), onClose: handleClose, visible: visible}}>
         <TextInputField label={"Key"} placeholder={"Enter a key"}
                         control={{key: "key", register: register, isSubmitting: isSubmitting}}
@@ -53,10 +54,7 @@ export function AddFeatureToggleModal({visible, onClose}: Inputs) {
                            validatorHint: "Enter a description", minLength: 1, isRequired: false
                        }}
         />
-        <EnvironmentInputField label={"Environment"} control={control} isRequired={false}
-                               formKey={"environment"}
-                               register={register} error={errors.environmentActivation}
-                               isSubmitting={isSubmitting}/>
+        <EnvironmentInputField setValue={setValue} isSubmitting={isSubmitting} isSubmitSuccessful={isSubmitSuccessful}/>
     </ModalWrapper>)
 
 }

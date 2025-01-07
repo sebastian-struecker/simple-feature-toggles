@@ -23,6 +23,7 @@ import simple_feature_toggles.DefaultRoles
 import simple_feature_toggles.FeatureToggle
 import simple_feature_toggles.FeatureToggleRepository
 import simple_feature_toggles.api.models.CreateFeatureToggleRequest
+import simple_feature_toggles.api.models.EnvironmentActivationApiModel
 import simple_feature_toggles.api.models.FeatureToggleResponse
 import simple_feature_toggles.api.models.UpdateFeatureToggleRequest
 
@@ -161,7 +162,10 @@ class FeatureToggleApi(
             key = key,
             name = name,
             description = description,
-            environmentActivation = environmentActivation.map { (key, value) -> key to value }.toMap()
-        )
+            environmentActivations = environmentActivation.map { (key, value) ->
+                EnvironmentActivationApiModel(
+                    key, value
+                )
+            })
     }
 }

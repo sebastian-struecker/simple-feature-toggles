@@ -22,10 +22,7 @@ import org.jboss.resteasy.reactive.RestResponse
 import simple_feature_toggles.ApiKey
 import simple_feature_toggles.ApiKeyRepository
 import simple_feature_toggles.DefaultRoles
-import simple_feature_toggles.api.models.ApiKeyResponse
-import simple_feature_toggles.api.models.CreateApiKeyRequest
-import simple_feature_toggles.api.models.FeatureToggleResponse
-import simple_feature_toggles.api.models.UpdateApiKeyRequest
+import simple_feature_toggles.api.models.*
 
 @ApplicationScoped
 @Path("api-keys")
@@ -92,7 +89,7 @@ class ApiKeyApi(
         ), APIResponse(responseCode = "400", description = "Invalid input")]
     )
     fun createApiKey(request: CreateApiKeyRequest): Uni<RestResponse<ApiKeyResponse>> {
-        Log.debug("[ApiKeyApi] Calling method: post url: /api-keys body: $request")
+        Log.info("[ApiKeyApi] Calling method: post url: /api-keys body: $request")
         try {
             return repository.create(request).onFailure().transform { BadRequestException() }.onItem()
                 .transform { RestResponse.ok(it.toResponse()) }
@@ -159,10 +156,11 @@ class ApiKeyApi(
 
     fun ApiKey.toResponse(): ApiKeyResponse {
         return ApiKeyResponse(
-            id = id,
-            name = name,
-            secret = secret,
-            environmentActivation = environmentActivation.map { (key, value) -> key to value }.toMap()
-        )
+            id = id, name = name, secret = secret, environmentActivations = environmentActivation.map { (key, value) ->
+                EnvironmentActivationApiModel(
+                    key, value
+                )
+            })
     }
+
 }

@@ -6,6 +6,6 @@ export default async function fetcher(path: string, options: RequestInit = {}) {
     options.headers = {
         ...options.headers, Authorization: `Bearer ${session?.access_token}`,
     };
-    console.log(options.body);
+    console.log(session?.access_token);
     return fetch(url + path, options);
 }

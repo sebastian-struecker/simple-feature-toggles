@@ -27,7 +27,7 @@ class ApiKeyPanacheRepository(private val environmentRepository: EnvironmentRepo
     }
 
     override fun create(createRequest: CreateApiKeyRequest): Uni<ApiKey> {
-        if (createRequest.environmentActivation.isEmpty()) {
+        if (createRequest.environmentActivations.isEmpty()) {
             val entity = ApiKeyEntity.create(createRequest.name, mutableMapOf())
             return Panache.withTransaction {
                 persistAndFlush(entity).map {
@@ -35,13 +35,13 @@ class ApiKeyPanacheRepository(private val environmentRepository: EnvironmentRepo
                 }
             }
         }
-        return environmentRepository.checkEnvironmentsExist(createRequest.environmentActivation.keys.toList())
+        return environmentRepository.checkEnvironmentsExist(createRequest.environmentActivations.map { it.environmentKey })
             .flatMap { allExist ->
                 if (!allExist) {
                     Uni.createFrom().failure(IllegalArgumentException("One or more environments do not exist"))
                 } else {
-                    val mappedEnvironmentActivation = createRequest.environmentActivation.map { entry ->
-                        entry.key to entry.value
+                    val mappedEnvironmentActivation = createRequest.environmentActivations.map { entry ->
+                        entry.environmentKey to entry.isActive
                     }.toMap().toMutableMap()
                     val entity = ApiKeyEntity.create(createRequest.name, mappedEnvironmentActivation)
                     Panache.withTransaction {
@@ -58,9 +58,9 @@ class ApiKeyPanacheRepository(private val environmentRepository: EnvironmentRepo
                     if (updates.name?.isNotBlank() == true) {
                         name = updates.name
                     }
-                    if (updates.environmentActivation?.isNotEmpty() == true) {
-                        updates.environmentActivation.forEach { entry ->
-                            environmentActivation[entry.key] = entry.value
+                    if (updates.environmentActivations?.isNotEmpty() == true) {
+                        updates.environmentActivations.forEach { entry ->
+                            environmentActivation[entry.environmentKey] = entry.isActive
                         }
                     }
                 }

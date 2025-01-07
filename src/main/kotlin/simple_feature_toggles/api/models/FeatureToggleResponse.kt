@@ -5,5 +5,5 @@ data class FeatureToggleResponse(
     val key: String,
     val name: String,
     val description: String,
-    val environmentActivation: Map<String, Boolean>
+    val environmentActivations: List<EnvironmentActivationApiModel> = listOf()
 )

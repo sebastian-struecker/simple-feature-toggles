@@ -44,7 +44,7 @@ class FeatureTogglePanacheRepository(private val environmentRepository: Environm
 
     override fun create(createRequest: CreateFeatureToggleRequest): Uni<FeatureToggle> {
         FeatureToggle.checkInputs(createRequest.key, createRequest.name)
-        if (createRequest.environmentActivation.isEmpty()) {
+        if (createRequest.environmentActivations.isEmpty()) {
             val entity = FeatureToggleEntity.create(
                 createRequest.key, createRequest.name, createRequest.description, mutableMapOf()
             )
@@ -54,13 +54,13 @@ class FeatureTogglePanacheRepository(private val environmentRepository: Environm
                 }
             }
         }
-        return environmentRepository.checkEnvironmentsExist(createRequest.environmentActivation.keys.toList())
+        return environmentRepository.checkEnvironmentsExist(createRequest.environmentActivations.map { it.environmentKey })
             .flatMap { allExist ->
                 if (!allExist) {
                     Uni.createFrom().failure(IllegalArgumentException("One or more environments do not exist"))
                 } else {
-                    val mappedEnvironmentActivation = createRequest.environmentActivation.map { entry ->
-                        entry.key to entry.value
+                    val mappedEnvironmentActivation = createRequest.environmentActivations.map { entry ->
+                        entry.environmentKey to entry.isActive
                     }.toMap().toMutableMap()
                     val entity = FeatureToggleEntity.create(
                         createRequest.key, createRequest.name, createRequest.description, mappedEnvironmentActivation
@@ -82,9 +82,9 @@ class FeatureTogglePanacheRepository(private val environmentRepository: Environm
                     if (updates.description?.isNotBlank() == true) {
                         description = updates.description
                     }
-                    if (updates.environmentActivation?.isNotEmpty() == true) {
-                        updates.environmentActivation.forEach { entry ->
-                            environmentActivation[entry.key] = entry.value
+                    if (updates.environmentActivations?.isNotEmpty() == true) {
+                        updates.environmentActivations.forEach { entry ->
+                            environmentActivation[entry.environmentKey] = entry.isActive
                         }
                     }
                 }

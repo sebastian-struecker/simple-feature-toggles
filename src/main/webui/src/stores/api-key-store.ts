@@ -38,6 +38,7 @@ export const createApiKeyStore = (initState: ApiKeyState = defaultInitState) => 
             return await apiKeys_getById(id);
         }, getAll: async () => {
             const response = await apiKeys_getAll();
+            console.log(response);
             set(() => ({
                 apiKeys: response
             }));
