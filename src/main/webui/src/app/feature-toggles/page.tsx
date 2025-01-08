@@ -60,7 +60,7 @@ export default function FeatureTogglesPage() {
                             }}><FaPen/></button>
                         </div>
                         <div className="lg:tooltip" data-tip="Remove">
-                        <button className="btn btn-soft btn-secondary" onClick={() => {
+                            <button className="btn btn-soft btn-secondary" onClick={() => {
                                 setSelected(element);
                                 setConfirmModalVisible(true);
                             }}><FaTrash/></button>

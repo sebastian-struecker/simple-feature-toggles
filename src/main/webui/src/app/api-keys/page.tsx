@@ -42,8 +42,9 @@ export default function ApiKeysPage() {
                     <div className="grid grid-cols-3 gap-1">
                         {element.environmentActivations.length != 0 && element.environmentActivations.map((env) => {
                             const {environmentKey, isActive} = env;
-                            return (
-                                <EnvironmentActivationStatusPill key={environmentKey + isActive} environmentKey={environmentKey} isActive={isActive}/>)
+                            return (<EnvironmentActivationStatusPill key={environmentKey + isActive}
+                                                                     environmentKey={environmentKey}
+                                                                     isActive={isActive}/>)
                         })}
                     </div>
                 </td>

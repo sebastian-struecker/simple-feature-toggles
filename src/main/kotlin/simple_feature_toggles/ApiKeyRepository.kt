@@ -18,4 +18,6 @@ interface ApiKeyRepository {
 
     fun removeAll(): Uni<Unit>
 
+    fun onEnvironmentRemoval(environmentKey: String): Uni<String>
+
 }

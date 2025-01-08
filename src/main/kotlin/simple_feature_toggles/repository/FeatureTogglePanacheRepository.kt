@@ -105,6 +105,18 @@ class FeatureTogglePanacheRepository(private val environmentRepository: Environm
         }.chain { _ -> Uni.createFrom().voidItem().replaceWithUnit() }
     }
 
+    override fun onEnvironmentRemoval(environmentKey: String): Uni<String> {
+        return Panache.withTransaction {
+            listAll()
+        }.toMulti().flatMap(Multi.createFrom()::iterable).filter {
+            it.environmentActivation.entries.any { entry -> entry.key == environmentKey }
+        }.map {
+            it.apply {
+                environmentActivation.remove(environmentKey)
+            }
+        }.toUni().map { _ -> environmentKey }
+    }
+
 }
 
 

@@ -4,7 +4,7 @@ import {useApiKeyStore} from "@/src/providers/api-key-store-provider";
 import {CreateApiKeyInputs} from "@/src/types/create-api-key-inputs";
 import {TextInputField, UsedPatterns} from "@/src/components/molecules/text-input-field";
 import {EnvironmentInputField} from "@/src/components/molecules/environment-input-field";
-import {ModalWrapper} from "@/src/components/molecules/modal-wrapper";
+import {ModalWithBottomActionsWrapper} from "@/src/components/molecules/modal-with-bottom-actions-wrapper";
 
 type Inputs = {
     visible: boolean; onClose: () => void;
@@ -27,8 +27,8 @@ export function AddApiKeyModal({visible, onClose}: Inputs) {
         onClose();
     };
 
-    return (<ModalWrapper labels={{title: "Create an Api Key", actionButtonLabel: "Create"}}
-                          controls={{onSubmit: handleSubmit(onSubmit), onClose: handleClose, visible: visible}}>
+    return (<ModalWithBottomActionsWrapper labels={{title: "Create an Api Key", actionButtonLabel: "Create"}}
+                                           controls={{onSubmit: handleSubmit(onSubmit), onClose: handleClose, visible: visible}}>
         <TextInputField label={"Name"} placeholder={"Enter a name"}
                         control={{key: "name", register, isSubmitting}}
                         validation={{
@@ -39,6 +39,6 @@ export function AddApiKeyModal({visible, onClose}: Inputs) {
                         }}
         />
         <EnvironmentInputField setValue={setValue} isSubmitting={isSubmitting} isSubmitSuccessful={isSubmitSuccessful}/>
-    </ModalWrapper>)
+    </ModalWithBottomActionsWrapper>)
 
 }

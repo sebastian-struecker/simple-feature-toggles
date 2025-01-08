@@ -14,7 +14,10 @@ import simple_feature_toggles.api.models.UpdateEnvironmentRequest
 
 
 @ApplicationScoped
-class EnvironmentPanacheRepository : PanacheRepository<EnvironmentEntity>, EnvironmentRepository {
+class EnvironmentPanacheRepository(
+    val apiKeyPanacheRepository: ApiKeyPanacheRepository,
+    val featureTogglePanacheRepository: FeatureTogglePanacheRepository
+) : PanacheRepository<EnvironmentEntity>, EnvironmentRepository {
 
     override fun checkEnvironmentsExist(keys: List<String>): Uni<Boolean> {
         return Panache.withTransaction {
@@ -60,7 +63,11 @@ class EnvironmentPanacheRepository : PanacheRepository<EnvironmentEntity>, Envir
 
     override fun removeById(id: Long): Uni<Unit> {
         return Panache.withTransaction {
-            deleteById(id)
+            findById(id).onItem().ifNull().failWith(NoSuchElementException("Environment with id $id not found"))
+                .onItem().ifNotNull().transformToUni { it ->
+                    featureTogglePanacheRepository.onEnvironmentRemoval(it.key)
+                }.onItem().transformToUni { it -> apiKeyPanacheRepository.onEnvironmentRemoval(it) }.onItem()
+                .transformToUni { _ -> deleteById(id) }
         }.onItem().ifNotNull().transformToUni { _ -> Uni.createFrom().voidItem().replaceWithUnit() }.onItem().ifNull()
             .failWith(NoSuchElementException("Environment with id $id not found"))
     }

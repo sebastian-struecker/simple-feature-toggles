@@ -1,5 +1,5 @@
 import React from "react";
-import {ModalWrapper} from "@/src/components/molecules/modal-wrapper";
+import {ModalWithBottomActionsWrapper} from "@/src/components/molecules/modal-with-bottom-actions-wrapper";
 
 
 type Inputs = {
@@ -22,9 +22,9 @@ export function ConfirmationModal({
         onClose();
     };
 
-    return (<ModalWrapper labels={{title: title, actionButtonLabel: actionButtonLabel}}
-                          controls={{onSubmit: onConfirm, onClose: handleClose, visible: visible}}>
+    return (<ModalWithBottomActionsWrapper labels={{title: title, actionButtonLabel: actionButtonLabel}}
+                                           controls={{onSubmit: onConfirm, onClose: handleClose, visible: visible}}>
         <div className="w-full flex justify-center">{description}</div>
-    </ModalWrapper>)
+    </ModalWithBottomActionsWrapper>)
 
 }

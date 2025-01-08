@@ -3,7 +3,7 @@ import {SubmitHandler, useForm} from "react-hook-form";
 import {CreateEnvironmentInputs} from "@/src/types/create-environment-inputs";
 import {useEnvironmentStore} from "@/src/providers/environment-store-provider";
 import {TextInputField, UsedPatterns} from "@/src/components/molecules/text-input-field";
-import {ModalWrapper} from "@/src/components/molecules/modal-wrapper";
+import {ModalWithBottomActionsWrapper} from "@/src/components/molecules/modal-with-bottom-actions-wrapper";
 
 type Inputs = {
     visible: boolean; onClose: () => void;
@@ -25,8 +25,8 @@ export function AddEnvironmentModal({visible, onClose}: Inputs) {
         onClose();
     };
 
-    return (<ModalWrapper labels={{title: "Create an Environment", actionButtonLabel: "Create"}}
-                          controls={{onSubmit: handleSubmit(onSubmit), onClose: handleClose, visible: visible}}>
+    return (<ModalWithBottomActionsWrapper labels={{title: "Create an Environment", actionButtonLabel: "Create"}}
+                                           controls={{onSubmit: handleSubmit(onSubmit), onClose: handleClose, visible: visible}}>
         <TextInputField label={"Key"} placeholder={"Enter a key"}
                         control={{
                             key: "key", register: register, isSubmitting: isSubmitting
@@ -49,6 +49,6 @@ export function AddEnvironmentModal({visible, onClose}: Inputs) {
                             isRequired: true
                         }}
         />
-    </ModalWrapper>)
+    </ModalWithBottomActionsWrapper>)
 
 }

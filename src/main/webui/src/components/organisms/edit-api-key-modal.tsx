@@ -1,6 +1,6 @@
 import React from "react";
 import {SubmitHandler, useForm} from "react-hook-form";
-import {ModalWrapper} from "@/src/components/molecules/modal-wrapper";
+import {ModalWithBottomActionsWrapper} from "@/src/components/molecules/modal-with-bottom-actions-wrapper";
 import {UpdateApiKeyInputs} from "@/src/types/update-api-key-inputs";
 import {useApiKeyStore} from "@/src/providers/api-key-store-provider";
 
@@ -24,11 +24,11 @@ export function EditApiKeyModal({visible, onClose}: Inputs) {
         onClose();
     };
 
-    return (<ModalWrapper labels={{title: "Edit Api Key", actionButtonLabel: "Save"}}
-                          controls={{onSubmit: handleSubmit(onSubmit), onClose: handleClose, visible: visible}}>
+    return (<ModalWithBottomActionsWrapper labels={{title: "Edit Api Key", actionButtonLabel: "Save"}}
+                                           controls={{onSubmit: handleSubmit(onSubmit), onClose: handleClose, visible: visible}}>
         <div className="flex flex-col">
             {selected?.name}
         </div>
-    </ModalWrapper>)
+    </ModalWithBottomActionsWrapper>)
 
 }

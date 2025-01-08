@@ -89,7 +89,7 @@ class ApiKeyApi(
         ), APIResponse(responseCode = "400", description = "Invalid input")]
     )
     fun createApiKey(request: CreateApiKeyRequest): Uni<RestResponse<ApiKeyResponse>> {
-        Log.info("[ApiKeyApi] Calling method: post url: /api-keys body: $request")
+        Log.debug("[ApiKeyApi] Calling method: post url: /api-keys body: $request")
         try {
             return repository.create(request).onFailure().transform { BadRequestException() }.onItem()
                 .transform { RestResponse.ok(it.toResponse()) }

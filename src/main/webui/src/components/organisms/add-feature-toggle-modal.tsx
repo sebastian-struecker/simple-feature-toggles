@@ -5,7 +5,7 @@ import {CreateFeatureToggleInputs} from "@/src/types/create-feature-toggle-input
 import {TextInputField, UsedPatterns} from "@/src/components/molecules/text-input-field";
 import {EnvironmentInputField} from "@/src/components/molecules/environment-input-field";
 import {TextInputArea} from "@/src/components/molecules/text-input-area";
-import {ModalWrapper} from "@/src/components/molecules/modal-wrapper";
+import {ModalWithBottomActionsWrapper} from "@/src/components/molecules/modal-with-bottom-actions-wrapper";
 
 type Inputs = {
     visible: boolean; onClose: () => void;
@@ -28,8 +28,8 @@ export function AddFeatureToggleModal({visible, onClose}: Inputs) {
         onClose();
     };
 
-    return (<ModalWrapper labels={{title: "Create a Feature Toggle", actionButtonLabel: "Create"}}
-                          controls={{onSubmit: handleSubmit(onSubmit), onClose: handleClose, visible: visible}}>
+    return (<ModalWithBottomActionsWrapper labels={{title: "Create a Feature Toggle", actionButtonLabel: "Create"}}
+                                           controls={{onSubmit: handleSubmit(onSubmit), onClose: handleClose, visible: visible}}>
         <TextInputField label={"Key"} placeholder={"Enter a key"}
                         control={{key: "key", register: register, isSubmitting: isSubmitting}}
                         validation={{
@@ -55,6 +55,6 @@ export function AddFeatureToggleModal({visible, onClose}: Inputs) {
                        }}
         />
         <EnvironmentInputField setValue={setValue} isSubmitting={isSubmitting} isSubmitSuccessful={isSubmitSuccessful}/>
-    </ModalWrapper>)
+    </ModalWithBottomActionsWrapper>)
 
 }

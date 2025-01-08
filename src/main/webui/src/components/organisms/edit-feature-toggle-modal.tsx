@@ -1,6 +1,6 @@
 import React from "react";
 import {SubmitHandler, useForm} from "react-hook-form";
-import {ModalWrapper} from "@/src/components/molecules/modal-wrapper";
+import {ModalWithBottomActionsWrapper} from "@/src/components/molecules/modal-with-bottom-actions-wrapper";
 import {UpdateFeatureToggleInputs} from "@/src/types/update-feature-toggle-inputs";
 import {useFeatureToggleStore} from "@/src/providers/feature-toggle-store-provider";
 
@@ -24,11 +24,11 @@ export function EditFeatureToggleModal({visible, onClose}: Inputs) {
         onClose();
     };
 
-    return (<ModalWrapper labels={{title: "Edit Feature Toggle", actionButtonLabel: "Save"}}
-                          controls={{onSubmit: handleSubmit(onSubmit), onClose: handleClose, visible: visible}}>
+    return (<ModalWithBottomActionsWrapper labels={{title: "Edit Feature Toggle", actionButtonLabel: "Save"}}
+                                           controls={{onSubmit: handleSubmit(onSubmit), onClose: handleClose, visible: visible}}>
         <div className="flex flex-col">
             {selected?.name}
         </div>
-    </ModalWrapper>)
+    </ModalWithBottomActionsWrapper>)
 
 }

@@ -3,6 +3,7 @@ package simple_feature_toggles.repository
 
 import io.quarkus.hibernate.reactive.panache.Panache
 import io.quarkus.hibernate.reactive.panache.PanacheRepository
+import io.smallrye.mutiny.Multi
 import io.smallrye.mutiny.Uni
 import io.smallrye.mutiny.replaceWithUnit
 import jakarta.enterprise.context.ApplicationScoped
@@ -80,6 +81,18 @@ class ApiKeyPanacheRepository(private val environmentRepository: EnvironmentRepo
         return Panache.withTransaction {
             deleteAll()
         }.chain { _ -> Uni.createFrom().voidItem().replaceWithUnit() }
+    }
+
+    override fun onEnvironmentRemoval(environmentKey: String): Uni<String> {
+        return Panache.withTransaction {
+            listAll()
+        }.toMulti().flatMap(Multi.createFrom()::iterable).filter {
+            it.environmentActivation.entries.any { entry -> entry.key == environmentKey }
+        }.map {
+            it.apply {
+                environmentActivation.remove(environmentKey)
+            }
+        }.toUni().map { _ -> environmentKey }
     }
 
 }

@@ -23,4 +23,6 @@ interface FeatureToggleRepository {
 
     fun removeAll(): Uni<Unit>
 
+    fun onEnvironmentRemoval(environmentKey: String): Uni<String>
+
 }
