@@ -21,7 +21,7 @@ export type ApiKeyActions = {
     getById: (id: number) => Promise<ApiKey>
     getAll: () => Promise<ApiKey[]>
     create: (input: CreateApiKeyInputs) => void
-    update: (input: UpdateApiKeyInputs) => void
+    update: (id: number, input: UpdateApiKeyInputs) => void
     deleteById: (id: number) => void
     setSelected: (value: ApiKey | undefined) => void
 }
@@ -38,7 +38,6 @@ export const createApiKeyStore = (initState: ApiKeyState = defaultInitState) => 
             return await apiKeys_getById(id);
         }, getAll: async () => {
             const response = await apiKeys_getAll();
-            console.log(response);
             set(() => ({
                 apiKeys: response
             }));
@@ -48,7 +47,6 @@ export const createApiKeyStore = (initState: ApiKeyState = defaultInitState) => 
                 await apiKeys_create(input);
                 toast.success("Api key created successfully");
             } catch (e) {
-                console.error(e);
                 if (e instanceof Error) {
                     toast.error(e.message);
                 }
@@ -57,12 +55,11 @@ export const createApiKeyStore = (initState: ApiKeyState = defaultInitState) => 
             set(() => ({
                 apiKeys: response
             }));
-        }, update: async (input: UpdateApiKeyInputs) => {
+        }, update: async (id: number, input: UpdateApiKeyInputs) => {
             try {
-                await apiKeys_update(input);
+                await apiKeys_update(id, input);
                 toast.success("Api key updated successfully");
             } catch (e) {
-                console.error(e);
                 if (e instanceof Error) {
                     toast.error(e.message);
                 }
@@ -76,7 +73,6 @@ export const createApiKeyStore = (initState: ApiKeyState = defaultInitState) => 
                 await apiKeys_deleteById(id);
                 toast.success("Api key deleted successfully");
             } catch (e) {
-                console.error(e);
                 if (e instanceof Error) {
                     toast.error(e.message);
                 }

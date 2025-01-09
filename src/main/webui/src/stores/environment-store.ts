@@ -22,7 +22,7 @@ export type EnvironmentActions = {
     getById: (id: number) => Promise<Environment>
     getAll: () => Promise<Environment[]>
     create: (input: CreateEnvironmentInputs) => void
-    update: (input: UpdateEnvironmentInputs) => void
+    update: (id: number, input: UpdateEnvironmentInputs) => void
     deleteById: (id: number) => void
     setSelected: (value: Environment | undefined) => void
 }
@@ -57,9 +57,9 @@ export const createEnvironmentStore = (initState: EnvironmentState = defaultInit
             set(() => ({
                 environments: response
             }));
-        }, update: async (input: UpdateEnvironmentInputs) => {
+        }, update: async (id: number, input: UpdateEnvironmentInputs) => {
             try {
-                await environments_update(input);
+                await environments_update(id, input);
                 toast.success("Environment updated successfully");
             } catch (e) {
                 console.error(e);

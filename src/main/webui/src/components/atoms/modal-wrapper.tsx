@@ -32,7 +32,7 @@ export function ModalWrapper({
         modalRef.current.close();
     };
 
-    return (<dialog ref={modalRef} className="modal modal-bottom sm:modal-middle">
+    return (<dialog ref={modalRef} onClose={onClose} className="modal modal-bottom sm:modal-middle">
         <div className="modal-box">
             <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2" type="reset"
                     onClick={handleClose}>✕

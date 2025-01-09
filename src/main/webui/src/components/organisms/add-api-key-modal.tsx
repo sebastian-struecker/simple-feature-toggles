@@ -12,7 +12,7 @@ type Inputs = {
 
 export function AddApiKeyModal({visible, onClose}: Inputs) {
     const {
-        register, handleSubmit, reset, setValue, formState: {isSubmitting, isSubmitSuccessful},
+        register, control, handleSubmit, reset, setValue, formState: {isSubmitting},
     } = useForm<CreateApiKeyInputs>({defaultValues: {environmentActivations: []}});
     const {create} = useApiKeyStore((state) => state);
 
@@ -28,9 +28,13 @@ export function AddApiKeyModal({visible, onClose}: Inputs) {
     };
 
     return (<ModalWithBottomActionsWrapper labels={{title: "Create an Api Key", actionButtonLabel: "Create"}}
-                                           controls={{onSubmit: handleSubmit(onSubmit), onClose: handleClose, visible: visible}}>
+                                           controls={{
+                                               onSubmit: handleSubmit(onSubmit),
+                                               onClose: handleClose,
+                                               visible: visible
+                                           }}>
         <TextInputField label={"Name"} placeholder={"Enter a name"}
-                        control={{key: "name", register, isSubmitting}}
+                        control={{key: "name", register, setValue: setValue, submitting: isSubmitting}}
                         validation={{
                             validatorHint: "Some new api key",
                             minLength: 1,
@@ -38,7 +42,7 @@ export function AddApiKeyModal({visible, onClose}: Inputs) {
                             isRequired: true
                         }}
         />
-        <EnvironmentInputField setValue={setValue} isSubmitting={isSubmitting} isSubmitSuccessful={isSubmitSuccessful}/>
+        <EnvironmentInputField setValue={setValue} control={control} isSubmitting={isSubmitting}/>
     </ModalWithBottomActionsWrapper>)
 
 }

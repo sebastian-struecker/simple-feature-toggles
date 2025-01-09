@@ -18,10 +18,6 @@ export function ModalWithBottomActionsWrapper({
                                                   controls: {onSubmit, onClose, visible},
                                                   children
                                               }: Inputs) {
-    const handleClose = () => {
-        onClose();
-    };
-
     return (<ModalWrapper labels={{title}} controls={{onClose, visible}}>
         <form method="dialog" className="flex flex-col gap-3" onSubmit={onSubmit}>
             <div className="flex flex-col">
@@ -32,7 +28,7 @@ export function ModalWithBottomActionsWrapper({
                     {actionButtonLabel}
                 </button>
                 <button className="btn btn-outline btn-primary btn-block max-w-[12rem]" type="reset"
-                        onClick={handleClose}>
+                        onClick={onClose}>
                     Cancel
                 </button>
             </div>

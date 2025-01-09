@@ -76,7 +76,7 @@ export default function FeatureTogglesPage() {
         <div className="w-5/6 flex flex-col">
             <div className="flex justify-between flex-row">
                 <div className="text-xl font-semibold">
-                    Feature Toggles
+                    Feature-Toggles
                 </div>
                 <button className="btn btn-primary"
                         onClick={() => {

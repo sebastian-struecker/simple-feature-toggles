@@ -27,8 +27,8 @@ export async function environments_create(input: CreateEnvironmentInputs): Promi
     throw new Error("Error while creating an environment");
 }
 
-export async function environments_update(input: UpdateEnvironmentInputs): Promise<Environment> {
-    const response = await fetcher(`${path}`, {
+export async function environments_update(id: number, input: UpdateEnvironmentInputs): Promise<Environment> {
+    const response = await fetcher(`${path}/` + id, {
         method: "PATCH", body: JSON.stringify(input), headers: {"Content-Type": "application/json"}
     });
     if (response && response.status === 200) {

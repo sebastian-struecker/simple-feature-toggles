@@ -11,7 +11,7 @@ type Inputs = {
 
 export function AddEnvironmentModal({visible, onClose}: Inputs) {
     const {
-        register, handleSubmit, reset, formState: {isSubmitting},
+        register, handleSubmit, setValue, reset, formState: {isSubmitting},
     } = useForm<CreateEnvironmentInputs>();
     const {create} = useEnvironmentStore((state) => state);
 
@@ -29,7 +29,7 @@ export function AddEnvironmentModal({visible, onClose}: Inputs) {
                                            controls={{onSubmit: handleSubmit(onSubmit), onClose: handleClose, visible: visible}}>
         <TextInputField label={"Key"} placeholder={"Enter a key"}
                         control={{
-                            key: "key", register: register, isSubmitting: isSubmitting
+                            key: "key", register: register,  setValue: setValue, submitting: isSubmitting
                         }}
                         validation={{
                             validatorHint: "Enter a valid key",
@@ -40,7 +40,7 @@ export function AddEnvironmentModal({visible, onClose}: Inputs) {
         />
         <TextInputField label={"Name"} placeholder={"Enter a name"}
                         control={{
-                            key: "name", register: register, isSubmitting: isSubmitting
+                            key: "name", register: register,  setValue: setValue, submitting: isSubmitting
                         }}
                         validation={{
                             validatorHint: "Enter a valid name",

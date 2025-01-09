@@ -30,8 +30,8 @@ export async function apiKeys_create(input: CreateApiKeyInputs): Promise<ApiKey>
     throw new Error("Error while creating an api key");
 }
 
-export async function apiKeys_update(input: UpdateApiKeyInputs): Promise<ApiKey> {
-    const response = await fetcher(`${path}`, {
+export async function apiKeys_update(id: number, input: UpdateApiKeyInputs): Promise<ApiKey> {
+    const response = await fetcher(`${path}/` + id, {
         method: "PATCH", body: JSON.stringify(input), headers: {"Content-Type": "application/json"}
     })
     if (response && response.status === 200) {

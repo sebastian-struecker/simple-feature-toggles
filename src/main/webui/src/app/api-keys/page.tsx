@@ -73,7 +73,7 @@ export default function ApiKeysPage() {
         <div className="w-5/6 flex flex-col">
             <div className="flex justify-between flex-row">
                 <div className="text-xl font-semibold">
-                    Api Keys
+                    Api-Keys
                 </div>
                 <button className="btn btn-primary" onClick={() => {
                     setAddModalVisible(true)

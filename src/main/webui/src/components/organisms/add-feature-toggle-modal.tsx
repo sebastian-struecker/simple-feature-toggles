@@ -13,7 +13,7 @@ type Inputs = {
 
 export function AddFeatureToggleModal({visible, onClose}: Inputs) {
     const {
-        register, handleSubmit, reset, setValue, formState: {isSubmitting, isSubmitSuccessful},
+        register, control, handleSubmit, reset, setValue, formState: {isSubmitting},
     } = useForm<CreateFeatureToggleInputs>({defaultValues: {environmentActivations: [], description: ""}});
     const {create} = useFeatureToggleStore((state) => state);
 
@@ -29,9 +29,13 @@ export function AddFeatureToggleModal({visible, onClose}: Inputs) {
     };
 
     return (<ModalWithBottomActionsWrapper labels={{title: "Create a Feature Toggle", actionButtonLabel: "Create"}}
-                                           controls={{onSubmit: handleSubmit(onSubmit), onClose: handleClose, visible: visible}}>
+                                           controls={{
+                                               onSubmit: handleSubmit(onSubmit),
+                                               onClose: handleClose,
+                                               visible: visible
+                                           }}>
         <TextInputField label={"Key"} placeholder={"Enter a key"}
-                        control={{key: "key", register: register, isSubmitting: isSubmitting}}
+                        control={{key: "key", register: register, setValue: setValue, submitting: isSubmitting}}
                         validation={{
                             validatorHint: "Enter a valid key",
                             minLength: 3,
@@ -40,7 +44,7 @@ export function AddFeatureToggleModal({visible, onClose}: Inputs) {
                         }}
         />
         <TextInputField label={"Name"} placeholder={"Enter a name"}
-                        control={{key: "name", register: register, isSubmitting: isSubmitting}}
+                        control={{key: "name", register: register, setValue: setValue, submitting: isSubmitting}}
                         validation={{
                             validatorHint: "Enter a valid name",
                             minLength: 1,
@@ -54,7 +58,7 @@ export function AddFeatureToggleModal({visible, onClose}: Inputs) {
                            validatorHint: "Enter a description", minLength: 1, isRequired: false
                        }}
         />
-        <EnvironmentInputField setValue={setValue} isSubmitting={isSubmitting} isSubmitSuccessful={isSubmitSuccessful}/>
+        <EnvironmentInputField setValue={setValue} control={control} isSubmitting={isSubmitting}/>
     </ModalWithBottomActionsWrapper>)
 
 }

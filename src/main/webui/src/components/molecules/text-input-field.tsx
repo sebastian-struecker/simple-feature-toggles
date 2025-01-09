@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect} from "react";
 
 export const UsedPatterns = {
     key: "(([a-z])+(_[a-z])*)+", default: ".*"
@@ -9,7 +9,7 @@ type Inputs = {
 }
 
 type Control = {
-    key: string; register: any; isSubmitting: boolean;
+    key: string; register: any; setValue: any; submitting: boolean; disabled?: boolean; value?: string;
 }
 
 type Validation = {
@@ -19,7 +19,7 @@ type Validation = {
 export function TextInputField({
                                    label = "",
                                    placeholder = "",
-                                   control: {key, register, isSubmitting},
+                                   control: {key, register, setValue, submitting, disabled = false, value = undefined},
                                    validation: {
                                        pattern = UsedPatterns.default,
                                        isRequired = false,
@@ -27,6 +27,10 @@ export function TextInputField({
                                        validatorHint = ""
                                    },
                                }: Inputs) {
+    useEffect(() => {
+        setValue(key, value);
+    }, [value]);
+
     return (<>
         <fieldset className="fieldset">
             <legend className="fieldset-legend gap-0">{label}
@@ -34,7 +38,7 @@ export function TextInputField({
             </legend>
             <input
                 {...register(key, {required: isRequired, pattern: pattern, minLength: minLength})}
-                disabled={isSubmitting}
+                disabled={submitting || disabled}
                 name={key}
                 type="text" className="input input-primary input-md w-full validator" required={isRequired}
                 placeholder={placeholder} minLength={minLength}
