@@ -52,8 +52,8 @@ jobs:
         id: push
         uses: docker/build-push-action@a254f8ca60a858f3136a2f1f23a60969f2c402dd
         with:
-          context: .
-          file: ./service/src/main/docker/Dockerfile
+          context: ./service
+          file: ./Dockerfile
           push: true
           tags: ghcr.io/sebastian-struecker/simple-feature-toggles/service:${{ steps.project.outputs.version }}
 
@@ -131,8 +131,8 @@ jobs:
         id: push
         uses: docker/build-push-action@a254f8ca60a858f3136a2f1f23a60969f2c402dd
         with:
-          context: .
-          file: ./ui/Dockerfile
+          context: ./ui
+          file: ./Dockerfile
           push: true
           tags: ghcr.io/sebastian-struecker/simple-feature-toggles/ui:${{ steps.package-version.outputs.current-version }}
 

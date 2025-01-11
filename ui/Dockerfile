@@ -11,7 +11,7 @@ WORKDIR /app
 # Dependencies
 FROM base AS dependencies
 
-COPY ui/package.json package-lock.json ./
+COPY package.json package-lock.json ./
 RUN npm ci
 
 # Build
@@ -24,6 +24,7 @@ COPY . .
 ARG NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
 ENV NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=$NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
 
+RUN cat package.json
 RUN npm run build
 
 # Run
