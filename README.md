@@ -6,7 +6,7 @@
 [![codecov](https://codecov.io/gh/sebastian-struecker/simple-feature-toggles/branch/main/graph/badge.svg?token=QODH0DNVSL)](https://codecov.io/gh/sebastian-struecker/simple-feature-toggles)
 [![Snyk](https://snyk.io/test/github/sebastian-struecker/simple-feature-toggles/badge.svg)](https://snyk.io/test/github/sebastian-struecker/simple-feature-toggles)
 
-[![CI](https://github.com/sebastian-struecker/simple-feature-toggles/actions/workflows/build-image.yml/badge.svg)](https://github.com/sebastian-struecker/simple-feature-toggles/actions/workflows/build-image.yml)
+[![CI](https://github.com/sebastian-struecker/simple-feature-toggles/actions/workflows/release-pipeline.yml/badge.svg)](https://github.com/sebastian-struecker/simple-feature-toggles/actions/workflows/release-pipeline.yml)
 
 ## Why use simple-feature-toggles
 - Simple service for feature toggles
