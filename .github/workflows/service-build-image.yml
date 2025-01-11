@@ -30,7 +30,8 @@ jobs:
           cache: maven
 
       - name: Maven Package
-        run: service/mvnw -B package -DskipTests
+        working-directory: ./service
+        run: ./mvnw -B package -DskipTests
 
       - name: Docker log in to Github Container Registry
         uses: docker/login-action@0d4c9c5ea7693da7b068278f7b52bda2a190a446
