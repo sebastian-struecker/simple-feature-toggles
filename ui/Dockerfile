@@ -11,7 +11,7 @@ WORKDIR /app
 # Dependencies
 FROM base AS dependencies
 
-COPY package.json package-lock.json ./
+COPY ui/package.json package-lock.json ./
 RUN npm ci
 
 # Build
