@@ -62,7 +62,7 @@ jobs:
           context: ./service
           file: ./service/Dockerfile
           push: true
-          tags: ghcr.io/sebastian-struecker/simple-feature-toggles/service:${{ RELEASE_VERSION }}
+          tags: ghcr.io/sebastian-struecker/simple-feature-toggles/service:${{ env.RELEASE_VERSION }}
 
   service-test:
     runs-on: ubuntu-latest
@@ -109,7 +109,7 @@ jobs:
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@0.20.0
         with:
-          image-ref: 'ghcr.io/sebastian-struecker/simple-feature-toggles/service:${{ RELEASE_VERSION }}'
+          image-ref: 'ghcr.io/sebastian-struecker/simple-feature-toggles/service:${{ env.RELEASE_VERSION }}'
           format: 'sarif'
           limit-severities-for-sarif: true
           output: 'trivy-results.sarif'
@@ -142,7 +142,7 @@ jobs:
           context: ./ui
           file: ./ui/Dockerfile
           push: true
-          tags: ghcr.io/sebastian-struecker/simple-feature-toggles/ui:${{ RELEASE_VERSION }}
+          tags: ghcr.io/sebastian-struecker/simple-feature-toggles/ui:${{ env.RELEASE_VERSION }}
 
   ui-security-check:
     runs-on: ubuntu-latest
@@ -157,7 +157,7 @@ jobs:
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@0.20.0
         with:
-          image-ref: 'ghcr.io/sebastian-struecker/simple-feature-toggles/ui:${{ RELEASE_VERSION }}'
+          image-ref: 'ghcr.io/sebastian-struecker/simple-feature-toggles/ui:${{ env.RELEASE_VERSION }}'
           format: 'sarif'
           output: 'trivy-results.sarif'
 
