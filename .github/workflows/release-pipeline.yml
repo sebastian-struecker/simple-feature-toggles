@@ -22,6 +22,8 @@ jobs:
   get-version:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v4
+
       - name: Get npm version
         id: package-version
         uses: martinbeentjes/npm-get-version-action@v1.3.1
