@@ -43,7 +43,7 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Extract version from pom.xml file
-        id: project
+        id: pom-version
         uses: dostonhamrakulov/maven-artifact-version-extractor@v1.0
         with:
           file_path: ${{ github.workspace }}/service/pom.xml
@@ -55,7 +55,7 @@ jobs:
           context: ./service
           file: ./service/Dockerfile
           push: true
-          tags: ghcr.io/sebastian-struecker/simple-feature-toggles/service:${{ steps.project.outputs.version }}
+          tags: ghcr.io/sebastian-struecker/simple-feature-toggles/service:${{ steps.pom-version.outputs.version }}
 
   service-test:
     runs-on: ubuntu-latest
@@ -126,6 +126,8 @@ jobs:
       - name: get-npm-version
         id: package-version
         uses: martinbeentjes/npm-get-version-action@v1.3.1
+        with:
+          path: ui
 
       - name: Build and push Docker images
         id: push
