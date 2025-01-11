@@ -71,6 +71,7 @@ jobs:
         with:
           image-ref: 'ghcr.io/sebastian-struecker/simple-feature-toggles/service:${{ steps.project.outputs.version }}'
           format: 'sarif'
+          limit-severities-for-sarif: true
           output: 'trivy-results.sarif'
 
       - name: Upload Trivy scan results to GitHub Security tab
