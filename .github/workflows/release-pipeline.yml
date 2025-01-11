@@ -53,7 +53,7 @@ jobs:
         uses: docker/build-push-action@a254f8ca60a858f3136a2f1f23a60969f2c402dd
         with:
           context: ./service
-          file: ./Dockerfile
+          file: ./service/Dockerfile
           push: true
           tags: ghcr.io/sebastian-struecker/simple-feature-toggles/service:${{ steps.project.outputs.version }}
 
@@ -132,7 +132,7 @@ jobs:
         uses: docker/build-push-action@a254f8ca60a858f3136a2f1f23a60969f2c402dd
         with:
           context: ./ui
-          file: ./Dockerfile
+          file: ./ui/Dockerfile
           push: true
           tags: ghcr.io/sebastian-struecker/simple-feature-toggles/ui:${{ steps.package-version.outputs.current-version }}
 
