@@ -1,4 +1,4 @@
-name: Service - Build Image
+name: Ui - Build Image
 
 on:
   push:
