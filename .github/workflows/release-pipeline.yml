@@ -5,11 +5,9 @@ on:
     branches:
       - 'main'
     paths:
-      - '.github/workflows/**'
+      - '.github/workflows/release-pipeline.yml'
       - 'service/**'
       - 'ui/**'
-      - 'docs/**'
-      - 'package.json'
   workflow_dispatch:
 
 permissions:
@@ -18,11 +16,6 @@ permissions:
   packages: write
   id-token: write
   security-events: write
-  pages: write
-
-concurrency:
-  group: pages
-  cancel-in-progress: false
 
 jobs:
   get-version:
@@ -174,42 +167,3 @@ jobs:
         uses: github/codeql-action/upload-sarif@v3
         with:
           sarif_file: 'trivy-results.sarif'
-
-  docs-build:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: npm
-
-      - name: Setup Pages
-        uses: actions/configure-pages@v4
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Build with VitePress
-        run: npm run docs:build
-
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: docs/.vitepress/dist
-
-  docs-deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    needs: docs-build
-    runs-on: ubuntu-latest
-    steps:
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
