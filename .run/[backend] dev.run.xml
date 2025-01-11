@@ -1,6 +1,6 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="[backend] dev" type="QuarkusRunConfigurationType" factoryName="Quarkus">
-    <module name="simple-feature-toggles" />
+    <module name="service" />
     <QsMavenRunConfiguration>
       <MavenSettings>
         <option name="myGeneralSettings" />

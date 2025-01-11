@@ -21,14 +21,6 @@ quarkus:
   tls:
     trust-all: true
 
-  quinoa: false
-
-#  quinoa:
-#    enable-spa-routing: true
-#    dev-server:
-#      port: 3000
-#    build-dir: dist
-
 api:
   authorization:
     enable: ${API_AUTHORIZATION_ENABLE:true}
@@ -55,8 +47,6 @@ api:
 
 "%test":
   quarkus:
-    quinoa: false
-
     datasource:
       devservices:
         enabled: true
@@ -85,8 +75,6 @@ api:
 
 "%dev":
   quarkus:
-    quinoa: false
-
     log:
       level:
         category:

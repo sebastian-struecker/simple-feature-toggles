@@ -1,4 +1,4 @@
-import React, {useEffect, useRef} from "react";
+import React, {RefObject, useEffect, useRef} from "react";
 
 type Inputs = {
     labels: Labels; controls: Controls; children: React.ReactNode;
@@ -21,7 +21,7 @@ export function ModalWrapper({
         if (!modalRef.current) {
             return;
         }
-        visible ? modalRef.current.showModal() : modalRef.current.close();
+        visible ? (modalRef.current as HTMLDialogElement).showModal() : (modalRef.current as HTMLDialogElement).close();
     }, [visible]);
 
     const handleClose = () => {
@@ -29,7 +29,7 @@ export function ModalWrapper({
             return;
         }
         onClose();
-        modalRef.current.close();
+        (modalRef.current as HTMLDialogElement).close();
     };
 
     return (<dialog ref={modalRef} onClose={onClose} className="modal modal-bottom sm:modal-middle">

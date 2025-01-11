@@ -1,9 +1,12 @@
-name: Build Image
+name: Service - Build Image
 
 on:
   push:
     branches:
       - 'main'
+    paths:
+      - '.github/workflows/service-build-image.yml'
+      - 'service/**'
   workflow_dispatch:
 
 permissions:
@@ -27,7 +30,7 @@ jobs:
           cache: maven
 
       - name: Maven Package
-        run: ./mvnw -B package -DskipTests
+        run: ./service/mvnw -B package -DskipTests
 
       - name: Docker log in to Github Container Registry
         uses: docker/login-action@0d4c9c5ea7693da7b068278f7b52bda2a190a446
@@ -40,16 +43,16 @@ jobs:
         id: project
         uses: dostonhamrakulov/maven-artifact-version-extractor@v1.0
         with:
-          file_path: ${{ github.workspace }}/pom.xml
+          file_path: ${{ github.workspace }}/service/pom.xml
 
       - name: Build and push Docker images
         id: push
         uses: docker/build-push-action@a254f8ca60a858f3136a2f1f23a60969f2c402dd
         with:
           context: .
-          file: ./src/main/docker/Dockerfile
+          file: ./service/src/main/docker/Dockerfile
           push: true
-          tags: ghcr.io/sebastian-struecker/simple-feature-toggles:${{ steps.project.outputs.version }}
+          tags: ghcr.io/sebastian-struecker/simple-feature-toggles/service:${{ steps.project.outputs.version }}
 
   security-check:
     runs-on: ubuntu-latest
@@ -60,12 +63,12 @@ jobs:
         id: project
         uses: dostonhamrakulov/maven-artifact-version-extractor@v1.0
         with:
-          file_path: ${{ github.workspace }}/pom.xml
+          file_path: ${{ github.workspace }}/service/pom.xml
 
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@0.20.0
         with:
-          image-ref: 'ghcr.io/sebastian-struecker/simple-feature-toggles:${{ steps.project.outputs.version }}'
+          image-ref: 'ghcr.io/sebastian-struecker/simple-feature-toggles/service:${{ steps.project.outputs.version }}'
           format: 'sarif'
           output: 'trivy-results.sarif'
 
