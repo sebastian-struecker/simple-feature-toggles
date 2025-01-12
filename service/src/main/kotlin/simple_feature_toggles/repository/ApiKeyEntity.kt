@@ -1,10 +1,14 @@
 package simple_feature_toggles.repository
 
 import jakarta.persistence.*
+import org.hibernate.annotations.CreationTimestamp
+import org.hibernate.annotations.UpdateTimestamp
 import simple_feature_toggles.ApiKey
+import java.time.LocalDateTime
 
 
 @Entity
+@Table(name = "apikeyentity")
 class ApiKeyEntity(
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY) var id: Long? = null,
     @Column(nullable = false) var name: String,
@@ -14,8 +18,10 @@ class ApiKeyEntity(
     ) @MapKeyJoinColumn(name = "environmententity_key") @Column(
         name = "activation", nullable = true
     ) var environmentActivation: MutableMap<String, Boolean> = mutableMapOf(),
+    @UpdateTimestamp val updatedAt: LocalDateTime,
+    @CreationTimestamp @Column(nullable = false, updatable = false) val createdAt: LocalDateTime
 ) {
-    constructor() : this(null, "", "", mutableMapOf())
+    constructor() : this(null, "", "", mutableMapOf(), LocalDateTime.now(), LocalDateTime.now())
 
     companion object {
         fun create(name: String, environmentActivation: MutableMap<String, Boolean>): ApiKeyEntity {

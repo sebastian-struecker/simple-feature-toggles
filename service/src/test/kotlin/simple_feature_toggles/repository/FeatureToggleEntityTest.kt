@@ -3,6 +3,7 @@ package simple_feature_toggles.repository
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import java.time.LocalDateTime
 
 class FeatureToggleEntityTest {
 
@@ -58,7 +59,15 @@ class FeatureToggleEntityTest {
     }
 
     private fun featureToggleEntity(id: Long? = 1): FeatureToggleEntity {
-        return FeatureToggleEntity(id, "key", "name", "description", environmentEntities())
+        return FeatureToggleEntity(
+            id,
+            "key",
+            "name",
+            "description",
+            environmentEntities(),
+            LocalDateTime.now(),
+            LocalDateTime.now()
+        )
     }
 
     private fun environmentEntities(): MutableMap<String, Boolean> {

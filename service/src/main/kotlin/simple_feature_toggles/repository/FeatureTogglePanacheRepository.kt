@@ -60,7 +60,7 @@ class FeatureTogglePanacheRepository(private val environmentRepository: Environm
                     Uni.createFrom().failure(IllegalArgumentException("One or more environments do not exist"))
                 } else {
                     val mappedEnvironmentActivation = createRequest.environmentActivations.map { entry ->
-                        entry.environmentKey to entry.isActive
+                        entry.environmentKey to entry.activated
                     }.toMap().toMutableMap()
                     val entity = FeatureToggleEntity.create(
                         createRequest.key, createRequest.name, createRequest.description, mappedEnvironmentActivation
@@ -84,7 +84,7 @@ class FeatureTogglePanacheRepository(private val environmentRepository: Environm
                     }
                     if (updates.environmentActivations?.isNotEmpty() == true) {
                         updates.environmentActivations.forEach { entry ->
-                            environmentActivation[entry.environmentKey] = entry.isActive
+                            environmentActivation[entry.environmentKey] = entry.activated
                         }
                     }
                 }

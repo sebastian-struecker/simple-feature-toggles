@@ -7,10 +7,12 @@ import {HiDotsHorizontal} from "react-icons/hi";
 import ICON from "@/public/icon.svg";
 import {signOutAction} from "@/src/actions/auth";
 import {UrlPath} from "@/src/constants/url-path";
+import {useUser} from "@/src/utils/useUser";
 
 export function NavigationBar() {
     const pathname = usePathname();
     const router = useRouter();
+    const {role} = useUser();
 
     return (<div className="navbar bg-base-100 shadow-sm">
         <div className="navbar-start">
@@ -49,7 +51,7 @@ export function NavigationBar() {
             <a href={"/"}>
                 <div className="flex items-center gap-0.5">
                     <Image src={ICON} alt={"icon"} className="h-12 w-12"/>
-                    <p>simple-feature-toggles</p>
+                    <p className="font-semibold">simple-feature-toggles</p>
                 </div>
             </a>
         </div>
@@ -81,6 +83,8 @@ export function NavigationBar() {
                         signOutAction();
                         router.push("/api/auth/signin");
                     }}>Logout</a></li>
+                    <li className="menu-title">Role: {role()}</li>
+                    <li className="menu-title">Version: 1.0.0</li>
                 </ul>
             </div>
         </div>

@@ -23,7 +23,7 @@ export type FeatureToggleActions = {
     create: (input: CreateFeatureToggleInputs) => void
     update: (input: UpdateFeatureToggleInputs) => void
     deleteById: (id: number) => void
-    setSelected: (value: FeatureToggle | undefined) => void
+    setSelected: (selected?: FeatureToggle) => void
 }
 
 export type FeatureToggleStore = FeatureToggleState & FeatureToggleActions
@@ -84,9 +84,9 @@ export const createFeatureToggleStore = (initState: FeatureToggleState = default
             set(() => ({
                 featureToggles: response
             }));
-        }, setSelected: (value: FeatureToggle | undefined) => {
+        }, setSelected: (selected?: FeatureToggle) => {
             set({
-                selected: value
+                selected: selected
             });
         }
     }), {

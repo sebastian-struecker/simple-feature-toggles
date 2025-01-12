@@ -6,9 +6,11 @@ import {useEnvironmentStore} from "@/src/providers/environment-store-provider";
 import {AddEnvironmentModal} from "@/src/components/organisms/add-environment-modal";
 import {EditEnvironmentModal} from "@/src/components/organisms/edit-environment-modal";
 import {ConfirmationModal} from "@/src/components/organisms/confirmation-modal";
+import {useUser} from "@/src/utils/useUser";
 
 
 export default function EnvironmentsPage() {
+    const {isAdmin} = useUser();
     const {
         environments, selected, setSelected, getAll, deleteById
     } = useEnvironmentStore((state) => state);
@@ -30,11 +32,7 @@ export default function EnvironmentsPage() {
         return (<tbody>
         {environments?.map((element) => {
             return (<tr key={element.name + element.id}
-                        className="hover hover:cursor-pointer hover:bg-base-200"
-                        onClick={() => {
-                            setSelected(element);
-                            setEditModalVisible(true);
-                        }}>
+                        className="hover hover:cursor-pointer hover:bg-base-200">
                 <td>
                     <div>{element.key}</div>
                 </td>
@@ -44,13 +42,13 @@ export default function EnvironmentsPage() {
                 <td className="max-w-0.5">
                     <div className="flex gap-2">
                         <div className="lg:tooltip" data-tip="Edit">
-                            <button className="btn btn-soft btn-secondary" onClick={() => {
+                            <button className="btn btn-soft btn-secondary" disabled={!isAdmin} onClick={() => {
                                 setSelected(element);
                                 setEditModalVisible(true);
                             }}><FaPen/></button>
                         </div>
                         <div className="lg:tooltip" data-tip="Remove">
-                            <button className="btn btn-soft btn-secondary" onClick={() => {
+                            <button className="btn btn-soft btn-secondary" disabled={!isAdmin} onClick={() => {
                                 setSelected(element);
                                 setConfirmModalVisible(true);
                             }}><FaTrash/></button>
@@ -68,7 +66,7 @@ export default function EnvironmentsPage() {
                 <div className="text-xl font-semibold">
                     Environments
                 </div>
-                <button className="btn btn-primary"
+                <button className="btn btn-primary" disabled={!isAdmin}
                         onClick={() => {
                             setAddModalVisible(true);
                         }}>
@@ -95,6 +93,7 @@ export default function EnvironmentsPage() {
             setAddModalVisible(false);
         }}/>
         <EditEnvironmentModal visible={editModalVisible} onClose={() => {
+            setSelected(undefined);
             setEditModalVisible(false);
         }}/>
         <ConfirmationModal

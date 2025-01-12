@@ -3,6 +3,7 @@ package simple_feature_toggles.repository
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import java.time.LocalDateTime
 
 class EnvironmentEntityTest {
 
@@ -17,7 +18,7 @@ class EnvironmentEntityTest {
 
     @Test
     fun constructor_allArgs_test() {
-        val context = EnvironmentEntity(1, "key", "name")
+        val context = EnvironmentEntity(1, "key", "name", LocalDateTime.now(), LocalDateTime.now())
         assertNotNull(context)
         assertEquals(1L, context.id)
         assertEquals("key", context.key)
@@ -26,14 +27,14 @@ class EnvironmentEntityTest {
 
     @Test
     fun constructor_nullId_test() {
-        val context = EnvironmentEntity(null, "key", "name")
+        val context = EnvironmentEntity(null, "key", "name", LocalDateTime.now(), LocalDateTime.now())
         assertNull(context.id)
     }
 
     @Test
     fun toDomain_idNull_test() {
         assertThrows<IllegalStateException> {
-            EnvironmentEntity(null, "key", "name").toDomain()
+            EnvironmentEntity(null, "key", "name", LocalDateTime.now(), LocalDateTime.now()).toDomain()
         }
     }
 

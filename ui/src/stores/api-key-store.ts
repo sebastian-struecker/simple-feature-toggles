@@ -23,7 +23,7 @@ export type ApiKeyActions = {
     create: (input: CreateApiKeyInputs) => void
     update: (id: number, input: UpdateApiKeyInputs) => void
     deleteById: (id: number) => void
-    setSelected: (value: ApiKey | undefined) => void
+    setSelected: (selected?: ApiKey) => void
 }
 
 export type ApiKeyStore = ApiKeyState & ApiKeyActions
@@ -81,9 +81,9 @@ export const createApiKeyStore = (initState: ApiKeyState = defaultInitState) => 
             set(() => ({
                 apiKeys: response
             }));
-        }, setSelected: (value: ApiKey | undefined) => {
+        }, setSelected: (selected?: ApiKey) => {
             set({
-                selected: value
+                selected: selected
             });
         }
     }), {

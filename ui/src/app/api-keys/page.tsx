@@ -8,9 +8,11 @@ import {ConfirmationModal} from "@/src/components/organisms/confirmation-modal";
 import {EditApiKeyModal} from "@/src/components/organisms/edit-api-key-modal";
 import {EnvironmentActivationStatusPill} from "@/src/components/molecules/environment-activation-status-pill";
 import {OverflowText} from "@/src/components/atoms/overflow-text";
+import {useUser} from "@/src/utils/useUser";
 
 
 export default function ApiKeysPage() {
+    const {isAdmin} = useUser();
     const {apiKeys, selected, setSelected, getAll, deleteById} = useApiKeyStore((state) => state);
     const [addModalVisible, setAddModalVisible] = useState(false);
     const [editModalVisible, setEditModalVisible] = useState(false);
@@ -19,9 +21,8 @@ export default function ApiKeysPage() {
 
     useEffect(() => {
         async function awaitGetAll() {
-            let apiKeys1 = await getAll();
+            await getAll();
             setIsLoading(false);
-            console.log(apiKeys1);
         }
 
         awaitGetAll();
@@ -41,23 +42,23 @@ export default function ApiKeysPage() {
                 <td className="max-w-[16rem]">
                     <div className="grid grid-cols-3 gap-1">
                         {element.environmentActivations.length != 0 && element.environmentActivations.map((env) => {
-                            const {environmentKey, isActive} = env;
-                            return (<EnvironmentActivationStatusPill key={environmentKey + isActive}
+                            const {environmentKey, activated} = env;
+                            return (<EnvironmentActivationStatusPill key={environmentKey + activated}
                                                                      environmentKey={environmentKey}
-                                                                     isActive={isActive}/>)
+                                                                     activated={activated}/>)
                         })}
                     </div>
                 </td>
                 <td className="max-w-0.5">
                     <div className="flex gap-2">
                         <div className="lg:tooltip" data-tip="Edit">
-                            <button className="btn btn-soft btn-secondary" onClick={() => {
+                            <button className="btn btn-soft btn-secondary" disabled={!isAdmin} onClick={() => {
                                 setSelected(element);
                                 setEditModalVisible(true);
                             }}><FaPen/></button>
                         </div>
                         <div className="lg:tooltip" data-tip="Remove">
-                            <button className="btn btn-soft btn-secondary" onClick={() => {
+                            <button className="btn btn-soft btn-secondary" disabled={!isAdmin} onClick={() => {
                                 setSelected(element);
                                 setConfirmModalVisible(true);
                             }}><FaTrash/></button>
@@ -75,7 +76,7 @@ export default function ApiKeysPage() {
                 <div className="text-xl font-semibold">
                     Api-Keys
                 </div>
-                <button className="btn btn-primary" onClick={() => {
+                <button className="btn btn-primary" disabled={!isAdmin} onClick={() => {
                     setAddModalVisible(true)
                 }}>
                     <FaPlus/> Create
@@ -102,6 +103,7 @@ export default function ApiKeysPage() {
             setAddModalVisible(false);
         }}/>
         <EditApiKeyModal visible={editModalVisible} onClose={() => {
+            setSelected(undefined);
             setEditModalVisible(false);
         }}/>
         <ConfirmationModal

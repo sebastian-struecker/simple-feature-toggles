@@ -53,7 +53,12 @@ export function AddFeatureToggleModal({visible, onClose}: Inputs) {
                         }}
         />
         <TextInputArea label={"Description"} placeholder={"Enter a description"}
-                       control={{key: "description", register: register, isSubmitting: isSubmitting}}
+                       control={{
+                           key: "description",
+                           register: register,
+                           setValue: setValue,
+                           isSubmitting: isSubmitting
+                       }}
                        validation={{
                            validatorHint: "Enter a description", minLength: 1, isRequired: false
                        }}

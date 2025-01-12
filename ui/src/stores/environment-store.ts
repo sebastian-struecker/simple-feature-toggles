@@ -24,7 +24,7 @@ export type EnvironmentActions = {
     create: (input: CreateEnvironmentInputs) => void
     update: (id: number, input: UpdateEnvironmentInputs) => void
     deleteById: (id: number) => void
-    setSelected: (value: Environment | undefined) => void
+    setSelected: (selected?: Environment) => void
 }
 
 export type EnvironmentStore = EnvironmentState & EnvironmentActions
@@ -85,9 +85,9 @@ export const createEnvironmentStore = (initState: EnvironmentState = defaultInit
             set(() => ({
                 environments: response
             }));
-        }, setSelected: (value: Environment | undefined) => {
+        }, setSelected: (selected?: Environment) => {
             set({
-                selected: value
+                selected: selected
             });
         }
     }), {

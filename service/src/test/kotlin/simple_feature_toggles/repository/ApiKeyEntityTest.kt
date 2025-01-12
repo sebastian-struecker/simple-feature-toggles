@@ -3,6 +3,7 @@ package simple_feature_toggles.repository
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import java.time.LocalDateTime
 
 class ApiKeyEntityTest {
 
@@ -54,7 +55,7 @@ class ApiKeyEntityTest {
     }
 
     private fun apiKeyEntity(id: Long? = 1): ApiKeyEntity {
-        return ApiKeyEntity(id, "name", "value", environmentActivation())
+        return ApiKeyEntity(id, "name", "value", environmentActivation(), LocalDateTime.now(), LocalDateTime.now())
     }
 
     private fun environmentActivation(): MutableMap<String, Boolean> {

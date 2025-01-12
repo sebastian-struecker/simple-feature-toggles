@@ -26,10 +26,14 @@ export function AddEnvironmentModal({visible, onClose}: Inputs) {
     };
 
     return (<ModalWithBottomActionsWrapper labels={{title: "Create an Environment", actionButtonLabel: "Create"}}
-                                           controls={{onSubmit: handleSubmit(onSubmit), onClose: handleClose, visible: visible}}>
+                                           controls={{
+                                               onSubmit: handleSubmit(onSubmit),
+                                               onClose: handleClose,
+                                               visible: visible
+                                           }}>
         <TextInputField label={"Key"} placeholder={"Enter a key"}
                         control={{
-                            key: "key", register: register,  setValue: setValue, submitting: isSubmitting
+                            key: "key", register: register, setValue: setValue, submitting: isSubmitting
                         }}
                         validation={{
                             validatorHint: "Enter a valid key",
@@ -40,7 +44,7 @@ export function AddEnvironmentModal({visible, onClose}: Inputs) {
         />
         <TextInputField label={"Name"} placeholder={"Enter a name"}
                         control={{
-                            key: "name", register: register,  setValue: setValue, submitting: isSubmitting
+                            key: "name", register: register, setValue: setValue, submitting: isSubmitting
                         }}
                         validation={{
                             validatorHint: "Enter a valid name",

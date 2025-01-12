@@ -7,12 +7,4 @@ object DefaultRoles {
     fun getAll(): List<String> {
         return listOf(ADMIN, VIEWER)
     }
-
-    fun isDefaultRole(role: String): Boolean {
-        when (role) {
-            ADMIN -> return true
-            VIEWER -> return true
-            else -> return false
-        }
-    }
 }

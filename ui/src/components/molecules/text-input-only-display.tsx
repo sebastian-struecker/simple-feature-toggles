@@ -17,12 +17,12 @@ type Validation = {
 }
 
 export function TextInputOnlyDisplay({
-                                   label = "",
-                                   control: {key, setValue, disabled = false, value = undefined},
-                                   validation: {
-                                       isRequired = false,
-                                   },
-                               }: Inputs) {
+                                         label = "",
+                                         control: {key, setValue, disabled = false, value = undefined},
+                                         validation: {
+                                             isRequired = false,
+                                         },
+                                     }: Inputs) {
     useEffect(() => {
         setValue(key, value);
     }, [value]);

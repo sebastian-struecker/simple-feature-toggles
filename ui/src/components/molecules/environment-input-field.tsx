@@ -32,7 +32,7 @@ export function EnvironmentInputField({
 
     const isActive = (value: EnvironmentActivation[], environment: Environment): boolean => {
         return value.filter(el => el.environmentKey == environment.key)
-            .filter(el => el.isActive).length > 0;
+            .filter(el => el.activated).length > 0;
     }
 
     return (<Controller
@@ -46,16 +46,16 @@ export function EnvironmentInputField({
                 <div className="grid grid-cols-2 gap-4">
                     {environments.map(((environment, index) => {
                         return (<div key={environment.id + environment.key + index}
-                                     className={`flex flex-row justify-between gap-2 rounded-box p-2 border ${isSelected(value || [], environment) ? `bg-primary border-secondary` : "border-base-200 hover:bg-base-200"}`}>
+                                     className={`flex flex-row justify-between gap-2 rounded-box p-2 border hover:bg-base-200 ${isSelected(value || [], environment) ? "border-primary" : "border-base-200"}`}>
                             <div className="flex items-center">
                                 <input type="checkbox"
-                                       className={`checkbox ${value ? "checkbox-secondary" : ""}`}
+                                       className={`checkbox ${value ? "checkbox-primary" : ""}`}
                                        checked={isSelected(value || [], environment)} disabled={isSubmitting}
                                        onChange={(e) => {
                                            let activations: EnvironmentActivation[] = value
                                            if (e.target.checked) {
                                                activations.push({
-                                                   environmentKey: environment.key, isActive: false
+                                                   environmentKey: environment.key, activated: false
                                                });
                                            } else {
                                                activations = activations.filter((el) => el.environmentKey != environment.key)
@@ -70,16 +70,16 @@ export function EnvironmentInputField({
                                 </div>
                             </div>
                             <div className="flex flex-col items-center">
-                                <input type="checkbox" className="toggle toggle-secondary"
+                                <input type="checkbox" className="toggle toggle-primary"
                                        checked={isActive(value || [], environment)}
                                        disabled={!isSelected(value || [], environment) || isSubmitting}
                                        onChange={(e) => {
                                            const index = value.findIndex((obj: EnvironmentActivation) => obj.environmentKey == environment.key);
-                                           value[index].isActive = e.target.checked
+                                           value[index].activated = e.target.checked
                                            onChange(value);
                                        }}/>
                                 {isActive(value || [], environment) && <div
-                                    className="text-xs font-semibold lowercase text-secondary">active</div>}
+                                    className="text-xs font-semibold lowercase text-primary">active</div>}
                                 {!isActive(value || [], environment) && <div
                                     className="text-xs font-semibold opacity-60 lowercase">inactive</div>}
                             </div>

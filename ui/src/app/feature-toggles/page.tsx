@@ -7,9 +7,11 @@ import {AddFeatureToggleModal} from "@/src/components/organisms/add-feature-togg
 import {ConfirmationModal} from "@/src/components/organisms/confirmation-modal";
 import {EditFeatureToggleModal} from "@/src/components/organisms/edit-feature-toggle-modal";
 import {EnvironmentActivationStatusPill} from "@/src/components/molecules/environment-activation-status-pill";
+import {useUser} from "@/src/utils/useUser";
 
 
 export default function FeatureTogglesPage() {
+    const {isAdmin} = useUser();
     const {
         featureToggles, selected, setSelected, getAll, deleteById
     } = useFeatureToggleStore((state) => state);
@@ -35,7 +37,7 @@ export default function FeatureTogglesPage() {
                 <td className="w-1/5">
                     <div className="flex flex-col gap-3">
                         <span className="font-semibold">{element.name}</span>
-                        <span className="badge badge-ghost badge-md">{element.key}</span>
+                        <span className="badge badge-soft badge-ghost bg-base-300! badge-md">{element.key}</span>
                     </div>
                 </td>
                 <td className="w-1/4">
@@ -44,23 +46,23 @@ export default function FeatureTogglesPage() {
                 <td className="max-w-[16rem]">
                     <div className="grid grid-cols-3 gap-1">
                         {element.environmentActivations.length != 0 && element.environmentActivations.map((env) => {
-                            const {environmentKey, isActive} = env;
-                            return (
-                                <EnvironmentActivationStatusPill key={environmentKey + isActive}
-                                                                 environmentKey={environmentKey} isActive={isActive}/>)
+                            const {environmentKey, activated} = env;
+                            return (<EnvironmentActivationStatusPill key={environmentKey + activated}
+                                                                     environmentKey={environmentKey}
+                                                                     activated={activated}/>)
                         })}
                     </div>
                 </td>
                 <td className="max-w-0.5">
                     <div className="flex gap-2">
                         <div className="lg:tooltip" data-tip="Edit">
-                            <button className="btn btn-soft btn-secondary" onClick={() => {
+                            <button className="btn btn-soft btn-secondary" disabled={!isAdmin} onClick={() => {
                                 setSelected(element);
                                 setEditModalVisible(true);
                             }}><FaPen/></button>
                         </div>
                         <div className="lg:tooltip" data-tip="Remove">
-                            <button className="btn btn-soft btn-secondary" onClick={() => {
+                            <button className="btn btn-soft btn-secondary" disabled={!isAdmin} onClick={() => {
                                 setSelected(element);
                                 setConfirmModalVisible(true);
                             }}><FaTrash/></button>
@@ -78,7 +80,7 @@ export default function FeatureTogglesPage() {
                 <div className="text-xl font-semibold">
                     Feature-Toggles
                 </div>
-                <button className="btn btn-primary"
+                <button className="btn btn-primary" disabled={!isAdmin}
                         onClick={() => {
                             setAddModalVisible(true)
                         }}>
@@ -106,6 +108,7 @@ export default function FeatureTogglesPage() {
             setAddModalVisible(false)
         }}/>
         <EditFeatureToggleModal visible={editModalVisible} onClose={() => {
+            setSelected(undefined);
             setEditModalVisible(false);
         }}/>
         <ConfirmationModal

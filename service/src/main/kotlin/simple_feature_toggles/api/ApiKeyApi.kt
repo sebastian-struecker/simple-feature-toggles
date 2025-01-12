@@ -26,7 +26,7 @@ import simple_feature_toggles.api.models.*
 
 @ApplicationScoped
 @Path("api-keys")
-@Tag(name = "Api Key API", description = "API for managing api keys")
+@Tag(name = "Api-Key API", description = "API for managing api keys")
 @SecurityScheme(
     securitySchemeName = "JWT", type = SecuritySchemeType.HTTP, scheme = "bearer", bearerFormat = "JWT"
 )

@@ -2,6 +2,17 @@ quarkus:
   datasource:
     db-kind: postgresql
 
+  # Switch with hibernate-orm when Intellij IDEA v2024.3.2
+  #  flyway:
+  #    locations: db/migration
+  #    migrate-at-start: true
+
+  hibernate-orm:
+    database:
+      generation:
+        ~: update
+        create-schemas: true
+
   smallrye-openapi:
     path: /openapi
     store-schema-directory: target
@@ -21,10 +32,6 @@ quarkus:
   tls:
     trust-all: true
 
-api:
-  authorization:
-    enable: ${API_AUTHORIZATION_ENABLE:true}
-
 "%prod":
   quarkus:
     datasource:
@@ -32,11 +39,8 @@ api:
       password: ${DATASOURCE_PASSWORD}
       reactive:
         url: vertx-reactive:postgresql://${DATASOURCE_HOST}:${DATASOURCE_PORT}/${DATASOURCE_DATABASE}
-    hibernate-orm:
-      database:
-        generation:
-          ~: update
-          create-schemas: true
+      jdbc:
+        url: postgresql://${DATASOURCE_HOST}:${DATASOURCE_PORT}/${DATASOURCE_DATABASE}
 
     oidc:
       auth-server-url: ${OIDC_AUTH_SERVER_URL}
@@ -51,11 +55,9 @@ api:
       devservices:
         enabled: true
         port: 5432
+        db-name: sft
         username: sft
         password: sft
-    hibernate-orm:
-      database:
-        generation: drop-and-create
 
     keycloak:
       devservices:
@@ -69,27 +71,20 @@ api:
     ~: false
     enable: false
 
-  api:
-    authorization:
-      enable: true
-
 "%dev":
   quarkus:
     log:
-      level:
-        category:
-          "simple_feature_toggles":
-            level: DEBUG
+      category:
+        "simple_feature_toggles":
+          level: DEBUG
 
     datasource:
       devservices:
         enabled: true
         port: 5432
+        db-name: sft
         username: sft
         password: sft
-    hibernate-orm:
-      database:
-        generation: drop-and-create
 
     oidc:
       client-id: simple-feature-toggles
@@ -103,7 +98,3 @@ api:
         port: 8000
         realm-name: simple-feature-toggles
         realm-path: example-keycloak-settings.json
-
-  api:
-    authorization:
-      enable: false

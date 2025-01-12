@@ -1,3 +1,3 @@
 export type EnvironmentActivation = {
-    environmentKey: string; isActive: boolean;
+    environmentKey: string; activated: boolean;
 };

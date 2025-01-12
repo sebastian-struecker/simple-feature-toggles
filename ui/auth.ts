@@ -1,5 +1,6 @@
 import NextAuth, {DefaultSession} from "next-auth"
 import Keycloak from "next-auth/providers/keycloak";
+import {parseJwt} from "@/src/utils/jwt";
 
 /**
  * For more information see:
@@ -8,7 +9,7 @@ import Keycloak from "next-auth/providers/keycloak";
 declare module "next-auth" {
     interface Session {
         user: {
-            token?: string;
+            token?: string; roles?: string[];
         } & DefaultSession["user"];
         access_token: string;
         expires_at?: number;
@@ -21,6 +22,7 @@ declare module "next-auth" {
  */
 declare module '@auth/core/jwt' {
     interface JWT {
+        roles?: string[];
         accessToken?: string
         expires_at?: number
         refresh_token?: string
@@ -31,9 +33,17 @@ declare module '@auth/core/jwt' {
 export const {handlers, auth, signIn, signOut} = NextAuth({
     providers: [Keycloak], callbacks: {
         async jwt({token, account}) {
+            let roles: string [] = []
+            if (account?.access_token) {
+                const decodedToken = parseJwt(account?.access_token)
+                if (decodedToken) {
+                    roles = decodedToken.realm_access.roles
+                }
+            }
             if (account) {
                 return {
                     ...token,
+                    roles: roles,
                     access_token: account.access_token,
                     expires_at: account.expires_at,
                     refresh_token: account.refresh_token,
@@ -44,9 +54,9 @@ export const {handlers, auth, signIn, signOut} = NextAuth({
             if (session) {
                 session = Object.assign({}, session, {access_token: token.access_token})
                 session.expires_at = token.expires_at;
+                session.user.roles = token.roles;
             }
-            console.log("session");
-            return session
+            return session;
         }, async authorized({auth}) {
             return !!auth
         },

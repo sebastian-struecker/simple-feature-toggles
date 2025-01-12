@@ -1,4 +1,4 @@
-import React, {RefObject, useEffect, useRef} from "react";
+import React, {useEffect, useRef} from "react";
 
 type Inputs = {
     labels: Labels; controls: Controls; children: React.ReactNode;

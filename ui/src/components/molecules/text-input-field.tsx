@@ -40,7 +40,7 @@ export function TextInputField({
                 {...register(key, {required: isRequired, pattern: pattern, minLength: minLength})}
                 disabled={submitting || disabled}
                 name={key}
-                type="text" className="input input-primary input-md w-full validator" required={isRequired}
+                type="text" className="input input-md w-full validator" required={isRequired}
                 placeholder={placeholder} minLength={minLength}
                 pattern={pattern}/>
             <div className="validator-hint hidden">

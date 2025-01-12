@@ -1,28 +1,43 @@
 services:
   service:
-    image: ghcr.io/sebastian-struecker/simple-feature-toggles/service:1.0.0-snapshot
+    image: ghcr.io/sebastian-struecker/simple-feature-toggles/service:1.0.0
     environment:
-      DATASOURCE_DATABASE: service
-      DATASOURCE_USERNAME: service
-      DATASOURCE_PASSWORD: service
+      DATASOURCE_DATABASE: sft
+      DATASOURCE_USERNAME: sft
+      DATASOURCE_PASSWORD: sft
       DATASOURCE_HOST: service_database
       DATASOURCE_PORT: 5432
       OIDC_AUTH_SERVER_URL: http://host.docker.internal:8000/realms/simple-feature-toggles
       OIDC_CLIENT_ID: simple-feature-toggles
       OIDC_TOKEN_JWT_ISSUER: http://localhost:8000/realms/simple-feature-toggles
       OIDC_TOKEN_JWT_AUDIENCE: simple-feature-toggles
-      API_KEYS: test
+    depends_on:
+      - service_database
+      - keycloak
     ports:
-      - 8080:8080
+      - "8080:8080"
 
   service_database:
     image: bitnami/postgresql:16.3.0
     environment:
-      POSTGRESQL_USERNAME: service
-      POSTGRESQL_PASSWORD: service
-      POSTGRESQL_DATABASE: service
+      POSTGRESQL_USERNAME: sft
+      POSTGRESQL_PASSWORD: sft
+      POSTGRESQL_DATABASE: sft
     ports:
       - 5432:5432
+
+  ui:
+    image: ghcr.io/sebastian-struecker/simple-feature-toggles/ui:1.0.0
+    environment:
+      AUTH_SECRET: abcdefghijgklmopqrstuvwxyz
+      AUTH_KEYCLOAK_ID: simple-feature-toggles
+      AUTH_KEYCLOAK_SECRET: simple-feature-toggles
+      AUTH_KEYCLOAK_ISSUER: http://localhost:8000/realms/simple-feature-toggles
+      BACKEND_URL: http://localhost:8080
+    depends_on:
+      - keycloak
+    ports:
+      - "8080:8080"
 
   keycloak:
     image: bitnami/keycloak:24.0.5

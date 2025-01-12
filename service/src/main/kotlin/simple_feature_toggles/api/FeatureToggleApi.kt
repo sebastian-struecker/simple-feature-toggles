@@ -29,7 +29,7 @@ import simple_feature_toggles.api.models.UpdateFeatureToggleRequest
 
 @ApplicationScoped
 @Path("feature-toggles")
-@Tag(name = "Feature Toggle API", description = "API for managing feature toggles")
+@Tag(name = "Feature-Toggle API", description = "API for managing feature-toggles")
 @SecurityScheme(
     securitySchemeName = "JWT", type = SecuritySchemeType.HTTP, scheme = "bearer", bearerFormat = "JWT"
 )
@@ -42,10 +42,10 @@ class FeatureToggleApi(
     @Produces(MediaType.APPLICATION_JSON)
     @RolesAllowed(DefaultRoles.ADMIN, DefaultRoles.VIEWER)
     @SecurityRequirement(name = "JWT")
-    @Operation(operationId = "getAll", summary = "Get all feature toggles")
+    @Operation(operationId = "getAll", summary = "Get all feature-toggles")
     @APIResponses(
         value = [APIResponse(
-            responseCode = "200", description = "A list of all feature toggles", content = [Content(
+            responseCode = "200", description = "A list of all feature-toggles", content = [Content(
                 mediaType = "application/json",
                 schema = Schema(type = SchemaType.ARRAY, implementation = FeatureToggleResponse::class)
             )]
@@ -145,9 +145,9 @@ class FeatureToggleApi(
     @DELETE
     @RolesAllowed(DefaultRoles.ADMIN)
     @SecurityRequirement(name = "JWT")
-    @Operation(operationId = "deleteAll", summary = "Delete all feature toggles")
+    @Operation(operationId = "deleteAll", summary = "Delete all feature-toggles")
     @APIResponses(
-        value = [APIResponse(responseCode = "204", description = "All feature toggles deleted")]
+        value = [APIResponse(responseCode = "204", description = "All feature-toggles deleted")]
     )
     fun deleteAllFeatureToggles(): Uni<RestResponse<Unit>> {
         Log.debug("[FeatureToggleApi] Calling method: delete url: /feature-toggles")
