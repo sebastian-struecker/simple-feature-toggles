@@ -8,6 +8,8 @@ import ICON from "@/public/icon.svg";
 import {signOutAction} from "@/src/actions/auth";
 import {UrlPath} from "@/src/constants/url-path";
 import {useUser} from "@/src/utils/useUser";
+import {SiGoogledocs} from "react-icons/si";
+import {FaExternalLinkAlt, FaGithub} from "react-icons/fa";
 
 export function NavigationBar() {
     const pathname = usePathname();
@@ -79,12 +81,28 @@ export function NavigationBar() {
                 <ul
                     tabIndex={0}
                     className="menu menu-md dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-52 p-2 shadow">
+                    <li className="menu-title">Role: {role()}</li>
+                    <li className="menu-title">Version: 1.0.0</li>
+                    <li>
+                        <a target="_blank" rel="noopener noreferrer"
+                           href="https://github.com/sebastian-struecker/simple-feature-toggles">
+                            <FaGithub/>
+                            Github
+                            <FaExternalLinkAlt/>
+                        </a>
+                    </li>
+                    <li>
+                        <a target="_blank" rel="noopener noreferrer"
+                           href="https://sebastian-struecker.github.io/simple-feature-toggles/">
+                            <SiGoogledocs/>
+                            Documentation
+                            <FaExternalLinkAlt/>
+                        </a>
+                    </li>
                     <li><a onClick={() => {
                         signOutAction();
                         router.push("/api/auth/signin");
                     }}>Logout</a></li>
-                    <li className="menu-title">Role: {role()}</li>
-                    <li className="menu-title">Version: 1.0.0</li>
                 </ul>
             </div>
         </div>
