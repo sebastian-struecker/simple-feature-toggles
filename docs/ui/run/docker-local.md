@@ -7,7 +7,7 @@ This documentation should explain how to use the ``ui`` image locally with [Dock
 ### Prerequisites
 
 - A [Docker](https://www.docker.com/) environment.
-- A ``service`` instance. More information [here](../../service).
+- A ``service`` instance. More information [here](../../service/index).
 - A Keycloak instance. More information [here](../../infrastructure/oidc/keycloak).
 
 ### Start the service
@@ -40,4 +40,4 @@ services:
 
 :::
 
-> All configurations can be found [here](/configuration)
+> All configurations can be found [here](../configuration)

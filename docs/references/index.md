@@ -44,6 +44,6 @@ roles: [Service RBAC](../service/role-based-access-control), [UI RBAC](../ui/rol
 
 ## Further reading
 
-- [Service](./service)
-- [UI](./ui)
-- [Infrastructure](./infrastructure)
+- [Service](../service/index)
+- [UI](../ui/index)
+- [Infrastructure](../infrastructure/index)
