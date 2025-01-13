@@ -51,6 +51,12 @@ class EnvironmentApiTest {
     }
 
     @Test
+    @TestSecurity(user = "viewer", roles = [DefaultRoles.VIEWER])
+    fun getAll_Environments_authorized_viewer_test() {
+        getAllEnvironmentsRequest().then().statusCode(200)
+    }
+
+    @Test
     fun getEnvironmentById_unauthorized_test() {
         getEnvironmentByIdRequest(1).then().statusCode(401)
     }
@@ -64,6 +70,17 @@ class EnvironmentApiTest {
     @Test
     @TestSecurity(user = "admin", roles = [DefaultRoles.ADMIN])
     fun getEnvironmentById_authorized_admin_test() {
+        val environment = environment()
+        Mockito.`when`(repositoryMock.getById(1)).thenReturn(
+            Uni.createFrom().item(environment)
+        )
+        getEnvironmentByIdRequest().then().statusCode(200).body("name", `is`(environment.name))
+            .body("key", `is`(environment.key))
+    }
+
+    @Test
+    @TestSecurity(user = "viewer", roles = [DefaultRoles.VIEWER])
+    fun getEnvironmentById_authorized_viewer_test() {
         val environment = environment()
         Mockito.`when`(repositoryMock.getById(1)).thenReturn(
             Uni.createFrom().item(environment)

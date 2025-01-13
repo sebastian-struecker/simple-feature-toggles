@@ -37,7 +37,8 @@ export default function ApiKeysPage() {
                     <OverflowText text={element.name} length={12}/>
                 </td>
                 <td>
-                    <div>{element.secret}</div>
+                    {isAdmin && <div>{element.secret}</div>}
+                    {!isAdmin && <div>{element.secret.slice(0,3)}*******************</div>}
                 </td>
                 <td className="max-w-[16rem]">
                     <div className="grid grid-cols-3 gap-1">

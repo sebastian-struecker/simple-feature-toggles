@@ -39,7 +39,7 @@ class EnvironmentApi(
     @GET
     @NoCache
     @Produces(MediaType.APPLICATION_JSON)
-    @RolesAllowed(DefaultRoles.ADMIN)
+    @RolesAllowed(DefaultRoles.ADMIN, DefaultRoles.VIEWER)
     @SecurityRequirement(name = "JWT")
     @Operation(operationId = "getAll", summary = "Get all environments")
     @APIResponses(
@@ -58,7 +58,7 @@ class EnvironmentApi(
     @GET
     @NoCache
     @Produces(MediaType.APPLICATION_JSON)
-    @RolesAllowed(DefaultRoles.ADMIN)
+    @RolesAllowed(DefaultRoles.ADMIN, DefaultRoles.VIEWER)
     @Path("{id}")
     @SecurityRequirement(name = "JWT")
     @Operation(operationId = "getById", summary = "Get an environment by ID")

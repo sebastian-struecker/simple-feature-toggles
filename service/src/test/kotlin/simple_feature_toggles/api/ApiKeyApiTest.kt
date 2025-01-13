@@ -51,6 +51,12 @@ class ApiKeyApiTest {
     }
 
     @Test
+    @TestSecurity(user = "viewer", roles = [DefaultRoles.VIEWER])
+    fun getAll_ApiKeys_authorized_viewer_test() {
+        getAllApiKeysRequest().then().statusCode(200)
+    }
+
+    @Test
     fun getApiKeyById_unauthorized_test() {
         getApiKeyByIdRequest(1).then().statusCode(401)
     }
@@ -64,6 +70,16 @@ class ApiKeyApiTest {
     @Test
     @TestSecurity(user = "admin", roles = [DefaultRoles.ADMIN])
     fun getApiKeyById_authorized_admin_test() {
+        val apiKey = apiKey()
+        Mockito.`when`(repositoryMock.getById(1)).thenReturn(
+            Uni.createFrom().item(apiKey)
+        )
+        getApiKeyByIdRequest().then().statusCode(200).body("name", `is`(apiKey.name))
+    }
+
+    @Test
+    @TestSecurity(user = "viewer", roles = [DefaultRoles.VIEWER])
+    fun getApiKeyById_authorized_viewer_test() {
         val apiKey = apiKey()
         Mockito.`when`(repositoryMock.getById(1)).thenReturn(
             Uni.createFrom().item(apiKey)

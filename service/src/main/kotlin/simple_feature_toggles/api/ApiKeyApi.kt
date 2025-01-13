@@ -37,7 +37,7 @@ class ApiKeyApi(
     @GET
     @NoCache
     @Produces(MediaType.APPLICATION_JSON)
-    @RolesAllowed(DefaultRoles.ADMIN)
+    @RolesAllowed(DefaultRoles.ADMIN, DefaultRoles.VIEWER)
     @SecurityRequirement(name = "JWT")
     @Operation(operationId = "getAll", summary = "Get all api keys")
     @APIResponses(
@@ -57,7 +57,7 @@ class ApiKeyApi(
     @GET
     @NoCache
     @Produces(MediaType.APPLICATION_JSON)
-    @RolesAllowed(DefaultRoles.ADMIN)
+    @RolesAllowed(DefaultRoles.ADMIN, DefaultRoles.VIEWER)
     @Path("{id}")
     @SecurityRequirement(name = "JWT")
     @Operation(operationId = "getById", summary = "Get an api key by ID")

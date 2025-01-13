@@ -37,7 +37,7 @@ services:
     depends_on:
       - keycloak
     ports:
-      - "8080:8080"
+      - "3000:3000"
 
   keycloak:
     image: bitnami/keycloak:24.0.5

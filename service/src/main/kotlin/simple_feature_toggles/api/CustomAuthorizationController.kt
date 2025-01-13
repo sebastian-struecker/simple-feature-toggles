@@ -13,7 +13,7 @@ import org.eclipse.microprofile.config.inject.ConfigProperty
 @ApplicationScoped
 @UnlessBuildProfile("test")
 class CustomAuthorizationController(
-    @ConfigProperty(name = "api.authorization.enable", defaultValue = "true")
+    @ConfigProperty(name = "api.authorization.enabled", defaultValue = "true")
     val authorizationEnabled: Boolean
 ) : AuthorizationController() {
 
