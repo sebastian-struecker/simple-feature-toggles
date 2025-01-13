@@ -11,5 +11,8 @@
   },
   "optionalDependencies": {
     "@rollup/rollup-linux-x64-gnu": "^4.22.4"
+  },
+  "dependencies": {
+    "vitepress-versioning-plugin": "^1.3.0"
   }
 }

@@ -1,12 +1,14 @@
-# Getting Started <Badge type="warning" text="1.0.0-SNAPSHOT" />
+# Quickstart
 
 Get started with simple-feature-toggles on your machine.
 
 ## Before you start
 
 Make sure you have a running:
-- [Docker](https://www.docker.com/) environment.
-- [PostgreSQL](https://www.postgresql.org/) instance version 16 or higher.
+
+- A [Docker](https://www.docker.com/) environment.
+- A Keycloak instance. More information [here](../../infrastructure/oidc/keycloak).
+- A PostgreSQL instance version 16 or higher. More information [here](../../infrastructure/postgresql).
 
 ## Start the service
 
